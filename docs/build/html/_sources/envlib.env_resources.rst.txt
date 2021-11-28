@@ -4,11 +4,21 @@ envlib.env\_resources package
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: -1
+envlib.env\_resources.constant module
+-------------------------------------
 
-   envlib.env_resources.constant
-   envlib.env_resources.preset_data
+.. automodule:: envlib.env_resources.constant
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+envlib.env\_resources.preset\_data module
+-----------------------------------------
+
+.. automodule:: envlib.env_resources.preset_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

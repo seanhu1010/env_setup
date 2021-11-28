@@ -89,13 +89,13 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Object&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="Object"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object">[文档]</a><span class="k">class</span> <span class="nc">Object</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="Object"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object">[文档]</a><span class="k">class</span> <span class="nc">Object</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;对象管理类&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Object.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Object.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Object.query_object_bookmark_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.query_object_bookmark_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.query_object_bookmark_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.query_object_bookmark_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_object_bookmark_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询收藏夹</span>
 
@@ -115,7 +115,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;object_bookmark_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.query_group_list_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.query_group_list_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.query_group_list_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.query_group_list_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_group_list_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询分组列表</span>
 
@@ -142,7 +142,7 @@
 
         <span class="k">return</span> <span class="n">group_list</span></div>
 
-<div class="viewcode-block" id="Object.query_person_group_list_by_rest_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.query_person_group_list_by_rest_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.query_person_group_list_by_rest_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.query_person_group_list_by_rest_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_person_group_list_by_rest_via_group_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询人员分组列表，以及名单库列表</span>
 
@@ -165,7 +165,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;object_person_group_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.query_group_list_detail_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.query_group_list_detail_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.query_group_list_detail_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.query_group_list_detail_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_group_list_detail_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">search</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询分组里的对象列表</span>
 
@@ -200,7 +200,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;object_person_group_list_detail&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Object.query_person_group_list_detail_by_rest_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.query_person_group_list_detail_by_rest_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.query_person_group_list_detail_by_rest_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.query_person_group_list_detail_by_rest_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_person_group_list_detail_by_rest_via_group_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">search</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询人员分组里的对象列表</span>
 
@@ -226,7 +226,7 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;组织列表不存在或有误，查询结果为 </span><span class="si">{</span><span class="n">group_list</span><span class="si">}</span><span class="s1"> &#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Object.query_person_manage_person_list_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.query_person_manage_person_list_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.query_person_manage_person_list_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.query_person_manage_person_list_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_person_manage_person_list_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;检索对象管理-人员列表</span>
 
@@ -247,7 +247,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;object_person_manage_person_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.query_object_person_detail_list_by_dep_name"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.query_object_person_detail_list_by_dep_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.query_object_person_detail_list_by_dep_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.query_object_person_detail_list_by_dep_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_object_person_detail_list_by_dep_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dep_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;根据部门名，检索对象管理-人员管理-某部门下的人员列表</span>
 
@@ -289,7 +289,7 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_person_manage_person_list_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Object.add_object_group_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_object_group_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_object_group_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_object_group_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_object_group_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">object_type</span><span class="p">,</span> <span class="n">group_type</span><span class="p">,</span> <span class="n">send_lib</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;新建分组,包括人员分组,车辆分组,房屋分组等</span>
 
@@ -329,7 +329,7 @@
             <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_person_group_normal_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_person_group_normal_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_person_group_normal_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_person_group_normal_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_person_group_normal_via_group_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;新建人员分组-普通分组</span>
 
@@ -354,7 +354,7 @@
                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_namelist_static_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_namelist_static_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_namelist_static_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_namelist_static_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_namelist_static_via_group_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">send_lib</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;新建人员分组-静态库</span>
 
@@ -380,7 +380,7 @@
                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_namelist_black_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_namelist_black_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_namelist_black_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_namelist_black_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_namelist_black_via_group_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">send_lib</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;新建人员分组-黑名单</span>
 
@@ -406,7 +406,7 @@
                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_namelist_white_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_namelist_white_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_namelist_white_via_group_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_namelist_white_via_group_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_namelist_white_via_group_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">send_lib</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;新建人员分组-白名单</span>
 
@@ -432,7 +432,7 @@
                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.delete_object_group_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.delete_object_group_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.delete_object_group_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.delete_object_group_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delete_object_group_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;删除分组</span>
 
@@ -449,7 +449,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.modify_object_group_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.modify_object_group_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.modify_object_group_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.modify_object_group_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">modify_object_group_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;修改分组</span>
 
@@ -466,7 +466,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.export_object_group_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.export_object_group_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.export_object_group_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.export_object_group_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">export_object_group_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;导出分组</span>
 
@@ -483,7 +483,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.upload_object_image_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.upload_object_image_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.upload_object_image_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.upload_object_image_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">upload_object_image_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;添加人员对象上传的图片</span>
 
@@ -501,7 +501,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.upload_object_image_by_smb_via_file"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.upload_object_image_by_smb_via_file">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.upload_object_image_by_smb_via_file"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.upload_object_image_by_smb_via_file">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">upload_object_image_by_smb_via_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;SMB连接添加人员对象上传的图片</span>
 
@@ -519,7 +519,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">upload_object_image_by_rest_via_kw</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">_headers</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_person_object_to_department_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_person_object_to_department_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_person_object_to_department_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_person_object_to_department_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_person_object_to_department_by_smb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sex</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="s1">&#39;images&#39;</span><span class="p">,</span>
                                                <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;person.jpg&#39;</span><span class="p">,</span> <span class="n">is_construct</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dep_name</span><span class="o">=</span><span class="s1">&#39;common&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;向部门中添加人员对象</span>
@@ -580,7 +580,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_person_object_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.batch_add_person_object_to_department_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.batch_add_person_object_to_department_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.batch_add_person_object_to_department_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.batch_add_person_object_to_department_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">batch_add_person_object_to_department_by_smb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">,</span> <span class="n">dep_name</span><span class="o">=</span><span class="s1">&#39;common&#39;</span><span class="p">,</span> <span class="n">sex</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;SMB批量向部门中添加人员对象</span>
 
@@ -605,7 +605,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_object_person_detail_list_by_dep_name</span><span class="p">(</span><span class="n">dep_name</span><span class="o">=</span><span class="n">dep_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_person_object_to_group_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_person_object_to_group_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_person_object_to_group_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_person_object_to_group_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_person_object_to_group_by_smb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">user_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sex</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                                           <span class="n">file_relative_path</span><span class="o">=</span><span class="s1">&#39;images&#39;</span><span class="p">,</span>
                                           <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;person.jpg&#39;</span><span class="p">,</span> <span class="n">is_construct</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -669,7 +669,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_person_object_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.batch_add_object_person_to_group_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.batch_add_object_person_to_group_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.batch_add_object_person_to_group_by_smb"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.batch_add_object_person_to_group_by_smb">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">batch_add_object_person_to_group_by_smb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">,</span> <span class="n">sex</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;SMB批量向分组(名单库)中添加人员对象</span>
 
@@ -694,7 +694,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_person_group_list_detail_by_rest_via_group_name</span><span class="p">(</span><span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_person_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_person_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_person_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_person_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_person_object_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;添加人员对象</span>
 
@@ -711,7 +711,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_vehicle_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_vehicle_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_vehicle_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_vehicle_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_vehicle_object_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;添加车辆对象</span>
 
@@ -728,7 +728,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.add_house_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.add_house_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.add_house_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.add_house_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_house_object_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;添加房屋对象</span>
 
@@ -745,7 +745,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.delete_person_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.delete_person_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.delete_person_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.delete_person_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delete_person_object_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;删除人员对象</span>
 
@@ -762,7 +762,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.delete_vehicle_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.delete_vehicle_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.delete_vehicle_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.delete_vehicle_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delete_vehicle_object_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;删除车辆对象</span>
 
@@ -779,7 +779,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Object.delete_house_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.object.html#envlib.envsetup.object.Object.delete_house_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Object.delete_house_object_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.object.Object.delete_house_object_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delete_house_object_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;删除房屋对象</span>
 

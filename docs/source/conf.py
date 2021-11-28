@@ -15,6 +15,12 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../..'))
 
+# source_suffix = ['.rst', '.md']
+source_suffix = '.rst'
+
+# The master toctree document.
+master_doc = 'index'
+
 # -- Project information -----------------------------------------------------
 
 project = 'env_setup_v2'
@@ -44,6 +50,8 @@ autodoc_default_options = {
     'show-inheritance': True,  # 默认展示类和函数的 点'.'分层级
     'exclude-members': '__dict__',  # 排除不展示魔术方法__dict__,
 }
+
+autodoc_mock_imports = ['_tkinter']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

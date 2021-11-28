@@ -84,7 +84,7 @@
     <span class="n">ID_NUMBER_15_REGEX</span>
 
 
-<div class="viewcode-block" id="random_chinese_name"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.random_chinese_name">[文档]</a><span class="k">def</span> <span class="nf">random_chinese_name</span><span class="p">():</span>
+<div class="viewcode-block" id="random_chinese_name"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.random_chinese_name">[文档]</a><span class="k">def</span> <span class="nf">random_chinese_name</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;生成随机中文名字，二到三字</span>
 
 <span class="sd">    Returns:</span>
@@ -99,7 +99,7 @@
     <span class="k">return</span> <span class="n">name</span></div>
 
 
-<div class="viewcode-block" id="random_nation"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.random_nation">[文档]</a><span class="k">def</span> <span class="nf">random_nation</span><span class="p">():</span>
+<div class="viewcode-block" id="random_nation"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.random_nation">[文档]</a><span class="k">def</span> <span class="nf">random_nation</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;返回随机名族</span>
 
 <span class="sd">    Returns:</span>
@@ -109,7 +109,7 @@
     <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">NATION</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="random_phone_number"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.random_phone_number">[文档]</a><span class="k">def</span> <span class="nf">random_phone_number</span><span class="p">():</span>
+<div class="viewcode-block" id="random_phone_number"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.random_phone_number">[文档]</a><span class="k">def</span> <span class="nf">random_phone_number</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;随机生成电话号码</span>
 
 <span class="sd">    Returns:</span>
@@ -135,7 +135,7 @@
     <span class="k">return</span> <span class="s2">&quot;1</span><span class="si">{}{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="n">third</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="IdNumber"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber">[文档]</a><span class="k">class</span> <span class="nc">IdNumber</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber">[文档]</a><span class="k">class</span> <span class="nc">IdNumber</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    身份类</span>
 
@@ -147,7 +147,7 @@
 <span class="sd">        birth_day: 身份证日</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="IdNumber.__init__"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_number</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.__init__"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_number</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;传入{id_number}身份证号生成身份证实例&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">IdNumber</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">id_number</span>
@@ -156,11 +156,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">birth_month</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">12</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">birth_day</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">14</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_area_name"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_area_name">[文档]</a>    <span class="k">def</span> <span class="nf">get_area_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_area_name"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_area_name">[文档]</a>    <span class="k">def</span> <span class="nf">get_area_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;根据区域编号取出区域名称&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">AREA_INFO</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">area_id</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_residence"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_residence">[文档]</a>    <span class="k">def</span> <span class="nf">get_residence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_residence"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_residence">[文档]</a>    <span class="k">def</span> <span class="nf">get_residence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;对象管理-人员管理居住地编码&quot;&quot;&quot;</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
@@ -173,11 +173,11 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">q</span> <span class="o">+</span> <span class="s1">&#39;0000&#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span> <span class="n">z</span> <span class="o">+</span> <span class="s1">&#39;00&#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span> <span class="n">z</span> <span class="o">+</span> <span class="n">h</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_birthday"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_birthday">[文档]</a>    <span class="k">def</span> <span class="nf">get_birthday</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_birthday"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_birthday">[文档]</a>    <span class="k">def</span> <span class="nf">get_birthday</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;通过身份证号获取出生日期&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">-</span><span class="si">{1}</span><span class="s2">-</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">birth_year</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">birth_month</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">birth_day</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_birthday_timestamp"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_birthday_timestamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_birthday_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_birthday_timestamp"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_birthday_timestamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_birthday_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;转换生日为时间戳</span>
 <span class="sd">        Args:</span>
 <span class="sd">            stamp13: bool 默认为13位，毫秒级</span>
@@ -191,7 +191,7 @@
             <span class="k">return</span> <span class="nb">int</span><span class="p">((</span><span class="n">birthday</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s1">&#39;19700101&#39;</span><span class="p">,</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">((</span><span class="n">birthday</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s1">&#39;19700101&#39;</span><span class="p">,</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_age"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_age">[文档]</a>    <span class="k">def</span> <span class="nf">get_age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_age"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_age">[文档]</a>    <span class="k">def</span> <span class="nf">get_age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;通过身份证号获取年龄&quot;&quot;&quot;</span>
         <span class="n">now</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
         <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span>
@@ -204,16 +204,16 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">year</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">birth_year</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_sex"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_sex">[文档]</a>    <span class="k">def</span> <span class="nf">get_sex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_sex"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_sex">[文档]</a>    <span class="k">def</span> <span class="nf">get_sex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;通过身份证号获取性别， 女生：0，男生：1&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">17</span><span class="p">])</span> <span class="o">%</span> <span class="mi">2</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_sex_cn"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_sex_cn">[文档]</a>    <span class="k">def</span> <span class="nf">get_sex_cn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_sex_cn"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_sex_cn">[文档]</a>    <span class="k">def</span> <span class="nf">get_sex_cn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;通过身份证号获取性别， 女生：女，男生：男&quot;&quot;&quot;</span>
         <span class="n">sex</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">17</span><span class="p">])</span> <span class="o">%</span> <span class="mi">2</span>
         <span class="k">return</span> <span class="s1">&#39;男&#39;</span> <span class="k">if</span> <span class="n">sex</span> <span class="k">else</span> <span class="s1">&#39;女&#39;</span></div>
 
-<div class="viewcode-block" id="IdNumber.get_check_digit"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.get_check_digit">[文档]</a>    <span class="k">def</span> <span class="nf">get_check_digit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IdNumber.get_check_digit"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.get_check_digit">[文档]</a>    <span class="k">def</span> <span class="nf">get_check_digit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;通过身份证号获取校验码&quot;&quot;&quot;</span>
         <span class="n">check_sum</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">17</span><span class="p">):</span>
@@ -221,7 +221,7 @@
         <span class="n">check_digit</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span> <span class="o">-</span> <span class="p">(</span><span class="n">check_sum</span> <span class="o">%</span> <span class="mi">11</span><span class="p">))</span> <span class="o">%</span> <span class="mi">11</span>
         <span class="k">return</span> <span class="n">check_digit</span> <span class="k">if</span> <span class="n">check_digit</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="s1">&#39;X&#39;</span></div>
 
-<div class="viewcode-block" id="IdNumber.verify_id"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.verify_id">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IdNumber.verify_id"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.verify_id">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">verify_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_number</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;校验身份证是否正确&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ID_NUMBER_18_REGEX</span><span class="p">,</span> <span class="n">id_number</span><span class="p">):</span>
@@ -230,7 +230,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ID_NUMBER_15_REGEX</span><span class="p">,</span> <span class="n">id_number</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="IdNumber.generate_id"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.IdNumber.generate_id">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IdNumber.generate_id"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.IdNumber.generate_id">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sex</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;类方法，随机生成身份证号，默认生成男性的身份证</span>
 
@@ -255,7 +255,7 @@
         <span class="k">return</span> <span class="n">id_number</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="n">id_number</span><span class="p">)</span><span class="o">.</span><span class="n">get_check_digit</span><span class="p">())</span></div></div>
 
 
-<div class="viewcode-block" id="id_info"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.id_info">[文档]</a><span class="k">def</span> <span class="nf">id_info</span><span class="p">():</span>
+<div class="viewcode-block" id="id_info"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.id_info">[文档]</a><span class="k">def</span> <span class="nf">id_info</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;生成常见身份证信息</span>
 
 <span class="sd">    Returns:</span>
@@ -289,7 +289,7 @@
     <span class="k">return</span> <span class="n">id_information</span></div>
 
 
-<div class="viewcode-block" id="object_id_info"><a class="viewcode-back" href="../../envlib.id_info.html#envlib.id_info.object_id_info">[文档]</a><span class="k">def</span> <span class="nf">object_id_info</span><span class="p">(</span><span class="n">name_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sex_</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">user_code</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="object_id_info"><a class="viewcode-back" href="../../envlib.html#envlib.id_info.object_id_info">[文档]</a><span class="k">def</span> <span class="nf">object_id_info</span><span class="p">(</span><span class="n">name_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sex_</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">user_code</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;随机生成对象管理-人像管理-基本信息</span>
 
 <span class="sd">    Args:</span>

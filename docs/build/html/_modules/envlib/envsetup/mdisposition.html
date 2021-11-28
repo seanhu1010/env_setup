@@ -88,14 +88,14 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MDisposition&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="MDisposition"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition">[文档]</a><span class="k">class</span> <span class="nc">MDisposition</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="MDisposition"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.mdisposition.MDisposition">[文档]</a><span class="k">class</span> <span class="nc">MDisposition</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;多维布控类&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MDisposition.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MDisposition.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.mdisposition.MDisposition.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;初始化参数&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="MDisposition.query_tree_node_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.query_tree_node_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MDisposition.query_tree_node_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.mdisposition.MDisposition.query_tree_node_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_tree_node_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询配置中心平台下各类型id</span>
 
@@ -112,7 +112,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;mdiposition_tree_node_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;childs&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;childs&#39;</span><span class="p">)</span>  <span class="c1"># 默认平台下各类型id</span></div>
 
-<div class="viewcode-block" id="MDisposition.create_vehicle_disposition_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.create_vehicle_disposition_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MDisposition.create_vehicle_disposition_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.mdisposition.MDisposition.create_vehicle_disposition_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_vehicle_disposition_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="s2">&quot;0d&quot;</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="s2">&quot;30d&quot;</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">plat_no</span><span class="o">=</span><span class="s2">&quot;渝A123456&quot;</span><span class="p">,</span>
                                            <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;黄竹路28号1栋&quot;</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;mipc_10.4.32.131&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;新建车辆布控任务</span>
@@ -152,7 +152,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="MDisposition.create_face_national_disposition_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.create_face_national_disposition_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MDisposition.create_face_national_disposition_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.mdisposition.MDisposition.create_face_national_disposition_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_face_national_disposition_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="s2">&quot;0d&quot;</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="s2">&quot;30d&quot;</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;新建人像民族布控任务, 并绑定到环境变量&#39;multi_disposition&#39; tag下</span>
@@ -197,7 +197,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;multi_disposition_task_id&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="MDisposition.query_multi_disposition_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.query_multi_disposition_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MDisposition.query_multi_disposition_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.mdisposition.MDisposition.query_multi_disposition_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_multi_disposition_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;根据布控任务名称查询布控任务信息</span>
 
@@ -225,7 +225,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;mdisposition_task_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># app.send_by_rest默认剥离第一层data</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MDisposition.delete_mult_disposition_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.delete_mult_disposition_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MDisposition.delete_mult_disposition_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.mdisposition.MDisposition.delete_mult_disposition_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delete_mult_disposition_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;删除指定布控任务</span>
 

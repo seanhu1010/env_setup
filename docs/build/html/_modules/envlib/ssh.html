@@ -81,7 +81,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ssh&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="Ssh"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh">[文档]</a><span class="k">class</span> <span class="nc">Ssh</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh">[文档]</a><span class="k">class</span> <span class="nc">Ssh</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;ssh工具类，提供交互式ssh远程执行命令功能和sftp上传下载功能</span>
 
 <span class="sd">    Attributes:</span>
@@ -94,7 +94,7 @@
     <span class="n">DEFAULT_SSH_TIMEOUT</span> <span class="o">=</span> <span class="mi">20</span>
     <span class="n">kubelet_prompt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;/ #&quot;</span>
 
-<div class="viewcode-block" id="Ssh.__init__"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.__init__"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chan</span> <span class="o">=</span> <span class="kc">None</span>
@@ -108,7 +108,7 @@
         <span class="k">if</span> <span class="n">host</span> <span class="ow">and</span> <span class="n">username</span> <span class="ow">and</span> <span class="n">password</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ssh.connect"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.connect">[文档]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.connect"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.connect">[文档]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;建立ssh连接</span>
 
 <span class="sd">        Args:</span>
@@ -142,7 +142,7 @@
         <span class="k">except</span> <span class="n">SSHException</span> <span class="k">as</span> <span class="n">se</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;连接主机</span><span class="si">{}</span><span class="s2">发生错误&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Ssh.close"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.close">[文档]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.close"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.close">[文档]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;关闭ssh连接&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="p">:</span>
@@ -153,7 +153,7 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Ssh.exec_cmd_and_return"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmd_and_return">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd_and_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">DEFAULT_SSH_TIMEOUT</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.exec_cmd_and_return"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.exec_cmd_and_return">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd_and_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">DEFAULT_SSH_TIMEOUT</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;执行带返回的命令并获取输出</span>
 
 <span class="sd">        Args:</span>
@@ -172,7 +172,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span></div>
 
-<div class="viewcode-block" id="Ssh.exec_cmds_with_expect"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmds_with_expect">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmds_with_expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.exec_cmds_with_expect"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.exec_cmds_with_expect">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmds_with_expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;交互式执行命令行</span>
 
 <span class="sd">        Args:</span>
@@ -214,7 +214,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="Ssh.exec_cmd_with_stream"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmd_with_stream">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd_with_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">DEFAULT_SSH_TIMEOUT</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.exec_cmd_with_stream"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.exec_cmd_with_stream">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd_with_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">DEFAULT_SSH_TIMEOUT</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;执行持续输出流的命令（例如kubectl logs -f）并获取输出</span>
 
 <span class="sd">        Args:</span>
@@ -252,7 +252,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">cout</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cout</span></div>
 
-<div class="viewcode-block" id="Ssh.get"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;从远端下载文件和目录到本地</span>
 
 <span class="sd">        Args:</span>
@@ -287,7 +287,7 @@
             <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">ioe</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ssh.put"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.put"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;从本地上传文件和目录到远端</span>
 
 <span class="sd">        Args:</span>
@@ -324,7 +324,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传本地文件:</span><span class="si">{}</span><span class="s2">, 到远端文件:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ssh.get_file"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_file">[文档]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_file"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_file">[文档]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;从远端下载文件到本地</span>
 
 <span class="sd">        Args:</span>
@@ -337,7 +337,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ssh.get_directory"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_directory">[文档]</a>    <span class="k">def</span> <span class="nf">get_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_directory"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_directory">[文档]</a>    <span class="k">def</span> <span class="nf">get_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;从远端下载目录到本地</span>
 
 <span class="sd">        Args:</span>
@@ -365,7 +365,7 @@
         <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">ioe</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Ssh.put_file"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.put_file">[文档]</a>    <span class="k">def</span> <span class="nf">put_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.put_file"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.put_file">[文档]</a>    <span class="k">def</span> <span class="nf">put_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;从本地上传文件到远端</span>
 
 <span class="sd">        Args:</span>
@@ -379,7 +379,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;拷贝本地文件:</span><span class="si">{}</span><span class="s2">, 到远端文件:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ssh.put_directory"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.put_directory">[文档]</a>    <span class="k">def</span> <span class="nf">put_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_dir</span><span class="p">,</span> <span class="n">remote_dir</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.put_directory"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.put_directory">[文档]</a>    <span class="k">def</span> <span class="nf">put_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_dir</span><span class="p">,</span> <span class="n">remote_dir</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;从本地上传目录到远端</span>
 
 <span class="sd">        Args:</span>
@@ -423,7 +423,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传时发生了错误&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ssh.get_host_date_rest"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_host_date_rest">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_host_date_rest"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_host_date_rest">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;获取主机时间，作为接口入参，时间格式为2019-06-12 10:26:53</span>
 
 <span class="sd">        Args:</span>
@@ -437,7 +437,7 @@
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">sh</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Ssh.get_host_date_rfc3339"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_host_date_rfc3339">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_rfc3339</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_host_date_rfc3339"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_host_date_rfc3339">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_rfc3339</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;获取主机rfc3339格式时间，用于pod日志查询时指定时间点查询对应时间点以后的日志</span>
 
 <span class="sd">        Args:</span>
@@ -459,7 +459,7 @@
 
         <span class="k">return</span> <span class="n">re_time</span></div>
 
-<div class="viewcode-block" id="Ssh.get_host_date_stamp"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_host_date_stamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;ms&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_host_date_stamp"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_host_date_stamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;ms&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;获取主机时间戳格式时间</span>
 
 <span class="sd">        Args:</span>
@@ -476,7 +476,7 @@
         <span class="k">elif</span> <span class="n">accuracy</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s_str</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ssh.get_time_quantum_stamp"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_time_quantum_stamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_time_quantum_stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;ms&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_time_quantum_stamp"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_time_quantum_stamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_time_quantum_stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;ms&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;通过当前时间点加偏移量获取时间段的两个时间戳</span>
 
 <span class="sd">        Args:</span>
@@ -504,7 +504,7 @@
 
         <span class="k">return</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span></div>
 
-<div class="viewcode-block" id="Ssh.get_time"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_unit</span><span class="o">=</span><span class="s2">&quot;hour&quot;</span><span class="p">,</span> <span class="n">start_to_now</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_time"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_unit</span><span class="o">=</span><span class="s2">&quot;hour&quot;</span><span class="p">,</span> <span class="n">start_to_now</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        获取服务器的时间戳或时间格式</span>
 <span class="sd">        :create: yinjia@2021.02.07</span>
@@ -533,7 +533,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="Ssh.get_start_and_end_time"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_start_and_end_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_start_and_end_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_start_and_end_time"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_start_and_end_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_start_and_end_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        获取服务器start和end时间戳或时间格式</span>
 <span class="sd">        :create: yinjia@2021.02.07</span>
@@ -568,7 +568,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span></div>
 
-<div class="viewcode-block" id="Ssh.convert_to_seconds"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.convert_to_seconds">[文档]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Ssh.convert_to_seconds"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.convert_to_seconds">[文档]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">convert_to_seconds</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;将时间描述字符串转换为秒数</span>
 
@@ -583,7 +583,7 @@
 
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">seconds_per_unit</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span></div>
 
-<div class="viewcode-block" id="Ssh.get_pod_log"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_pod_log">[文档]</a>    <span class="k">def</span> <span class="nf">get_pod_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pod_name</span><span class="p">,</span> <span class="n">since_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">greps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">grep_abc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.get_pod_log"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.get_pod_log">[文档]</a>    <span class="k">def</span> <span class="nf">get_pod_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pod_name</span><span class="p">,</span> <span class="n">since_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">greps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">grep_abc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;获取pod日志</span>
 
 <span class="sd">        Args:</span>
@@ -631,7 +631,7 @@
 
         <span class="k">return</span> <span class="n">logs</span></div>
 
-<div class="viewcode-block" id="Ssh.exec_cmd"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmd">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">expect</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="Ssh.exec_cmd"><a class="viewcode-back" href="../../envlib.html#envlib.ssh.Ssh.exec_cmd">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">expect</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        cmd持续交互，继承上一条命令的界面</span>
 <span class="sd">        :param cmd:</span>

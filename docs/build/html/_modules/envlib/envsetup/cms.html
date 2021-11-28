@@ -94,13 +94,13 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cms&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="Cms"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms">[文档]</a><span class="k">class</span> <span class="nc">Cms</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="Cms"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms">[文档]</a><span class="k">class</span> <span class="nc">Cms</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Cms配置类&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Cms.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Cms.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Cms.query_cms_platform_config_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.query_cms_platform_config_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.query_cms_platform_config_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.query_cms_platform_config_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_cms_platform_config_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询cms，系统配置，平台配置</span>
 
@@ -120,7 +120,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;cms_platform_config&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">json_tool</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">json_tool</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Cms.config_cms_platform_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.config_cms_platform_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.config_cms_platform_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.config_cms_platform_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_cms_platform_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">cms_system_config_data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms,系统配置,平台配置</span>
 
@@ -142,7 +142,7 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">query_cms_platform_config_by_rest</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Cms.query_cms_archive_config_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.query_cms_archive_config_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.query_cms_archive_config_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.query_cms_archive_config_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_cms_archive_config_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询cms，系统配置，一人一档配置</span>
 
@@ -162,7 +162,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;cms_archive_config&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Cms.config_cms_archive_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.config_cms_archive_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.config_cms_archive_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.config_cms_archive_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_cms_archive_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">cms_archive_config_data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms,系统配置,一人一档</span>
 
@@ -179,7 +179,7 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">query_cms_archive_config_by_rest</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Cms.query_cms_cloud_storage_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.query_cms_cloud_storage_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.query_cms_cloud_storage_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.query_cms_cloud_storage_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_cms_cloud_storage_list_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms-查询存储集群列表</span>
 
@@ -199,7 +199,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;cms_cloud_storage_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cms.add_cms_cloud_storage_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.add_cms_cloud_storage_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.add_cms_cloud_storage_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.add_cms_cloud_storage_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_cms_cloud_storage_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms系统配置-云存储配置-添加存储集群</span>
 
@@ -216,7 +216,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Cms.query_cms_cloud_storage_capacity_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.query_cms_cloud_storage_capacity_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.query_cms_cloud_storage_capacity_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.query_cms_cloud_storage_capacity_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_cms_cloud_storage_capacity_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cm_ip&#39;</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
@@ -234,7 +234,7 @@
 
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;capacity&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cms.config_cms_cloud_storage_directory_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.config_cms_cloud_storage_directory_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_cms_cloud_storage_directory_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms-存储集群存储目录配置</span>
 
@@ -251,7 +251,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Cms.query_cms_cloud_storage_directory_by_rest_via_params"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.query_cms_cloud_storage_directory_by_rest_via_params">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.query_cms_cloud_storage_directory_by_rest_via_params"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.query_cms_cloud_storage_directory_by_rest_via_params">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_cms_cloud_storage_directory_by_rest_via_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms-查询存储集群存储目录配置</span>
 
@@ -268,7 +268,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Cms.config_cms_cloud_storage_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.config_cms_cloud_storage_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.config_cms_cloud_storage_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.config_cms_cloud_storage_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_cms_cloud_storage_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms,系统配置-云存储配置，根据env_ini中预设的存储集群，添加存储集群</span>
 
@@ -302,7 +302,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_cms_cloud_storage_list_by_rest</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Cms.get_storage_id_via_cm_ip"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.get_storage_id_via_cm_ip">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.get_storage_id_via_cm_ip"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.get_storage_id_via_cm_ip">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_storage_id_via_cm_ip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cm_ip</span><span class="o">=</span><span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cm_ip&#39;</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot;通过cm ip获取存储id</span>
 
@@ -320,7 +320,7 @@
             <span class="n">_storage_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;cms_cloud_storage_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;storage_id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;storage_ip&#39;</span><span class="p">:</span> <span class="n">cm_ip</span><span class="p">})</span>
         <span class="k">return</span> <span class="n">_storage_id</span></div>
 
-<div class="viewcode-block" id="Cms.config_cms_cloud_storage_directory_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.cms.html#envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cms.config_cms_cloud_storage_directory_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_cms_cloud_storage_directory_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;cms,系统配置-云存储配置，根据env_ini中预设的存储集群，进行目录配置</span>
 

@@ -84,7 +84,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Smb&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="Smb"><a class="viewcode-back" href="../../envlib.smb.html#envlib.smb.Smb">[文档]</a><span class="k">class</span> <span class="nc">Smb</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Smb"><a class="viewcode-back" href="../../envlib.html#envlib.smb.Smb">[文档]</a><span class="k">class</span> <span class="nc">Smb</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;SMB轻量连接与操作</span>
 
 <span class="sd">    Attributes:</span>
@@ -98,7 +98,7 @@
 <span class="sd">        stat: Get the status of a file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Smb.__init__"><a class="viewcode-back" href="../../envlib.smb.html#envlib.smb.Smb.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="n">SMB_SERVER</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">SMB_USERNAME</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">SMB_PASSWORD</span><span class="p">):</span>
+<div class="viewcode-block" id="Smb.__init__"><a class="viewcode-back" href="../../envlib.html#envlib.smb.Smb.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="n">SMB_SERVER</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">SMB_USERNAME</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">SMB_PASSWORD</span><span class="p">):</span>
         <span class="n">register_session</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">server</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_session</span> <span class="o">=</span> <span class="n">register_session</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">listdir</span> <span class="o">=</span> <span class="n">listdir</span>

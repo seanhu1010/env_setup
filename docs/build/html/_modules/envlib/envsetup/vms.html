@@ -90,13 +90,13 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Vms&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="Vms"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms">[文档]</a><span class="k">class</span> <span class="nc">Vms</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="Vms"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms">[文档]</a><span class="k">class</span> <span class="nc">Vms</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Vms操作类&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Vms.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Vms.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_config_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_config_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_config_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_config_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_config_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询VMS配置-参数设置</span>
 
@@ -116,7 +116,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_config&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.config_vms_config_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.config_vms_config_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.config_vms_config_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.config_vms_config_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_vms_config_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;传入json,配置VMS配置-参数设置</span>
 
@@ -133,7 +133,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Vms.config_vms_gb_code"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.config_vms_gb_code">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.config_vms_gb_code"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.config_vms_gb_code">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_vms_gb_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;设置VMS配置-参数设置-GB配置</span>
 
@@ -159,7 +159,7 @@
             <span class="p">}]</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">config_vms_config_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">vms_gb_code_json</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.config_vms_guard_upload"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.config_vms_guard_upload">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.config_vms_guard_upload"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.config_vms_guard_upload">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">config_vms_guard_upload</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;设置VMS配置-参数设置-门禁设置</span>
 
@@ -181,7 +181,7 @@
             <span class="p">]</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">config_vms_config_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">vms_guard_set_json</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.add_vms_storage_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.add_vms_storage_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.add_vms_storage_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_vms_storage_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;传入json，配置vms存储</span>
 
@@ -198,7 +198,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_storage_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storage_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_storage_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_storage_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_storage_list_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询VMS已配置的存储</span>
 
@@ -229,7 +229,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storage_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_evc_storage_info_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_evc_storage_info_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_evc_storage_info_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_evc_storage_info_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_evc_storage_info_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询evc存储容量信息</span>
 
@@ -257,7 +257,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_evc_storage_info&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.add_vms_storage_plan_template_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_plan_template_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.add_vms_storage_plan_template_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.add_vms_storage_plan_template_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_vms_storage_plan_template_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;vms业务设置-录像管理-录像计划模板</span>
 
@@ -284,7 +284,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_storage_plan_template_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storage_plan_template_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_storage_plan_template_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_storage_plan_template_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_storage_plan_template_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询vms业务设置-录像管理-录像计划模板</span>
 
@@ -310,7 +310,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storage_plan_template&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_storageplan_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_storageplan_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_storageplan_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_storageplan_list_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询vms录像计划列表</span>
 
@@ -337,7 +337,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storageplan_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_storageplan_detail_by_rest_via_record_id"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_detail_by_rest_via_record_id">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_storageplan_detail_by_rest_via_record_id"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_storageplan_detail_by_rest_via_record_id">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_storageplan_detail_by_rest_via_record_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">record_id</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询录像计划详情</span>
 
@@ -358,7 +358,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storageplan_detail&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vms.add_vms_storageplan_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storageplan_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.add_vms_storageplan_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.add_vms_storageplan_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_vms_storageplan_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;添加设备录像</span>
 
@@ -375,7 +375,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Vms.modify_vms_storageplan_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.modify_vms_storageplan_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.modify_vms_storageplan_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.modify_vms_storageplan_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">modify_vms_storageplan_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;修改设备录像</span>
 
@@ -392,7 +392,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_storageplan_used_channel_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_used_channel_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_storageplan_used_channel_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_storageplan_used_channel_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_storageplan_used_channel_list_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询vms录像计划已使用的通道列表</span>
 
@@ -408,7 +408,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Vms.add_vms_storage_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.add_vms_storage_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.add_vms_storage_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_vms_storage_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;根据env_ini中预设的存储配置，添加存储，当前仅支持sdk添加转存</span>
 
@@ -445,7 +445,7 @@
 
         <span class="k">return</span> <span class="n">_vms_storage_list</span></div>
 
-<div class="viewcode-block" id="Vms.query_vms_storageplan_detail_channel_list_via_record_name"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_detail_channel_list_via_record_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.query_vms_storageplan_detail_channel_list_via_record_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.query_vms_storageplan_detail_channel_list_via_record_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_vms_storageplan_detail_channel_list_via_record_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">record_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;根据录像计划的名称，查询vms录像计划详详情中的设备列表</span>
 
@@ -470,7 +470,7 @@
 
         <span class="k">return</span> <span class="n">storageplan_detail_channel_list</span></div>
 
-<div class="viewcode-block" id="Vms.add_vms_storage_plan_template_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_plan_template_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.add_vms_storage_plan_template_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.add_vms_storage_plan_template_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_vms_storage_plan_template_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;根据env.ini中的 ``vms_storage_plan_template_name`` 设置存储计划模板，默认存7天，全天录制，2M码率</span>
 
@@ -496,7 +496,7 @@
 
         <span class="k">return</span> <span class="n">_exist_storage_plan_template</span></div>
 
-<div class="viewcode-block" id="Vms.add_vms_storageplan_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storageplan_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Vms.add_vms_storageplan_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.vms.Vms.add_vms_storageplan_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_vms_storageplan_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">record_quantity</span><span class="p">,</span>
                                          <span class="n">record_name</span><span class="o">=</span><span class="n">AUTO_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_plan_record_name&#39;</span><span class="p">),</span>
                                          <span class="n">org_name</span><span class="o">=</span><span class="s1">&#39;本域&#39;</span><span class="p">):</span>

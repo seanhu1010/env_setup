@@ -80,7 +80,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rest&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="Rest"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest">[文档]</a><span class="k">class</span> <span class="nc">Rest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Rest"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest">[文档]</a><span class="k">class</span> <span class="nc">Rest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;restful接口操作基础库</span>
 
 <span class="sd">    Attributes:</span>
@@ -98,7 +98,7 @@
 <span class="sd">        2、使用传统方式，传入完整url和参数</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Rest.__init__"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">):</span>
+<div class="viewcode-block" id="Rest.__init__"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">validate_url</span><span class="p">(</span><span class="n">host</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;输入的主机地址不符合正则规定，请检查！！&quot;</span><span class="p">)</span>
@@ -109,7 +109,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cookies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">cookies</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verify</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">verify</span></div>
 
-<div class="viewcode-block" id="Rest.send"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.send">[文档]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Rest.send"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.send">[文档]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;request send请求, 通过uri中的@判断到对应的post/get等方法</span>
 
 <span class="sd">        Args:</span>
@@ -144,7 +144,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;解析出的方法不存在，请检查@后的字符&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Rest.post"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Rest.post"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">url</span><span class="p">,</span>
              <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -203,7 +203,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Rest.get"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Rest.get"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">url</span><span class="p">,</span>
             <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -250,7 +250,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">resp</span></div>
 
-<div class="viewcode-block" id="Rest.put"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Rest.put"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">url</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -307,7 +307,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Rest.patch"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.patch">[文档]</a>    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Rest.patch"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.patch">[文档]</a>    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">url</span><span class="p">,</span>
               <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -362,7 +362,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Rest.delete"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.delete">[文档]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
+<div class="viewcode-block" id="Rest.delete"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.delete">[文档]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">url</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -409,11 +409,11 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Rest.close"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.close">[文档]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Rest.close"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.close">[文档]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;关闭session连接&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Rest._format_data_to_log_string_according_to_header"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._format_data_to_log_string_according_to_header">[文档]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Rest._format_data_to_log_string_according_to_header"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._format_data_to_log_string_according_to_header">[文档]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_format_data_to_log_string_according_to_header</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
         <span class="n">dataStr</span> <span class="o">=</span> <span class="s2">&quot;&lt;empty&gt;&quot;</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;Content-Type&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
@@ -428,18 +428,18 @@
 
         <span class="k">return</span> <span class="n">dataStr</span></div>
 
-<div class="viewcode-block" id="Rest._get_timeout"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._get_timeout">[文档]</a>    <span class="k">def</span> <span class="nf">_get_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+<div class="viewcode-block" id="Rest._get_timeout"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._get_timeout">[文档]</a>    <span class="k">def</span> <span class="nf">_get_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
         <span class="n">timeout</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span> <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span>
         <span class="k">return</span> <span class="n">timeout</span></div>
 
-<div class="viewcode-block" id="Rest._get_str_from_bytes"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._get_str_from_bytes">[文档]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Rest._get_str_from_bytes"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._get_str_from_bytes">[文档]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_str_from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">coding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">coding</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">content</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
-<div class="viewcode-block" id="Rest._get_base64_from_data"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._get_base64_from_data">[文档]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Rest._get_base64_from_data"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._get_base64_from_data">[文档]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_base64_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">base64</span>
         <span class="c1"># 如果是二进制内容，直接把二进制编码成base64</span>
@@ -453,7 +453,7 @@
                     <span class="n">data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
-<div class="viewcode-block" id="Rest._merge_headers"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._merge_headers">[文档]</a>    <span class="k">def</span> <span class="nf">_merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+<div class="viewcode-block" id="Rest._merge_headers"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._merge_headers">[文档]</a>    <span class="k">def</span> <span class="nf">_merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
@@ -462,7 +462,7 @@
 
         <span class="k">return</span> <span class="n">headers</span></div>
 
-<div class="viewcode-block" id="Rest._utf8_urlencode"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._utf8_urlencode">[文档]</a>    <span class="k">def</span> <span class="nf">_utf8_urlencode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="Rest._utf8_urlencode"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._utf8_urlencode">[文档]</a>    <span class="k">def</span> <span class="nf">_utf8_urlencode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_string_type</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
@@ -477,7 +477,7 @@
             <span class="n">utf8_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="k">return</span> <span class="n">urlencode</span><span class="p">(</span><span class="n">utf8_data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Rest._is_json"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._is_json">[文档]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Rest._is_json"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._is_json">[文档]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_json</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -485,13 +485,13 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Rest._is_string_type"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._is_string_type">[文档]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Rest._is_string_type"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest._is_string_type">[文档]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_string_type</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="Rest.encode_authentication"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.encode_authentication">[文档]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Rest.encode_authentication"><a class="viewcode-back" href="../../envlib.html#envlib.rest.Rest.encode_authentication">[文档]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">encode_authentication</span><span class="p">(</span><span class="n">usercode</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;将用户信息，转换成鉴权Header使用User的字符串，如&#39;User: usercode%253Aadmin%2526username%253Aadmin&#39;</span>
 

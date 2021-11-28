@@ -93,7 +93,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FullAnalysis&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="FullAnalysis"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis">[文档]</a><span class="k">class</span> <span class="nc">FullAnalysis</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="FullAnalysis"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis">[文档]</a><span class="k">class</span> <span class="nc">FullAnalysis</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;全量解析类&quot;&quot;&quot;</span>
     <span class="c1"># 创建解析任务类型</span>
     <span class="n">__task_source_type</span> <span class="o">=</span> <span class="p">{</span>
@@ -103,10 +103,10 @@
         <span class="s2">&quot;离线解析&quot;</span><span class="p">:</span> <span class="mi">4</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="FullAnalysis.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FullAnalysis.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;初始化参数&quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.query_fullanalysis_task_detail_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_fullanalysis_task_detail_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.query_fullanalysis_task_detail_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.query_fullanalysis_task_detail_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_fullanalysis_task_detail_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_id</span><span class="p">,</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;根据task_id查询解析任务详情</span>
 
@@ -126,7 +126,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;analysis_task_detail_dict&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>  <span class="c1"># res为字典</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.query_fullanalysis_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_fullanalysis_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.query_fullanalysis_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.query_fullanalysis_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_fullanalysis_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source_type</span><span class="o">=</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时视频流&quot;</span><span class="p">),</span> <span class="n">search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询各类解析任务列表</span>
@@ -164,7 +164,7 @@
 
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_realtime_video_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_realtime_video_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_realtime_video_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_realtime_video_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_fullanalysis_realtime_video_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
                                                      <span class="n">device_name</span><span class="o">=</span><span class="s1">&#39;realtime_video&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;创建视频流解析任务</span>
@@ -205,7 +205,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_online_video_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_online_video_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>  <span class="c1"># new</span>
+<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_online_video_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_online_video_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>  <span class="c1"># new</span>
     <span class="k">def</span> <span class="nf">add_fullanalysis_online_video_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
                                                    <span class="n">device_name</span><span class="o">=</span><span class="s1">&#39;m_ipc_10.4.48.2&#39;</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="s2">&quot;0m&quot;</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="s2">&quot;5m&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;创建在线录像解析任务</span>
@@ -252,7 +252,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_realtime_image_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_realtime_image_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>  <span class="c1"># new</span>
+<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_realtime_image_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_realtime_image_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>  <span class="c1"># new</span>
     <span class="k">def</span> <span class="nf">add_fullanalysis_realtime_image_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
                                                      <span class="n">device_name</span><span class="o">=</span><span class="s1">&#39;realtime_image&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;创建实时图片流解析任务</span>
@@ -291,7 +291,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.query_wait_fullanalysis_task_status"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_wait_fullanalysis_task_status">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.query_wait_fullanalysis_task_status"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.query_wait_fullanalysis_task_status">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_wait_fullanalysis_task_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">source_type</span><span class="o">=</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时视频流&quot;</span><span class="p">),</span>
                                             <span class="n">except_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sleep_time</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;超时时间内校验解析任务状态</span>
@@ -338,7 +338,7 @@
 
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.delete_fullanalysis_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.delete_fullanalysis_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.delete_fullanalysis_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.delete_fullanalysis_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delete_fullanalysis_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">source_type</span><span class="o">=</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时视频流&quot;</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot;删除指定全量解析任务</span>
 
@@ -368,7 +368,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.add_offline_task"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_offline_task">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.add_offline_task"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.add_offline_task">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_offline_task</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;ac-personvehicle.ts&#39;</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                          <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;创建离线解析任务</span>
@@ -410,7 +410,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.query_analysis_file_info"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_analysis_file_info">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.query_analysis_file_info"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.query_analysis_file_info">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_analysis_file_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;查询离线文件信息</span>
 
@@ -427,7 +427,7 @@
         <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;fullanalysys_files_info_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  <span class="c1"># getk进行列表查询，res[0]非列表</span></div>
 
-<div class="viewcode-block" id="FullAnalysis.upload_offline_file"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.upload_offline_file">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis.upload_offline_file"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis.upload_offline_file">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">upload_offline_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;ac-personvehicle.ts&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">31457280</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;离线文件上传入口方法</span>
@@ -484,7 +484,7 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;更新文件状态失败&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FullAnalysis._upload_file_by_size"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis._upload_file_by_size">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis._upload_file_by_size"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis._upload_file_by_size">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_upload_file_by_size</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">start_size</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">file_size</span><span class="p">,</span> <span class="n">file_info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;全量解析上传视频文件入口函数</span>
 
@@ -513,7 +513,7 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="FullAnalysis._add_configuration_files"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis._add_configuration_files">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis._add_configuration_files"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis._add_configuration_files">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_add_configuration_files</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">file_size</span><span class="p">,</span> <span class="n">file_md5</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;全量解析页面上传视频文件创建任务信息(暂未上传视频)</span>
 
@@ -535,7 +535,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/demo@post&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="FullAnalysis._update_offline_files_status"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis._update_offline_files_status">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FullAnalysis._update_offline_files_status"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.fullanalysis.FullAnalysis._update_offline_files_status">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_update_offline_files_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_info_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;更新视频文件状态</span>
 

@@ -85,17 +85,17 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Storage&#39;</span><span class="p">,</span> <span class="p">]</span>
 
 
-<div class="viewcode-block" id="Storage"><a class="viewcode-back" href="../../../envlib.envsetup.storage.html#envlib.envsetup.storage.Storage">[文档]</a><span class="k">class</span> <span class="nc">Storage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Storage"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.storage.Storage">[文档]</a><span class="k">class</span> <span class="nc">Storage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Storage存储类&quot;&quot;&quot;</span>
 
     <span class="c1"># TODO: 目前仅支持y3000</span>
     <span class="n">rest_3000</span> <span class="o">=</span> <span class="n">Rest</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;http://</span><span class="si">{}</span><span class="s2">:9003&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cm_ip&#39;</span><span class="p">)))</span>  <span class="c1"># y3000私有接口</span>
 
-<div class="viewcode-block" id="Storage.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.storage.html#envlib.envsetup.storage.Storage.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Storage.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.storage.Storage.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;初始化Storage类，包括连接vms,cms的Rest和y3000的Ssh&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Storage.query_y3000_bucket_storage_quota_via_bucket_name"><a class="viewcode-back" href="../../../envlib.envsetup.storage.html#envlib.envsetup.storage.Storage.query_y3000_bucket_storage_quota_via_bucket_name">[文档]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Storage.query_y3000_bucket_storage_quota_via_bucket_name"><a class="viewcode-back" href="../../../envlib.envsetup.html#envlib.envsetup.storage.Storage.query_y3000_bucket_storage_quota_via_bucket_name">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">query_y3000_bucket_storage_quota_via_bucket_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;传入存储空间目录名，查询当前配额空间</span>
 
