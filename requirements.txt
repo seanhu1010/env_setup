@@ -9,9 +9,9 @@ requests>=2.25.1
 smbprotocol==1.4.0
 paramiko>=2.7.2
 pypinyin>=0.40.0
-Sphinx>=3.5.1
+sphinx==1.8.*
 recommonmark>=0.7.1
-sphinx-rtd-theme>=0.5.1
+sphinx_rtd_theme==0.4.*
 pandas>=1.0.3
 pytest>=6.2.4
 allure-pytest>=2.9.45
