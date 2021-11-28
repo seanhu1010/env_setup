@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.mda &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.envsetup.mda</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.envsetup.mda 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python </span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @File:    mda.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mda推图预置库</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span> <span class="k">as</span> <span class="nn">json_tool</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">envlib.rest</span> <span class="kn">import</span> <span class="n">Rest</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">envlib.util</span> <span class="kn">import</span> <span class="n">get_time</span><span class="p">,</span> <span class="n">random_plate_no</span><span class="p">,</span> <span class="n">time_type_change</span><span class="p">,</span> <span class="n">random_number</span>
+
+<span class="kn">from</span> <span class="nn">resources.data</span> <span class="kn">import</span> <span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">HOST_IP</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mda&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Mda"><a class="viewcode-back" href="../../../envlib.envsetup.mda.html#envlib.envsetup.mda.Mda">[文档]</a><span class="k">class</span> <span class="nc">Mda</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mda推图的类&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Mda.push_face_data_to_mda_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.mda.html#envlib.envsetup.mda.Mda.push_face_data_to_mda_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">push_face_data_to_mda_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">base_64</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;模拟推送人脸小图数据到mda</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel_id(str): 卡口通道id</span>
+<span class="sd">            base_64(str): 人脸小图的base_64编码</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_time</span> <span class="o">=</span> <span class="n">get_time</span><span class="p">(</span><span class="n">is_time_stamp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H%M%S&quot;</span><span class="p">)</span>
+
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;FaceListObject&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;FaceObject&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;FaceID&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">channel_id</span><span class="si">}</span><span class="s2">02</span><span class="si">{</span><span class="n">_time</span><span class="si">}</span><span class="s2">000620</span><span class="si">{</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="mi">999998</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;DeviceID&quot;</span><span class="p">:</span> <span class="n">channel_id</span><span class="p">,</span>
+                        <span class="s2">&quot;LocationMarkTime&quot;</span><span class="p">:</span> <span class="n">_time</span><span class="p">,</span>
+                        <span class="s2">&quot;PersonAppearTime&quot;</span><span class="p">:</span> <span class="n">_time</span><span class="p">,</span>
+                        <span class="s2">&quot;LeftTopX&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;LeftTopY&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;RightBtmX&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;RightBtmY&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;IsDriver&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;SourceID&quot;</span><span class="p">:</span> <span class="mi">11111111111111111111111111111111111111111</span><span class="p">,</span>
+                        <span class="s2">&quot;IsSuspectedTerrorist&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;IsCriminalInvolved&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;IsDetainees&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;IsVictim&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;IsSuspiciousPerson&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;IsForeigner&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;InfoKind&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;SubImageList&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;SubImageInfoObject&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="p">{</span>
+                                    <span class="s2">&quot;ImageID&quot;</span><span class="p">:</span> <span class="mi">11111111111111111111111111111111111111111</span><span class="p">,</span>
+                                    <span class="s2">&quot;DeviceID&quot;</span><span class="p">:</span> <span class="n">channel_id</span><span class="p">,</span>
+                                    <span class="s2">&quot;EvenSort&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                    <span class="s2">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;11&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;FileFormat&quot;</span><span class="p">:</span> <span class="s2">&quot;Jpeg&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;Data&quot;</span><span class="p">:</span> <span class="n">base_64</span>
+                                <span class="p">}</span>
+                            <span class="p">]</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">body</span><span class="p">[</span><span class="s2">&quot;FaceListObject&quot;</span><span class="p">][</span><span class="s2">&quot;FaceObject&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;/demo/Faces@post&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Rest</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">HOST_IP</span><span class="si">}</span><span class="s2">:2530&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">201</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;状态码校验失败，期望值为200，实际值为</span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">，接口响应为</span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;人脸推图成功，通道id为</span><span class="si">{</span><span class="n">channel_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Mda.push_single_face_data_to_mda_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.mda.html#envlib.envsetup.mda.Mda.push_single_face_data_to_mda_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">push_single_face_data_to_mda_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;person.jpg&quot;</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="s2">&quot;images&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;模拟推送单张人脸小图数据到mda,读取远端目录文件夹下的某个小图文件，依次推送</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel_id (str): 卡口通道id</span>
+<span class="sd">            file_name (str): 人脸小图文件名</span>
+<span class="sd">            file_relative_path (str): 相对远程目录，根目录为env.ini文件中的smb_share</span>
+<span class="sd">                ``\\\\1.1.1.1\\info\\auto\\`` , (Default value = &quot;images&quot;)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">base_64</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb_get_base64</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">push_face_data_to_mda_by_rest_via_kw</span><span class="p">(</span><span class="n">channel_id</span><span class="o">=</span><span class="n">channel_id</span><span class="p">,</span> <span class="n">base_64</span><span class="o">=</span><span class="n">base_64</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Mda.batch_push_face_data_to_mda_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.mda.html#envlib.envsetup.mda.Mda.batch_push_face_data_to_mda_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">batch_push_face_data_to_mda_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="s2">&quot;auto_faces&quot;</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;批量推送一个文件夹下的人脸小图数据到mda, 读取远端目录文件夹下的某个小图文件，依次推送</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel_id (str): 卡口通道id</span>
+<span class="sd">            file_relative_path (str): 相对远程目录，根目录为env.ini文件中的smb_share</span>
+<span class="sd">                ``\\\\1.1.1.1\\info\\auto\\``, (Default value = &quot;auto_faces&quot;)</span>
+<span class="sd">            slot (int): 推图时间间隔(s), (Default value = 0)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_pics</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_pic</span> <span class="ow">in</span> <span class="n">_pics</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">slot</span><span class="p">)</span>
+            <span class="n">_base_64</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb_get_base64</span><span class="p">(</span><span class="n">_pic</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">push_face_data_to_mda_by_rest_via_kw</span><span class="p">(</span><span class="n">channel_id</span><span class="o">=</span><span class="n">channel_id</span><span class="p">,</span> <span class="n">base_64</span><span class="o">=</span><span class="n">_base_64</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Mda.push_vehicle_data_to_mda_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.mda.html#envlib.envsetup.mda.Mda.push_vehicle_data_to_mda_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">push_vehicle_data_to_mda_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">base_64</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;模拟推送车辆数据到mda</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel_id (str): 通道id</span>
+<span class="sd">            base_64 (str): 图片base64</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            tollgate_id (str): 卡口id，不是卡口可不传</span>
+<span class="sd">            plate_no (str): 车牌号</span>
+<span class="sd">            lane_no (int):车道编号 1~8，车道1~车道8</span>
+<span class="sd">            direction (str): 方向，1~8，1东、2西、3南、4北、5东北、6西南、7东南、8西北</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_timestamp</span> <span class="o">=</span> <span class="n">get_time</span><span class="p">(</span><span class="n">stamp13</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_time</span> <span class="o">=</span> <span class="n">time_type_change</span><span class="p">(</span><span class="n">_timestamp</span><span class="p">,</span> <span class="n">is_time_stamp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H%M%S&quot;</span><span class="p">)</span>
+        <span class="n">_number_5</span> <span class="o">=</span> <span class="n">random_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">_motor_vehicle_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">channel_id</span><span class="si">}</span><span class="s2">02</span><span class="si">{</span><span class="n">_time</span><span class="si">}{</span><span class="n">_number_5</span><span class="si">}</span><span class="s2">02</span><span class="si">{</span><span class="n">_number_5</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">_source_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">channel_id</span><span class="si">}</span><span class="s2">02</span><span class="si">{</span><span class="n">_time</span><span class="si">}{</span><span class="n">_number_5</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">_plate_no</span> <span class="o">=</span> <span class="n">random_plate_no</span><span class="p">()</span>
+
+        <span class="n">body</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;MotorVehicleID&quot;</span><span class="p">:</span> <span class="n">_motor_vehicle_id</span><span class="p">,</span>
+                <span class="s2">&quot;InfoKind&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;SourceID&quot;</span><span class="p">:</span> <span class="n">_source_id</span><span class="p">,</span>
+                <span class="s2">&quot;TollgateID&quot;</span><span class="p">:</span> <span class="n">channel_id</span><span class="p">,</span>
+                <span class="s2">&quot;DeviceID&quot;</span><span class="p">:</span> <span class="n">channel_id</span><span class="p">,</span>
+                <span class="s2">&quot;storageUrlCloseShot&quot;</span><span class="p">:</span> <span class="s2">&quot;6125/4/featurevehicles/dn@0_0/1/65-3a50644d-3774a&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;storageUrlPlate&quot;</span><span class="p">:</span> <span class="s2">&quot;/featurevehicles/dn@07/1/1-0-2b2a&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;storageUrlDistantShot&quot;</span><span class="p">:</span> <span class="s2">&quot;/featurevehicles/dn@07/1/1-0-2b2a&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;storageUrlCompound&quot;</span><span class="p">:</span> <span class="s2">&quot;/featurevehicles/dn@07/1/1-0-2b2a&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;storageUrlBreviary&quot;</span><span class="p">:</span> <span class="s2">&quot;/featurevehicles/dn@07/1/1-0-2b2a&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;LeftTopX&quot;</span><span class="p">:</span> <span class="mi">722</span><span class="p">,</span>
+                <span class="s2">&quot;LeftTopY&quot;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+                <span class="s2">&quot;RightBtmX&quot;</span><span class="p">:</span> <span class="mi">1382</span><span class="p">,</span>
+                <span class="s2">&quot;RightBtmY&quot;</span><span class="p">:</span> <span class="mi">696</span><span class="p">,</span>
+                <span class="c1"># &quot;MarkTime&quot;: &quot;20180102101213&quot;,</span>
+                <span class="c1"># &quot;AppearTime&quot;: &quot;20180102101213&quot;,</span>
+                <span class="c1"># &quot;DisappearTime&quot;: &quot;20180102101214&quot;,</span>
+                <span class="s2">&quot;LaneNo&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;HasPlate&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PlateClass&quot;</span><span class="p">:</span> <span class="s2">&quot;02&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PlateColor&quot;</span><span class="p">:</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PlateNo&quot;</span><span class="p">:</span> <span class="n">_plate_no</span><span class="p">,</span>
+                <span class="s2">&quot;PlateNoAttach&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PlateDescribe&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;IsDecked&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;IsAltered&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;IsCovered&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Speed&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;Direction&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;DrivingStatusCode&quot;</span><span class="p">:</span> <span class="s2">&quot;0001&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleClass&quot;</span><span class="p">:</span> <span class="s2">&quot;K33&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleBrand&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleModel&quot;</span><span class="p">:</span> <span class="s2">&quot;迈腾&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleStyles&quot;</span><span class="p">:</span> <span class="s2">&quot;2019&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleLength&quot;</span><span class="p">:</span> <span class="mi">4500</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleWidth&quot;</span><span class="p">:</span> <span class="mi">2200</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleHeight&quot;</span><span class="p">:</span> <span class="mi">2233</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleColor&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleColorDepth&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleHood&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># 车前盖</span>
+                <span class="s2">&quot;VehicleTrunk&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># 车后盖</span>
+                <span class="s2">&quot;VehicleWheel&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># 车轮</span>
+                <span class="s2">&quot;WheelPrintedPattern&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleWindow&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleRoof&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleDoor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SideOfVehicle&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;CarOfVehicle&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;RearviewMirror&quot;</span><span class="p">:</span> <span class="s2">&quot;有车内后视镜&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleChassis&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleShielding&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;FilmColor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;IsModified&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;HitMarkInfo&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PlateReliability&quot;</span><span class="p">:</span> <span class="s2">&quot;100&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PlateCharReliability&quot;</span><span class="p">:</span> <span class="s2">&quot;0;0;0;0;0;0;0;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;BrandReliability&quot;</span><span class="p">:</span> <span class="s2">&quot;80&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleBodyDesc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleFrontItem&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;DescOfFrontItem&quot;</span><span class="p">:</span> <span class="s2">&quot;挂饰&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;VehicleRearItem&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;DescOfRearItem&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;NumOfPassenger&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;PassTime&quot;</span><span class="p">:</span> <span class="n">_timestamp</span><span class="p">,</span>
+                <span class="s2">&quot;NameOfPassedRoad&quot;</span><span class="p">:</span> <span class="s2">&quot;通天路&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;IsSuspicious&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Sunvisor&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;SafetyBelt&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;Calling&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;SubImageList&quot;</span><span class="p">:</span> <span class="p">[{</span>
+                    <span class="s2">&quot;ImageID&quot;</span><span class="p">:</span> <span class="n">_source_id</span><span class="p">,</span>
+                    <span class="s2">&quot;DeviceID&quot;</span><span class="p">:</span> <span class="n">channel_id</span><span class="p">,</span>
+                    <span class="s2">&quot;StoragePath&quot;</span><span class="p">:</span> <span class="s2">&quot;6125/4/featurevehicles/dn@0_0/1/65-3a50644d-3774a&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;01&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;FileFormat&quot;</span><span class="p">:</span> <span class="s2">&quot;Jpeg&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ShotTime&quot;</span><span class="p">:</span> <span class="n">_time</span><span class="p">,</span>
+                    <span class="s2">&quot;Width&quot;</span><span class="p">:</span> <span class="s2">&quot;1718&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Height&quot;</span><span class="p">:</span> <span class="s2">&quot;813&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Data&quot;</span><span class="p">:</span> <span class="n">base_64</span><span class="p">}]</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">))</span>
+            <span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;/demo/MotorVehicles@post&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Rest</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">HOST_IP</span><span class="si">}</span><span class="s2">:2530&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json_tool</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">201</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;车辆推图失败, 状态码为</span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s1">, 接口响应为: </span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;车辆推图成功，过车通道为</span><span class="si">{</span><span class="n">channel_id</span><span class="si">}</span><span class="s2">，过车时间为</span><span class="si">{</span><span class="n">_time</span><span class="si">}</span><span class="s2">,车牌号为</span><span class="si">{</span><span class="n">_plate_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Mda.push_single_vehicle_data_to_mda_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.mda.html#envlib.envsetup.mda.Mda.push_single_vehicle_data_to_mda_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">push_single_vehicle_data_to_mda_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;car001.jpg&quot;</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="s2">&quot;images&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;模拟推送车辆近景图数据到mda, 读取远端目录文件夹下的某个车辆近景图文件，依次推送</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel_id (str): 卡口通道id</span>
+<span class="sd">            file_name (str): 车辆近景图文件名</span>
+<span class="sd">            file_relative_path (str): 相对远程目录，根目录为env.ini文件中的smb_share</span>
+<span class="sd">                ``\\\\1.1.1.1\\info\\auto\\``, (Default value = &quot;images&quot;)</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            tollgate_id (str): 卡口id，不是卡口可不传</span>
+<span class="sd">            plate_no (str): 车牌号</span>
+<span class="sd">            lane_no (int):车道编号 1~8，车道1~车道8</span>
+<span class="sd">            direction (str): 方向，1~8，1东、2西、3南、4北、5东北、6西南、7东南、8西北</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">base_64</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb_get_base64</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">push_vehicle_data_to_mda_by_rest_via_kw</span><span class="p">(</span><span class="n">channel_id</span><span class="o">=</span><span class="n">channel_id</span><span class="p">,</span> <span class="n">base_64</span><span class="o">=</span><span class="n">base_64</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Mda.batch_push_vehicle_data_to_mda_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.mda.html#envlib.envsetup.mda.Mda.batch_push_vehicle_data_to_mda_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">batch_push_vehicle_data_to_mda_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="s2">&quot;auto_vehicles&quot;</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;批量推送一个文件夹下的车辆近景图数据到mda, 读取远端目录文件夹下的某个车辆近景图文件，依次推送</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel_id (str): 卡口通道id</span>
+<span class="sd">            file_relative_path (str): 相对远程目录，根目录为env.ini文件中的smb_share</span>
+<span class="sd">                ``\\\\1.1.1.1\\info\\auto\\``, (Default value = &quot;auto_vehicles&quot;)</span>
+<span class="sd">            slot (int): 推图时间间隔(s), (Default value = 0)</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            tollgate_id (str): 卡口id，不是卡口可不传</span>
+<span class="sd">            plate_no (str): 车牌号</span>
+<span class="sd">            lane_no (int):车道编号 1~8，车道1~车道8</span>
+<span class="sd">            direction (str): 方向，1~8，1东、2西、3南、4北、5东北、6西南、7东南、8西北</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_pics</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_pic</span> <span class="ow">in</span> <span class="n">_pics</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">slot</span><span class="p">)</span>
+            <span class="n">_base_64</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb_get_base64</span><span class="p">(</span><span class="n">_pic</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">push_vehicle_data_to_mda_by_rest_via_kw</span><span class="p">(</span><span class="n">channel_id</span><span class="o">=</span><span class="n">channel_id</span><span class="p">,</span> <span class="n">base_64</span><span class="o">=</span><span class="n">_base_64</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="envlib" href="modules.html" />
+    <link rel="prev" title="Welcome to env’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id1">1. 项目简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2"><strong>目标</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3"><strong>主要亮点</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">分层定义:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id5">2. 主要库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id6"><strong>驱动库的一般准则</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#query-get-keys">1）绑定绝大多数发生在query函数, 可以使用模块名.get_keys获取绑定值列表，如</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#res-bind-to-gvaluereturn">2）绑定的值和函数的返回值保持一致，允许对res的进行加工，如以下函数bind_to_g中绑定的value与return应一致</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key">3）key命名方式:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">4）函数命名方式:</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8"><strong>示例</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">5）区分函数是否可直接调用：</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#docstrings">Docstrings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id10">3. 提交说明</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id11">分支</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">审核制度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tag">Tag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git">Git提交信息</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#header">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#body">Body</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#footer">Footer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/introduction.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="永久链接至标题"></a></h1>
+</section>
+<section id="id1">
+<h1>1. 项目简介<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<p>预置驱动库框架，提供一些基础的预置库方法，方便进行端到端自动化预置；
+项目已脱敏，无法实际运行，仅做展示；
+<a class="reference external" href="https://docs.qq.com/flowchart/DS0xTcU5WWGRSeUdZ">设计思路</a></p>
+<p>基于 <a class="reference external" href="https://docs.pytest.org/en/6.2.x/">pytest</a> 测试框架 + <a class="reference external" href="https://docs.qameta.io/allure/">allure</a> 生成测试报告</p>
+<section id="id2">
+<h2><strong>目标</strong><a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<ul class="simple">
+<li><p>方便实现端到端自动化及类生产性能测试</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2><strong>主要亮点</strong><a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<ul class="simple">
+<li><p>分层设计</p></li>
+<li><p>全局代理模式，上下文堆栈(with触发)</p></li>
+<li><p>采用过程存储方式将端到到操作过程中产生的中间数据缓存在<code class="docutils literal notranslate"><span class="pre">g</span></code> 变量中，<code class="docutils literal notranslate"><span class="pre">g</span></code> 变量支持 <code class="docutils literal notranslate"><span class="pre">k-v</span></code> 形式的快捷数据提取，供后续接口调用</p></li>
+<li><p>支持多用户/多环境并行处理</p></li>
+<li><p>支持根据模板生成api函数方法</p></li>
+</ul>
+<section id="id4">
+<h3>分层定义:<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>level0: 如服务状态检查<code class="docutils literal notranslate"><span class="pre">K8s</span></code>,存储状态查询<code class="docutils literal notranslate"><span class="pre">Storage</span></code>,综合管理<code class="docutils literal notranslate"><span class="pre">Uuv</span></code>,各类tool<code class="docutils literal notranslate"><span class="pre">Kafka</span></code>等</p></li>
+<li><p>level1: cms配置<code class="docutils literal notranslate"><span class="pre">Cms</span></code>,vms配置<code class="docutils literal notranslate"><span class="pre">Vms</span></code>等</p></li>
+<li><p>level2: 对象管理<code class="docutils literal notranslate"><span class="pre">Object</span></code>,设备资源管理<code class="docutils literal notranslate"><span class="pre">Udm</span></code>等</p></li>
+<li><p>level3: 解析<code class="docutils literal notranslate"><span class="pre">FullAnalysis</span></code>,布控<code class="docutils literal notranslate"><span class="pre">MDisposition</span></code>等</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id5">
+<h1>2. 主要库<a class="headerlink" href="#id5" title="永久链接至标题"></a></h1>
+<ul class="simple">
+<li><p><strong>database</strong>: 数据库连接操作</p></li>
+<li><p><strong>id_info</strong>: 身份信息生成</p></li>
+<li><p><strong>rest</strong>: restful接口操作基础库</p></li>
+<li><p><strong>smb</strong>: SMB轻量连接与操作, 用于远端访问共享目录, 分离二进制文件</p></li>
+<li><p><strong>threadings</strong>: <em>试验</em>多线程模块</p></li>
+<li><p><strong>ssh</strong>: ssh工具类，提供交互式ssh远程执行命令功能和sftp上传下载功能</p></li>
+<li><p><strong>util</strong>: 工具库，提供随机数，Md5，等方法</p></li>
+<li><p><strong>env</strong>: 借鉴flask实现了基于代理模式的预置驱动app,</p></li>
+<li><p><strong>envsetup</strong>: 预置驱动库，提供一些易于使用的类方法，如K8s, Cms, Storage, Vms, Uuv, Object, Udm, etc.</p></li>
+<li><p><strong>env_resources</strong>: 预置驱动库数据</p></li>
+</ul>
+<section id="id6">
+<h2><strong>驱动库的一般准则</strong><a class="headerlink" href="#id6" title="永久链接至标题"></a></h2>
+<section id="query-get-keys">
+<h3>1）绑定绝大多数发生在query函数, 可以使用模块名.get_keys获取绑定值列表，如<a class="headerlink" href="#query-get-keys" title="永久链接至标题"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Uuv</span><span class="o">.</span><span class="n">get_keys</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;uuv_department_list&#39;</span><span class="p">:</span> <span class="s1">&#39;函数名: query_uuv_department_by_rest, 含义: &#39;</span>
+                        <span class="s1">&#39;传入params，查询部门信息&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;uuv_organization_list&#39;</span><span class="p">:</span> <span class="s1">&#39;函数名: query_uuv_organization_by_rest, 含义: &#39;</span>
+                          <span class="s1">&#39;传入params，查询组织list&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="res-bind-to-gvaluereturn">
+<h3>2）绑定的值和函数的返回值保持一致，允许对res的进行加工，如以下函数bind_to_g中绑定的value与return应一致<a class="headerlink" href="#res-bind-to-gvaluereturn" title="永久链接至标题"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">query_uuv_organization_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;传入params，查询组织list&quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;page_index&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;page_size&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">}</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;uuv_organization_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="key">
+<h3>3）key命名方式:<a class="headerlink" href="#key" title="永久链接至标题"></a></h3>
+<p>绑定的key以 “类名_key实际含义_数据类型”进行命名，value数据类型为字典时，数据类型可省略，如cms_archive_config</p>
+</section>
+<section id="id7">
+<h3>4）函数命名方式:<a class="headerlink" href="#id7" title="永久链接至标题"></a></h3>
+<p>统一使用 “操作 + 函数实际作用 + 方式 + 方法 + [via_条件]/[from_配置文件]” 的格式来作为函数名称,</p>
+<p>其中“操作”可用字段：</p>
+<ul class="simple">
+<li><p>添加：create</p></li>
+<li><p>删除：delete</p></li>
+<li><p>修改：modify</p></li>
+<li><p>查询：query</p></li>
+<li><p>配置: config</p></li>
+<li><p>操作：do</p></li>
+<li><p>校验: check</p></li>
+<li><p>可选副词批量处理: batch</p></li>
+</ul>
+<p>“函数实际作用”</p>
+<p>“方式”可用字段：</p>
+<ul class="simple">
+<li><p>通过：by</p></li>
+<li><p>伴随数据：with</p></li>
+</ul>
+<p>“方法”可用字段：</p>
+<ul class="simple">
+<li><p>日志：log</p></li>
+<li><p>接口：rest</p></li>
+<li><p>界面：web</p></li>
+<li><p>抓包：patch</p></li>
+<li><p>数据库：database</p></li>
+<li><p>远程共享目录：smb</p></li>
+</ul>
+<p>”可选“，[via_条件]/[from_配置文件]</p>
+<p>条件可用字段：</p>
+<ul class="simple">
+<li><p>单个条件：something</p></li>
+<li><p>多个条件：kw</p></li>
+<li><p>json体：json</p></li>
+<li><p>data体：data</p></li>
+</ul>
+<section id="id8">
+<h4><strong>示例</strong><a class="headerlink" href="#id8" title="永久链接至标题"></a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>通过rest方法，传入单个条件org_name,查询组织下编码器通道列表
+query_encoder_channel_list_by_rest_via_org_name
+
+通过rest方法，传入json体，检索对象管理-人员列表
+query_person_manage_person_list_via_json
+
+通过rest方法，传入多个参数，新建分组
+add_object_group_by_rest_via_kw
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id9">
+<h3>5）区分函数是否可直接调用：<a class="headerlink" href="#id9" title="永久链接至标题"></a></h3>
+<p>不含via及含单个条件如(query_encoder_channel_list_by_rest_via_org_name)的函数能直接调用;
+含多个条件via_kw, 及传入特定数据via_json, via_data, via_params的函数不推荐直接调用</p>
+</section>
+</section>
+<section id="docstrings">
+<h2>Docstrings<a class="headerlink" href="#docstrings" title="永久链接至标题"></a></h2>
+<p>推荐使用<a class="reference external" href="https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings">Google style</a>, PyCharm-&gt;Settings-&gt;Tools-&gt;Docstrings-&gt;Docstrings format选择Google, All of the following section headers are supported:</p>
+<ul class="simple">
+<li><p>Args (alias of Parameters)</p></li>
+<li><p>Arguments (alias of Parameters)</p></li>
+<li><p>Attention</p></li>
+<li><p>Attributes</p></li>
+<li><p>Caution</p></li>
+<li><p>Danger</p></li>
+<li><p>Error</p></li>
+<li><p>Example</p></li>
+<li><p>Examples</p></li>
+<li><p>Hint</p></li>
+<li><p>Important</p></li>
+<li><p>Keyword Args (alias of Keyword Arguments)</p></li>
+<li><p>Keyword Arguments</p></li>
+<li><p>Methods</p></li>
+<li><p>Note</p></li>
+<li><p>Notes</p></li>
+<li><p>Other Parameters</p></li>
+<li><p>Parameters</p></li>
+<li><p>Return (alias of Returns)</p></li>
+<li><p>Returns</p></li>
+<li><p>Raise (alias of Raises)</p></li>
+<li><p>Raises</p></li>
+<li><p>References</p></li>
+<li><p>See Also</p></li>
+<li><p>Tip</p></li>
+<li><p>Todo</p></li>
+<li><p>Warning</p></li>
+<li><p>Warnings (alias of Warning)</p></li>
+<li><p>Warn (alias of Warns)</p></li>
+<li><p>Warns</p></li>
+<li><p>Yield (alias of Yields)</p></li>
+<li><p>Yields</p></li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h1>3. 提交说明<a class="headerlink" href="#id10" title="永久链接至标题"></a></h1>
+<section id="id11">
+<h2>分支<a class="headerlink" href="#id11" title="永久链接至标题"></a></h2>
+<ul class="simple">
+<li><p>master分支为主分支（保护分支），不能直接在master上进行修改代码提交</p></li>
+<li><p>develop分支为测试分支，所有开发完成需要提交测试的功能合并到该分支</p></li>
+<li><p>feature分支为开发分支，大家根据不同需求创建独立的功能分支，开发完成后合并到develop分支</p></li>
+<li><p>fix分支为bug修复分支，需要根据实际情况对已发布的版本进行漏洞修复时使用该分支</p></li>
+</ul>
+</section>
+<section id="id12">
+<h2>审核制度<a class="headerlink" href="#id12" title="永久链接至标题"></a></h2>
+<p>略</p>
+</section>
+<section id="tag">
+<h2>Tag<a class="headerlink" href="#tag" title="永久链接至标题"></a></h2>
+<p>采用三段式， v版本.里程碑.序号，如 v1.2.1</p>
+<ul class="simple">
+<li><p>架构升级或架构重大调整，修改第1位</p></li>
+<li><p>新功能上线或者模块大的调整，修改第2位</p></li>
+<li><p>bug修复上线，修改第3位</p></li>
+</ul>
+</section>
+<section id="git">
+<h2>Git提交信息<a class="headerlink" href="#git" title="永久链接至标题"></a></h2>
+<p>Commit Message一般包含三部分：Header，Body和Footer</p>
+<section id="header">
+<h3>Header<a class="headerlink" href="#header" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>type：用于说明commit的类别，规定为如下几种</p></li>
+<li><p>feat：新增功能；</p></li>
+<li><p>fix：bug修复；</p></li>
+<li><p>docs：修改文档；</p></li>
+<li><p>refactor：代码重构，未新增任何功能和修复bug；</p></li>
+<li><p>build：改变构建流程，新增依赖库，工具等；</p></li>
+<li><p>style：仅仅修改了空格、缩进等，不改变代码逻辑；</p></li>
+<li><p>perf：改善性能和体现的修改；</p></li>
+<li><p>chore：非src和test的修改；</p></li>
+<li><p>test：测试用例的修改；</p></li>
+<li><p>ci：自动化流程配置修改；</p></li>
+<li><p>revert：回滚到某个版本；</p></li>
+<li><p>scope：【可选】用于说明commit的影响范围</p></li>
+<li><p>subject：commit的简短说明，尽量简短</p></li>
+</ul>
+</section>
+<section id="body">
+<h3>Body<a class="headerlink" href="#body" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>本次commit的详细描述，可分多行</p></li>
+</ul>
+<section id="footer">
+<h4>Footer<a class="headerlink" href="#footer" title="永久链接至标题"></a></h4>
+<ul class="simple">
+<li><p>不兼容变动：需要描述相关信息；</p></li>
+<li><p>关闭指定的Issue：输入Issue信息；</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to env’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="envlib" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

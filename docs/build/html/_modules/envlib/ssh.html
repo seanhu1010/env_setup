@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.ssh &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.ssh</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.ssh 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">stat</span>
+<span class="kn">import</span> <span class="nn">select</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">from</span> <span class="nn">paramiko.ssh_exception</span> <span class="kn">import</span> <span class="n">SSHException</span><span class="p">,</span> <span class="n">AuthenticationException</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ssh&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Ssh"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh">[文档]</a><span class="k">class</span> <span class="nc">Ssh</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ssh工具类，提供交互式ssh远程执行命令功能和sftp上传下载功能</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        host: str: 主机ip, 如&#39;1.1.1.1&#39;</span>
+<span class="sd">        username: ssh登录用户名</span>
+<span class="sd">        password: ssh登录密码</span>
+<span class="sd">        port: int: ssh端口号，默认为22</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">DEFAULT_SSH_TIMEOUT</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">kubelet_prompt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;/ #&quot;</span>
+
+<div class="viewcode-block" id="Ssh.__init__"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chan</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp_client</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="k">if</span> <span class="n">host</span> <span class="ow">and</span> <span class="n">username</span> <span class="ow">and</span> <span class="n">password</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ssh.connect"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.connect">[文档]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;建立ssh连接</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            host: 主机地址</span>
+<span class="sd">            username: 登录用户名</span>
+<span class="sd">            password: 登录密码</span>
+<span class="sd">            port: 登录端口,默认值：22</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;]#&quot;</span> <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;root&quot;</span> <span class="k">else</span> <span class="sa">r</span><span class="s2">&quot;]$&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">invoke_shell</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">999</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">999</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># DEFAULT_SSH_CHAN_TIMEOUT = 60</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">sftp_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">Transport</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sftp_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SFTPClient</span><span class="o">.</span><span class="n">from_transport</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sftp_client</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;连接主机</span><span class="si">{}</span><span class="s2">成功，使用用户名：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">AuthenticationException</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;连接主机</span><span class="si">{}</span><span class="s2">鉴权错误，使用用户名：</span><span class="si">{}</span><span class="s2">，密码：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">SSHException</span> <span class="k">as</span> <span class="n">se</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;连接主机</span><span class="si">{}</span><span class="s2">发生错误&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Ssh.close"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.close">[文档]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;关闭ssh连接&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sftp_client</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sftp_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ssh&amp;sftp通道已关闭&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Ssh.exec_cmd_and_return"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmd_and_return">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd_and_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">DEFAULT_SSH_TIMEOUT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;执行带返回的命令并获取输出</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd: 命令内容</span>
+<span class="sd">            timeout: int,超时时间,默认值:20min</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            stdout: cmd执行打印输出</span>
+<span class="sd">            stderr: ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;在主机:</span><span class="si">{}</span><span class="s2">执行命令成功，命令内容:</span><span class="si">{}</span><span class="s2">，执行用户:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span></div>
+
+<div class="viewcode-block" id="Ssh.exec_cmds_with_expect"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmds_with_expect">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmds_with_expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;交互式执行命令行</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            commands: list of tuple,命令list</span>
+<span class="sd">            timeout: int, 默认60min</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Output string</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            Usage::</span>
+
+<span class="sd">                Commands format: （命令，预期）</span>
+<span class="sd">                [(&#39;ssh 1.1.1.1&#39;, &#39;(yes/no)&#39;),</span>
+<span class="sd">                (&#39;yes&#39;, &#39;Password:&#39;),</span>
+<span class="sd">                (&#39;password&#39;, &#39;#&#39;)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">expect</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">tout</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">recv_ready</span><span class="p">():</span>
+                    <span class="n">cout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">tout</span> <span class="o">+=</span> <span class="p">(</span><span class="n">cout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="n">tout</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">expect</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="k">break</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Expect &#39;</span><span class="si">%s</span><span class="s2">&#39; timeout(</span><span class="si">%s</span><span class="s2">s) while Send &#39;</span><span class="si">%s</span><span class="s2">&#39;:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                    <span class="p">(</span><span class="n">expect</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">out</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;在主机:</span><span class="si">{}</span><span class="s2">执行命令成功，命令内容:</span><span class="si">{}</span><span class="s2">，执行用户:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">))</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">tout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="Ssh.exec_cmd_with_stream"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmd_with_stream">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd_with_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">DEFAULT_SSH_TIMEOUT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;执行持续输出流的命令（例如kubectl logs -f）并获取输出</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd: 命令内容</span>
+<span class="sd">            timeout: int，超时时间，此处必须设置，否则命令无法退出, 默认20min</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            cout: 输出</span>
+
+<span class="sd">        Tips:</span>
+<span class="sd">            kubectl命令通过paramiko执行时会报找不到命令，需在主机执行ln -s /root/local/bin/kubectl /usr/bin/kubectl以让系统识别到</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sin</span><span class="p">,</span> <span class="n">sout</span><span class="p">,</span> <span class="n">serr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">line_buffered</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+            <span class="n">line_buf</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">exit_status_ready</span><span class="p">():</span>
+                <span class="n">readq</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">channel</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="n">timeout</span><span class="p">)</span>
+                <span class="n">line_buf</span> <span class="o">+=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">readq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">in_buffer</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">line_buf</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">line_buf</span>
+                    <span class="n">line_buf</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">cout</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">line_buffered</span><span class="p">(</span><span class="n">sout</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
+                <span class="n">cout</span> <span class="o">+=</span> <span class="n">line</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;在主机:</span><span class="si">{}</span><span class="s2">执行命令成功，命令内容:</span><span class="si">{}</span><span class="s2">，执行用户:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">cout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cout</span></div>
+
+<div class="viewcode-block" id="Ssh.get"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;从远端下载文件和目录到本地</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            remote_path: 本地目录或文件路径</span>
+<span class="sd">            local_path: 远端目录或文件路径</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Tips:</span>
+<span class="sd">            1、远端路径为目录，本地路径为文件时会报错</span>
+<span class="sd">            2、远端路径为目录时，默认是把远端目录下的文件（包括子文件夹）拷贝到本地，而远端目录本身并不会拷贝，请自行处理顶级目录</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir_attr</span><span class="p">(</span><span class="n">remote_path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;远端路径是目录&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_directory</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">ioe</span><span class="p">:</span>
+                <span class="n">remote_filename</span> <span class="o">=</span> <span class="n">remote_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">local_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_filename</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;拷贝远端文件:</span><span class="si">{}</span><span class="s2"> 到本地:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_filename</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir_attr</span><span class="p">(</span><span class="n">remote_path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;不能把远端目录复制到本地文件&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">ioe</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ssh.put"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;从本地上传文件和目录到远端</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            local_path: 本地目录或文件路径</span>
+<span class="sd">            remote_path: 远端目录或文件路径</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Tips:</span>
+<span class="sd">            1、本地路径为目录，本远端路径为文件时会报错</span>
+<span class="sd">            2、本地路径为目录时，默认是把本地目录下的文件（包括子文件夹）拷贝到远端，而本地目录本身并不会拷贝，请自行处理顶级目录</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir_attr</span><span class="p">(</span><span class="n">remote_path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传本地文件夹:</span><span class="si">{}</span><span class="s2">, 到远端文件夹:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">put_directory</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">ioe</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;不能把本地目录上传到远端文件&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">ioe</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir_attr</span><span class="p">(</span><span class="n">remote_path</span><span class="p">)</span>
+                <span class="n">local_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">local_path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">remote_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+                    <span class="n">remote_filename</span> <span class="o">=</span> <span class="n">remote_path</span> <span class="o">+</span> <span class="n">local_filename</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">remote_filename</span> <span class="o">=</span> <span class="n">remote_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">local_filename</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传本地文件:</span><span class="si">{}</span><span class="s2">, 到远端文件夹:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_filename</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">ioe</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传本地文件:</span><span class="si">{}</span><span class="s2">, 到远端文件:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ssh.get_file"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_file">[文档]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;从远端下载文件到本地</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            remote_path: 本地文件路径</span>
+<span class="sd">            local_path: 远端文件路径</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ssh.get_directory"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_directory">[文档]</a>    <span class="k">def</span> <span class="nf">get_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;从远端下载目录到本地</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            remote_path: 本地目录路径</span>
+<span class="sd">            local_path: 远端目录路径</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 获取远端linux主机上指定目录及其子目录下的所有文件</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># listdir_attr方法会抛出异常，需手动接收一下，不然被外层except捕获会导致目录被当成问价来复制</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir_attr</span><span class="p">(</span><span class="n">remote_path</span><span class="p">):</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">remote_path</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">a</span><span class="o">.</span><span class="n">filename</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISDIR</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">st_mode</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;递归拷贝子目录:</span><span class="si">{}</span><span class="s2">,到本地:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_directory</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;拷贝远端文件:</span><span class="si">{}</span><span class="s2">, 到本地文件:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">ioe</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Ssh.put_file"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.put_file">[文档]</a>    <span class="k">def</span> <span class="nf">put_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;从本地上传文件到远端</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            local_path: 本地文件路径</span>
+<span class="sd">            remote_path: 远端文件路径</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;拷贝本地文件:</span><span class="si">{}</span><span class="s2">, 到远端文件:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ssh.put_directory"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.put_directory">[文档]</a>    <span class="k">def</span> <span class="nf">put_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_dir</span><span class="p">,</span> <span class="n">remote_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;从本地上传目录到远端</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            local_dir: 本地目录路径</span>
+<span class="sd">            remote_dir: 远端目录路径</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">start_upload</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;开始上传本地文件夹:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local_dir</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">local_dir</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                    <span class="n">local_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">local_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">local_dir</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">relative_path</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">))</span>
+                    <span class="n">remote_file</span> <span class="o">=</span> <span class="n">remote_dir</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">relative_path</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">local_file</span><span class="p">,</span> <span class="n">remote_file</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">remote_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">local_file</span><span class="p">,</span> <span class="n">remote_file</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;拷贝本地文件:</span><span class="si">{}</span><span class="s2">, 到远端文件:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local_file</span><span class="p">,</span> <span class="n">remote_file</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+                    <span class="n">local_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">local_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">local_dir</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">relative_path</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">))</span>
+                    <span class="n">remote_path</span> <span class="o">=</span> <span class="n">remote_dir</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">relative_path</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">remote_path</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;创建远端文件夹:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_path</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="n">upload_spend</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_upload</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;上传成功，总时长：</span><span class="si">{}</span><span class="s1">秒&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">upload_spend</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传时发生了错误&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ssh.get_host_date_rest"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_host_date_rest">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取主机时间，作为接口入参，时间格式为2019-06-12 10:26:53</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            before: int 向前推移时间，单位为天, 默认不推移，即获取当前时间</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: 主机时间</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sh</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;date -d &quot;-</span><span class="si">{</span><span class="n">before</span><span class="si">}</span><span class="s1"> day&quot; &quot;+%Y-%m-%d %H:%M:%S&quot;&#39;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">sh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Ssh.get_host_date_rfc3339"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_host_date_rfc3339">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_rfc3339</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取主机rfc3339格式时间，用于pod日志查询时指定时间点查询对应时间点以后的日志</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            before: 向前倒推时间，默认0s，可以避免日志查询时失败</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            主机rfc3339格式时间</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="s2">&quot;date --rfc-3339=seconds&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">before</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">time_split</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span>
+            <span class="n">time_tamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">time_split</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">))</span>
+            <span class="n">time_tamp</span> <span class="o">-=</span> <span class="n">before</span>
+            <span class="n">local</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">time_tamp</span><span class="p">))</span>
+            <span class="n">re_time</span> <span class="o">=</span> <span class="n">local</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;+&#39;</span> <span class="o">+</span> <span class="n">time_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">re_time</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">re_time</span></div>
+
+<div class="viewcode-block" id="Ssh.get_host_date_stamp"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_host_date_stamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_host_date_stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;ms&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取主机时间戳格式时间</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            accuracy: 精度，取值：&#39;ms&#39;, &#39;s&#39;, 默认精度为&#39;ms&#39;，返回13位整数</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: 主机时间戳格式时间</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">s_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="s2">&quot;date +</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">accuracy</span> <span class="o">==</span> <span class="s1">&#39;ms&#39;</span><span class="p">:</span>
+            <span class="n">ns_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="s2">&quot;date +%N&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s_str</span> <span class="o">+</span> <span class="n">ns_str</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">accuracy</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s_str</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ssh.get_time_quantum_stamp"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_time_quantum_stamp">[文档]</a>    <span class="k">def</span> <span class="nf">get_time_quantum_stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;ms&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;通过当前时间点加偏移量获取时间段的两个时间戳</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            before: 向前偏移量，格式：1（秒,不带单位），1m（分），1h（时），1d（天），1w（周），偏移量不支持ms</span>
+<span class="sd">            after: 向后偏移量</span>
+<span class="sd">            now: 当前时间，时间戳格式，默认为None，调用get_host_date_stamp获取</span>
+<span class="sd">            accuracy: 精度，取值：&#39;ms&#39;, &#39;s&#39;, 默认为ms</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (start_time, end_time)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">now</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">now</span><span class="p">)</span> <span class="k">if</span> <span class="n">now</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_host_date_stamp</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="n">before</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">before</span><span class="p">)</span> <span class="k">if</span> <span class="n">before</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_to_seconds</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+        <span class="n">after</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">after</span><span class="p">)</span> <span class="k">if</span> <span class="n">after</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_to_seconds</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">accuracy</span> <span class="o">==</span> <span class="s1">&#39;ms&#39;</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">before</span> <span class="o">*</span> <span class="mi">1000</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">now</span> <span class="o">+</span> <span class="n">after</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="k">elif</span> <span class="n">accuracy</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">before</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">now</span> <span class="o">+</span> <span class="n">after</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Param &#39;accuracy&#39; just support &#39;ms&#39; or &#39;s&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span></div>
+
+<div class="viewcode-block" id="Ssh.get_time"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_unit</span><span class="o">=</span><span class="s2">&quot;hour&quot;</span><span class="p">,</span> <span class="n">start_to_now</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取服务器的时间戳或时间格式</span>
+<span class="sd">        :create: yinjia@2021.02.07</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start_to_now: 时间偏移量，负数表示当前时间前多少（小时等）时间，正数表示未来的时间，不支持小数</span>
+<span class="sd">            time_unit: 时间单位，year, month，day, hour, minute, second等</span>
+<span class="sd">            time_type: 时间格式，默认为%s（时间戳）；其他时间格式，例如：%Y-%m-%d %H:%M:%S</span>
+<span class="sd">            stamp13: bool: False10位时间戳 True13位时间戳</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_unit</span> <span class="o">=</span> <span class="n">time_unit</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">sh</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;date -d &quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">start_to_now</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">time_unit</span><span class="si">}</span><span class="s1">&quot; &quot;+</span><span class="si">{</span><span class="n">time_type</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="n">ret</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">sh</span><span class="p">)</span>
+
+        <span class="c1"># self.close()</span>
+
+        <span class="k">if</span> <span class="n">time_type</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stamp13</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="Ssh.get_start_and_end_time"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_start_and_end_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_start_and_end_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取服务器start和end时间戳或时间格式</span>
+<span class="sd">        :create: yinjia@2021.02.07</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start: 开始时间偏移量，负数表示当前时间前多少（小时等）时间，正数表示未来的时间，不支持小数</span>
+<span class="sd">            times: 总时间区间长度</span>
+<span class="sd">            time_unit: 时间单位，year, month，day, hour, minute, second等</span>
+<span class="sd">            time_type: 时间格式，默认为%s时间戳；其他时间格式，例如：%Y-%m-%d %H:%M:%S</span>
+<span class="sd">            stamp13: bool: False10位时间戳 True13位时间戳</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            start, end</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">time_unit</span> <span class="o">=</span> <span class="n">time_unit</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">sh_now</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;date -d &quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">time_unit</span><span class="si">}</span><span class="s1">&quot; &quot;+%Y%m%d %H:%M:%S&quot;&#39;</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">sh_now</span><span class="p">)</span>
+        <span class="n">sh_start</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;date -d &quot;</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">&quot; &quot;+</span><span class="si">{</span><span class="n">time_type</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">sh_start</span><span class="p">)</span>
+        <span class="n">sh_end</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;date -d &quot;</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">times</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">time_unit</span><span class="si">}</span><span class="s1">&quot; &quot;+</span><span class="si">{</span><span class="n">time_type</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">sh_end</span><span class="p">)</span>
+
+        <span class="c1"># self.close()</span>
+
+        <span class="k">if</span> <span class="n">time_type</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stamp13</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span></div>
+
+<div class="viewcode-block" id="Ssh.convert_to_seconds"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.convert_to_seconds">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">convert_to_seconds</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;将时间描述字符串转换为秒数</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            s: 格式：1m（分），1h（时），1d（天），1w（周）</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            second</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">seconds_per_unit</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="mi">86400</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="mi">604800</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">seconds_per_unit</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="Ssh.get_pod_log"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.get_pod_log">[文档]</a>    <span class="k">def</span> <span class="nf">get_pod_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pod_name</span><span class="p">,</span> <span class="n">since_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">greps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">grep_abc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取pod日志</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pod_name: pod名，前缀，自动匹配</span>
+<span class="sd">            since_time: 日志过滤条件--since-time，rfc3339格式，过滤该时点后的所有日志，eg, 2019-03-01T04:30:13.000+08:00</span>
+<span class="sd">            since: 日志过滤条件--since，过滤当前时间前到之前since时长的日志，eg, 5s，2m，3h</span>
+<span class="sd">            greps: 日志过滤条件，grep eg: ``[&#39;1&#39;, &#39;2&#39;] -&gt; |grep &#39;1&#39; |grep &#39;2&#39;``</span>
+<span class="sd">            grep_abc: grep过滤参数，eg: ``{&#39;-A&#39;: 1, &#39;-B&#39;: 2, &#39;-C&#39;: 3}``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            log 查询回显</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="s1">&#39;vias&#39;</span> <span class="ow">in</span> <span class="n">pod_name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not support vias pod&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">greps</span> <span class="o">=</span> <span class="n">greps</span> <span class="k">if</span> <span class="n">greps</span> <span class="k">else</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">grep_abc</span> <span class="o">=</span> <span class="n">grep_abc</span> <span class="k">if</span> <span class="n">grep_abc</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># 生成命令grep过滤条件，eg：-A 1 -B 2</span>
+        <span class="n">grep_abc_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">grep_abc</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">grep_abc_str</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">grep_abc</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+        <span class="c1"># 生成命令grep字符串</span>
+        <span class="n">grep_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">grep</span> <span class="ow">in</span> <span class="n">greps</span><span class="p">:</span>
+            <span class="n">grep_str</span> <span class="o">+=</span> <span class="s1">&#39; |grep </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grep</span><span class="p">)</span>
+        <span class="n">grep_str</span> <span class="o">+=</span> <span class="n">grep_abc_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The command param of grep is &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grep_str</span><span class="p">))</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;kubectl logs $(kubectl get pod|grep </span><span class="si">{}</span><span class="s2">|awk &#39;{{print $1}}&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pod_name</span><span class="p">)</span>
+
+        <span class="c1"># --since-time与--since不可同时存在</span>
+        <span class="k">if</span> <span class="n">since_time</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39; --since-time=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">since_time</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">since</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39; --since=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">since</span><span class="p">)</span>
+
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="n">grep_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The command is: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+        <span class="n">logs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Get logs complete: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">logs</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">logs</span></div>
+
+<div class="viewcode-block" id="Ssh.exec_cmd"><a class="viewcode-back" href="../../envlib.ssh.html#envlib.ssh.Ssh.exec_cmd">[文档]</a>    <span class="k">def</span> <span class="nf">exec_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">expect</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        cmd持续交互，继承上一条命令的界面</span>
+<span class="sd">        :param cmd:</span>
+<span class="sd">        :param timeout: Timeout.</span>
+<span class="sd">        :param expect:</span>
+<span class="sd">        :return: Output string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">tout</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">recv_ready</span><span class="p">():</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">tout</span> <span class="o">+=</span> <span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">expect</span> <span class="ow">and</span> <span class="p">(</span><span class="n">tout</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">expect</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;在主机:</span><span class="si">{}</span><span class="s2">执行命令成功，命令内容:</span><span class="si">{}</span><span class="s2">，执行用户:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">tout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tout</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to env’s documentation! &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>Welcome to env’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <p>预置库</p>
+<section id="welcome-to-env-s-documentation">
+<h1>Welcome to env’s documentation!<a class="headerlink" href="#welcome-to-env-s-documentation" title="永久链接至标题"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="永久链接至标题"></a></h2>
+<p>预置驱动库框架，提供一些基础的预置库方法，方便进行端到端自动化预置</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="永久链接至标题"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">1. 项目简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#id2"><strong>目标</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#id3"><strong>主要亮点</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#id4">分层定义:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id5">2. 主要库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#id6"><strong>驱动库的一般准则</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#query-get-keys">1）绑定绝大多数发生在query函数, 可以使用模块名.get_keys获取绑定值列表，如</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#res-bind-to-gvaluereturn">2）绑定的值和函数的返回值保持一致，允许对res的进行加工，如以下函数bind_to_g中绑定的value与return应一致</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#key">3）key命名方式:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#id7">4）函数命名方式:</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#id8"><strong>示例</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#id9">5）区分函数是否可直接调用：</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#docstrings">Docstrings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id10">3. 提交说明</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#id11">分支</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#id12">审核制度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#tag">Tag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#git">Git提交信息</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#header">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#body">Body</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#footer">Footer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">envlib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="envlib.html">envlib package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="envlib.env.html">envlib.env package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="envlib.env.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.app.html">envlib.env.app module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="envlib.env.app.html#envlib-app">envlib.app</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.config.html">envlib.env.config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.ctx.html">envlib.env.ctx module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.datastructures.html">envlib.env.datastructures module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="envlib.env.datastructures.html#werkzeug-datastructures">werkzeug.datastructures</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.envlogging.html">envlib.env.envlogging module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.exceptions.html">envlib.env.exceptions module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.globals.html">envlib.env.globals module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.helpers.html">envlib.env.helpers module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env.local.html">envlib.env.local module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="envlib.env.local.html#werkzeug-local">werkzeug.local</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="envlib.env.html#module-envlib.env">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.env_resources.html">envlib.env_resources package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="envlib.env_resources.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env_resources.constant.html">envlib.env_resources.constant module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.env_resources.preset_data.html">envlib.env_resources.preset_data module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="envlib.env_resources.html#module-envlib.env_resources">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.envsetup.html">envlib.envsetup package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="envlib.envsetup.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.cms.html">envlib.envsetup.cms module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="envlib.envsetup.cms.html#envlib-cms">envlib.cms</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.fullanalysis.html">envlib.envsetup.fullanalysis module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.k8s.html">envlib.envsetup.k8s module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.kafka.html">envlib.envsetup.kafka module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.mda.html">envlib.envsetup.mda module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.mdisposition.html">envlib.envsetup.mdisposition module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.object.html">envlib.envsetup.object module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.storage.html">envlib.envsetup.storage module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.udm.html">envlib.envsetup.udm module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.uuv.html">envlib.envsetup.uuv module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="envlib.envsetup.vms.html">envlib.envsetup.vms module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="envlib.envsetup.html#module-envlib.envsetup">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="envlib.database.html">envlib.database module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.id_info.html">envlib.id_info module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.rest.html">envlib.rest module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.smb.html">envlib.smb module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.ssh.html">envlib.ssh module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.threadings.html">envlib.threadings module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.util.html">envlib.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#module-envlib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="永久链接至标题"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">索引</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">模块索引</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">搜索页面</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

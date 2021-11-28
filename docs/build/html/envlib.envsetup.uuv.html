@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.uuv module &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="envlib.envsetup.vms module" href="envlib.envsetup.vms.html" />
+    <link rel="prev" title="envlib.envsetup.udm module" href="envlib.envsetup.udm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">envlib</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="envlib.html">envlib package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="envlib.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="envlib.env.html">envlib.env package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.env_resources.html">envlib.env_resources package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="envlib.envsetup.html">envlib.envsetup package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#module-envlib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">envlib</a> &raquo;</li>
+          <li><a href="envlib.html">envlib package</a> &raquo;</li>
+          <li><a href="envlib.envsetup.html">envlib.envsetup package</a> &raquo;</li>
+      <li>envlib.envsetup.uuv module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/envlib.envsetup.uuv.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-envlib.envsetup.uuv">
+<span id="envlib-envsetup-uuv-module"></span><h1>envlib.envsetup.uuv module<a class="headerlink" href="#module-envlib.envsetup.uuv" title="永久链接至标题"></a></h1>
+<p>综合管理操作类预置库</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">envlib.envsetup.uuv.</span></span><span class="sig-name descname"><span class="pre">Uuv</span></span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="envlib.env.helpers.html#envlib.env.helpers.GetKeysMixin" title="envlib.env.helpers.GetKeysMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">envlib.env.helpers.GetKeysMixin</span></code></a></p>
+<p>综合管理操作类</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.__init__" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.query_uuv_department_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_uuv_department_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.query_uuv_department_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.query_uuv_department_by_rest" title="永久链接至目标"></a></dt>
+<dd><p>传入params，查询部门信息</p>
+<p>查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 <code class="docutils literal notranslate"><span class="pre">g</span></code> 下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>key=&#39;uuv_department_list&#39;, value=查询接口返回值，部门信息
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+<li><p><strong>**kwargs</strong> – 可选字典项</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值，部门信息</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.query_department_index_via_dep_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_department_index_via_dep_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'api'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.query_department_index_via_dep_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.query_department_index_via_dep_name" title="永久链接至目标"></a></dt>
+<dd><p>传入部门名，查询部门org_index</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>dep_name</strong> (<em>str</em>) – 部门名称</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>部门org_index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.query_department_info_via_dep_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_department_info_via_dep_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'api'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('org_index',)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.query_department_info_via_dep_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.query_department_info_via_dep_name" title="永久链接至目标"></a></dt>
+<dd><p>传入部门名及可选参数，查询部门info</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dep_name</strong> (<em>str</em>) – 部门名称</p></li>
+<li><p><strong>info</strong> (<em>tuple</em>) – 部门信息元组，例如 (‘org_index’,)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>部门info</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.add_uuv_department_by_rest_via_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_uuv_department_by_rest_via_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.add_uuv_department_by_rest_via_json"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.add_uuv_department_by_rest_via_json" title="永久链接至目标"></a></dt>
+<dd><p>传入json，添加部门信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json</strong> (<em>any</em>) – json数据结构</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.import_uuv_department_by_rest_via_smb">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_uuv_department_by_rest_via_smb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.import_uuv_department_by_rest_via_smb"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.import_uuv_department_by_rest_via_smb" title="永久链接至目标"></a></dt>
+<dd><p>读取 env.ini指定share_path <code class="docutils literal notranslate"><span class="pre">\\1.1.1.1\info\auto\</span></code> 下的 <code class="docutils literal notranslate"><span class="pre">部门导入模板.xlsx</span></code> 导入部门信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>any</em>) – 接口data数据结构</p></li>
+<li><p><strong>headers</strong> (<em>dict</em>) – rest请求headers</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.add_uuv_department_by_rest_via_dep_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_uuv_department_by_rest_via_dep_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.add_uuv_department_by_rest_via_dep_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.add_uuv_department_by_rest_via_dep_name" title="永久链接至目标"></a></dt>
+<dd><p>传入部门名称，添加部门信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>dep_name</strong> (<em>str</em>) – 组织名称，约定只用数字、字母、中划线</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.batch_add_uuv_department_from_env_ini">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">batch_add_uuv_department_from_env_ini</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.batch_add_uuv_department_from_env_ini"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.batch_add_uuv_department_from_env_ini" title="永久链接至目标"></a></dt>
+<dd><p>批量从env的配置文件中，添加tag_list下的部门信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.import_uuv_department_from_excel">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_uuv_department_from_excel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.import_uuv_department_from_excel"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.import_uuv_department_from_excel" title="永久链接至目标"></a></dt>
+<dd><p>读取 env.ini指定share_path <code class="docutils literal notranslate"><span class="pre">\\1.1.1.1\info\auto\</span></code> 下的 <code class="docutils literal notranslate"><span class="pre">部门导入模板.xlsx</span></code> 导入部门信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.query_uuv_organization_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_uuv_organization_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.query_uuv_organization_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.query_uuv_organization_by_rest" title="永久链接至目标"></a></dt>
+<dd><p>查询组织list</p>
+<p>查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 <code class="docutils literal notranslate"><span class="pre">g</span></code> 下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>key=&#39;uuv_organization_list&#39;, value=查询接口返回值，组织信息
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+<li><p><strong>**kwargs</strong> – 可选字典项</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值，组织信息</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.query_organization_index_via_org_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_organization_index_via_org_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'本域'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.query_organization_index_via_org_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.query_organization_index_via_org_name" title="永久链接至目标"></a></dt>
+<dd><p>传入组织名，查询组织id</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>org_name</strong> (<em>str</em>) – 组织名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>组织index值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.query_organization_info_via_org_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_organization_info_via_org_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'本域'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('org_index',)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.query_organization_info_via_org_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.query_organization_info_via_org_name" title="永久链接至目标"></a></dt>
+<dd><p>传入组织名及可选参数，查询组织info</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>org_name</strong> (<em>str</em>) – 组织名</p></li>
+<li><p><strong>info</strong> (<em>tuple</em>) – 组织信息元组，例如 (‘org_index’,)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>org_info</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.add_uuv_organization_by_rest_via_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_uuv_organization_by_rest_via_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.add_uuv_organization_by_rest_via_json"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.add_uuv_organization_by_rest_via_json" title="永久链接至目标"></a></dt>
+<dd><p>添加组织</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json</strong> (<em>any</em>) – json数据结构</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.import_uuv_organization_via_smb">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_uuv_organization_via_smb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.import_uuv_organization_via_smb"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.import_uuv_organization_via_smb" title="永久链接至目标"></a></dt>
+<dd><p>读取 env.ini指定share_path <code class="docutils literal notranslate"><span class="pre">\\1.1.1.1\info\auto\</span></code> 下的 <code class="docutils literal notranslate"><span class="pre">组织表.xlsx</span></code> 导入组织信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>any</em>) – 接口data数据结构</p></li>
+<li><p><strong>headers</strong> (<em>dict</em>) – rest请求headers</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.add_uuv_organization_via_org_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_uuv_organization_via_org_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.add_uuv_organization_via_org_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.add_uuv_organization_via_org_name" title="永久链接至目标"></a></dt>
+<dd><p>添加组织信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>org_name</strong> (<em>str</em>) – 组织名称</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>None or rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.batch_add_uuv_organization_from_env_ini">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">batch_add_uuv_organization_from_env_ini</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.batch_add_uuv_organization_from_env_ini"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.batch_add_uuv_organization_from_env_ini" title="永久链接至目标"></a></dt>
+<dd><p>批量从env的配置文件中，添加tag_list下的组织信息，并绑定到 <code class="docutils literal notranslate"><span class="pre">common</span></code> tag下</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.import_uuv_organization_from_excel">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_uuv_organization_from_excel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/uuv.html#Uuv.import_uuv_organization_from_excel"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.import_uuv_organization_from_excel" title="永久链接至目标"></a></dt>
+<dd><p>读取 env.ini指定share_path <code class="docutils literal notranslate"><span class="pre">\\1.1.1.1\info\auto\</span></code> 下的 <code class="docutils literal notranslate"><span class="pre">组织表.xlsx</span></code> 导入组织信息</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="envlib.envsetup.uuv.Uuv.__module__">
+<span class="sig-name descname"><span class="pre">__module__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'envlib.envsetup.uuv'</span></em><a class="headerlink" href="#envlib.envsetup.uuv.Uuv.__module__" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="envlib.envsetup.udm.html" class="btn btn-neutral float-left" title="envlib.envsetup.udm module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="envlib.envsetup.vms.html" class="btn btn-neutral float-right" title="envlib.envsetup.vms module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

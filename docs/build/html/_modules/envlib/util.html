@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.util &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.util 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding=utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">工具库，提供随机数，Md5，等方法</span>
+<span class="sd">description: common</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">pypinyin</span> <span class="kn">import</span> <span class="n">lazy_pinyin</span>
+<span class="kn">from</span> <span class="nn">requests_toolbelt.multipart.encoder</span> <span class="kn">import</span> <span class="n">MultipartEncoder</span>
+
+<span class="kn">from</span> <span class="nn">envlib.ssh</span> <span class="kn">import</span> <span class="n">Ssh</span>
+<span class="kn">from</span> <span class="nn">envlib.id_info</span> <span class="kn">import</span> <span class="n">IdNumber</span>
+<span class="kn">from</span> <span class="nn">resources.data</span> <span class="kn">import</span> <span class="n">HOST_IP</span><span class="p">,</span> <span class="n">SSH_NAME</span><span class="p">,</span> <span class="n">SSH_PWD</span>
+
+
+<div class="viewcode-block" id="random_number"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_number">[文档]</a><span class="k">def</span> <span class="nf">random_number</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;生成随机数字</span>
+<span class="sd">    </span>
+<span class="sd">    author: sean@2021/2/3 15:09</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      number: int: 位数</span>
+<span class="sd">      start: int: 起始数字，默认0 (Default value = 0)</span>
+<span class="sd">      end: int: 最大数字，默认9 (Default value = 9)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : str类型的多位数值</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="n">end</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;start: </span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> &gt; end: </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="random_str"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_str">[文档]</a><span class="k">def</span> <span class="nf">random_str</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;随机不重复字符串</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      number: int: 字符串长度 (Default value = None)</span>
+<span class="sd">      lower: bool: 是否全小写 (Default value = False)</span>
+<span class="sd">      upper: bool: 是否全大写 (Default value = False)</span>
+<span class="sd">      title: bool: 是否首字母大写 (Default value = False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : str类型的多位字符</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">string</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">str_</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span><span class="p">,</span> <span class="n">number</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">lower</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">str_</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">upper</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">str_</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">title</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">str_</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">str_</span></div>
+
+
+<div class="viewcode-block" id="random_str_number"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_str_number">[文档]</a><span class="k">def</span> <span class="nf">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;随机字符串（大小写字母、数字）</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      number: int: 位数</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : 指定{number}位数的大小写字母、数字组成的字符串</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">letter1</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="mi">122</span><span class="p">))</span>
+        <span class="n">letter2</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">65</span><span class="p">,</span> <span class="mi">90</span><span class="p">))</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="n">num</span><span class="p">,</span> <span class="n">letter1</span><span class="p">,</span> <span class="n">letter2</span><span class="p">]))</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="n">s</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="random_ip_list"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_ip_list">[文档]</a><span class="k">def</span> <span class="nf">random_ip_list</span><span class="p">(</span><span class="n">ip_heads</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ip_tail</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;随机生成ip地址</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ip_heads: str: ip固定开头，默认以10.xx.xx.xx形式 (Default value = None)</span>
+<span class="sd">      ip_tail: str: ip固定结尾，默认不传，取随机2~254 (Default value = None)</span>
+<span class="sd">      number: int: 生成ip的数量 (Default value = 500)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : ip列表</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          num: </span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">254</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ip_heads</span><span class="p">:</span>
+        <span class="n">ip_heads</span> <span class="o">=</span> <span class="s2">&quot;10&quot;</span>
+
+    <span class="n">ip_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">ip_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">number</span><span class="p">:</span>
+        <span class="n">heads</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ip_heads</span><span class="p">:</span>
+            <span class="n">heads</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ip_heads</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">ip_tail</span><span class="p">:</span>
+            <span class="n">tail</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ip_tail</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)))</span>
+
+        <span class="n">add_num</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">heads</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_num</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;传参ip_heads或者ip_tail有误&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">add_list</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">add_num</span><span class="p">)</span>
+        <span class="n">ip_l</span> <span class="o">=</span> <span class="n">heads</span> <span class="o">+</span> <span class="n">add_list</span> <span class="o">+</span> <span class="n">tail</span>
+        <span class="n">ip_str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ip_l</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ip_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ip_list</span><span class="p">:</span>
+            <span class="n">ip_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ip_str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ip_list</span></div>
+
+
+<div class="viewcode-block" id="os_remove"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.os_remove">[文档]</a><span class="k">def</span> <span class="nf">os_remove</span><span class="p">(</span><span class="n">del_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;删除文件和文件夹</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      del_list: list: 待删除的文件路径</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : 无</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">del_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已删除文件</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已删除文件夹</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="si">}</span><span class="s2">不是str&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="time_type_change"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.time_type_change">[文档]</a><span class="k">def</span> <span class="nf">time_type_change</span><span class="p">(</span><span class="n">input_time</span><span class="p">,</span> <span class="n">is_time_stamp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;时间格式-时间戳互相转换</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      input_time: 格式时间或者10位时间戳，超过10位的只取前10位</span>
+<span class="sd">      is_time_stamp: True转换成时间戳，False转换成时间格式 (Default value = True)</span>
+<span class="sd">      stamp13: is_time_stamp为True时生效，False转换为10位时间戳，转换为True13位时间戳 (Default value = False)</span>
+<span class="sd">      time_type: 时间格式type，默认格式&quot;%Y-%m-%d %H:%M:%S&quot;，如2019-05-21 18:03:48 (Default value = &quot;%Y-%m-%d %H:%M:%S&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : 转换后的时间</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">is_time_stamp</span><span class="p">:</span>
+        <span class="n">stamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">input_time</span><span class="p">,</span> <span class="n">time_type</span><span class="p">)</span>
+        <span class="n">time_stamp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">stamp</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">stamp13</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">input_time</span><span class="p">,</span> <span class="n">time_type</span><span class="p">)</span>
+            <span class="n">data_microsecond</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%06d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">dt</span><span class="o">.</span><span class="n">microsecond</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_stamp</span> <span class="o">+</span> <span class="n">data_microsecond</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_stamp</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">time_array</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_time</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">time_type</span><span class="p">,</span> <span class="n">time_array</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="random_longitude"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_longitude">[文档]</a><span class="k">def</span> <span class="nf">random_longitude</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mf">105.5</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">106.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;随机经度</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        start (float): 起始经度</span>
+<span class="sd">        end (float): 终止经度</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        小数点后8位</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="mi">8</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="random_latitude"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_latitude">[文档]</a><span class="k">def</span> <span class="nf">random_latitude</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mf">29.0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">30.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;随机纬度</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        start (float): 起始纬度</span>
+<span class="sd">        end (float): 终止纬度</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        小数点后8位</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="mi">8</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="create_file_by_binary"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.create_file_by_binary">[文档]</a><span class="k">def</span> <span class="nf">create_file_by_binary</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;根据二进制流，生成文件</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      content: 二进制流</span>
+<span class="sd">      file_path: 文件生成路径（带文件名）</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : True or False</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">file_dir</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;文件生成失败！&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="unzip_file"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.unzip_file">[文档]</a><span class="k">def</span> <span class="nf">unzip_file</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="n">unzip_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;解压zip文件到目的路径</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      zip_path: zip压缩包生成路径（带文件名）</span>
+<span class="sd">      unzip_dir: zip压缩包解压目的文件夹,默认解压到压缩包同级目录 (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      file_xls_return: 含图片压缩包解压后xls电子表格文件名称</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">zip_path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;zip文件不存在！&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unzip_dir</span><span class="p">:</span>
+        <span class="n">unzip_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">unzip_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">unzip_dir</span><span class="p">)</span>
+    <span class="n">zf</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
+    <span class="n">unzip_list</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+    <span class="n">return_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">unzip_list</span><span class="p">:</span>
+        <span class="n">file_return</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unzip_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">return_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_return</span><span class="p">)</span>
+    <span class="n">zf</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">unzip_dir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">return_list</span></div>
+
+
+<div class="viewcode-block" id="import_list_by_xls"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.import_list_by_xls">[文档]</a><span class="k">def</span> <span class="nf">import_list_by_xls</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
+                       <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/vnd.ms-excel&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;通过url上传xls</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      file_path: file_path</span>
+<span class="sd">      url: url</span>
+<span class="sd">      content_type: &#39;application/vnd.ms-excel&#39; (Default value = &#39;application/vnd.ms-excel&#39;)</span>
+<span class="sd">      **kwargs: list_type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : res.json</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">file_tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span> <span class="n">content_type</span><span class="p">)</span>
+
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="n">file_tup</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">fields</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">MultipartEncoder</span><span class="p">(</span>
+        <span class="n">fields</span><span class="o">=</span><span class="n">fields</span>
+    <span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
+                                                     <span class="s2">&quot;User&quot;</span><span class="p">:</span> <span class="s2">&quot;usercode:admin&amp;username:admin&quot;</span><span class="p">})</span>
+    <span class="n">remote_result</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span>
+    <span class="k">if</span> <span class="n">remote_result</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传文件success&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;上传文件failed&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="random_identity_no_list"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_identity_no_list">[文档]</a><span class="k">def</span> <span class="nf">random_identity_no_list</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;随机不重复身份证列表</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      number: 身份证号个数</span>
+<span class="sd">      limit: 循环次数，防止死循环 (Default value = 1000)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : list, {number}个身份证号</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">idt_no</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">idt_no</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">number</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">no</span> <span class="o">=</span> <span class="n">IdNumber</span><span class="o">.</span><span class="n">generate_id</span><span class="p">(</span><span class="n">sex</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">idt_no</span><span class="p">:</span>
+            <span class="n">idt_no</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">no</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idt_no</span><span class="p">)</span> <span class="o">==</span> <span class="n">number</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">idt_no</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Md5"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.Md5">[文档]</a><span class="k">class</span> <span class="nc">Md5</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;md5工具&quot;&quot;&quot;</span>
+    <span class="n">maker</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Md5.__init__"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.Md5.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;初始化参数&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Md5.md5_str"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.Md5.md5_str">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">md5_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;生成字符串的md5</span>
+<span class="sd">        </span>
+<span class="sd">        :author: sean@2021/2/3 15:09</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          message: str: 字符串</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          rel: 字符串的md5值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">maker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">rel</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">maker</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">maker</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">rel</span></div>
+
+<div class="viewcode-block" id="Md5.md5_file"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.Md5.md5_file">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">md5_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;根据文件内容生成md5</span>
+<span class="sd">        </span>
+<span class="sd">        :author: sean@2021/2/3 15:09</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          file_path: str: 文件路径</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          str: md5 value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">a_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">maker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">a_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">a_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">maker</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="base64_by_path"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.base64_by_path">[文档]</a><span class="k">def</span> <span class="nf">base64_by_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;base64转换</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      path: str: 图片路径</span>
+<span class="sd">      header: bool: 是否带头，例如：&quot;data:image/png;base64,...&quot; (Default value = False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : 图片base64</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">base64_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">base64_data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;data:image/</span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s2">;base64,&quot;</span> <span class="o">+</span> <span class="n">image</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">image</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_time"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.get_time">[文档]</a><span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="n">time_unit</span><span class="o">=</span><span class="s2">&quot;hour&quot;</span><span class="p">,</span> <span class="n">start_to_now</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_time_stamp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">stamp13</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;获取时间戳或时间格式</span>
+<span class="sd">    :modify: yinjia@2021.02.05修改为获取服务器时间</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      start_to_now: 当前时刻前多少小时,start_time=now - start_to_now，不支持小数(Default value = 0)</span>
+<span class="sd">      time_unit: 时间单位，year, month，day, hour, minute, second等，兼容老版本复数形式（例如hours） (Default value = &quot;hour&quot;)</span>
+<span class="sd">      time_type: 时间格式 (Default value = &quot;%Y-%m-%d %H:%M:%S&quot;)</span>
+<span class="sd">      is_time_stamp: True转换成时间戳，False转换成时间格式 (Default value = True)</span>
+<span class="sd">      stamp13: bool: False10位时间戳 True13位时间戳 (Default value = False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      int</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ssh</span> <span class="o">=</span> <span class="n">Ssh</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">HOST_IP</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">SSH_NAME</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">SSH_PWD</span><span class="p">)</span>
+    <span class="n">time_unit</span> <span class="o">=</span> <span class="n">time_unit</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">is_time_stamp</span><span class="p">:</span>
+        <span class="n">time_type</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span>
+    <span class="n">sh</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;date -d &quot;</span><span class="si">{</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">start_to_now</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">time_unit</span><span class="si">}</span><span class="s1">&quot; &quot;+</span><span class="si">{</span><span class="n">time_type</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">sh</span><span class="p">)</span>
+    <span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">is_time_stamp</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stamp13</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="random_plate_no"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.random_plate_no">[文档]</a><span class="k">def</span> <span class="nf">random_plate_no</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="s1">&#39;渝&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;随机车牌号(6位)</span>
+<span class="sd">    </span>
+<span class="sd">    :created: yf_yinjia@2020.11.14</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      area: 省份中文简称，默认为&#39;渝&#39; (Default value = &#39;渝&#39;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : str, 车牌号</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">plate_no_char0</span> <span class="o">=</span> <span class="s1">&#39;京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽赣粤青藏川宁琼&#39;</span>
+    <span class="n">plate_no_char1</span> <span class="o">=</span> <span class="s1">&#39;ABCDEFGHJKLMNPQRSTUVWXYZ&#39;</span>  <span class="c1"># 车牌号中没有I和O，可自行百度</span>
+    <span class="n">plate_no_char2</span> <span class="o">=</span> <span class="s1">&#39;1234567890ABCDEFGHJKLMNPQRSTUVWXYZ&#39;</span>
+
+    <span class="k">if</span> <span class="n">area</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">plate_no_char0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">area</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">plate_no_char1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">plate_no_char2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="reboot"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.reboot">[文档]</a><span class="k">def</span> <span class="nf">reboot</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;重启节点</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      node: 主机ip</span>
+<span class="sd">      username: 登录用户名</span>
+<span class="sd">      password: 登录密布</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ssh</span> <span class="o">=</span> <span class="n">Ssh</span><span class="p">()</span>
+    <span class="n">cmds</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;reboot -f&quot;</span><span class="p">,</span> <span class="s2">&quot;ing&quot;</span><span class="p">)]</span>
+    <span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="n">ssh</span><span class="o">.</span><span class="n">exec_cmds_with_expect</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span>
+    <span class="n">wait_until_unreachable</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="n">wait_until_reachable</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ping"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.ping">[文档]</a><span class="k">def</span> <span class="nf">ping</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ping 检查</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ip: ip</span>
+<span class="sd">      count: ping检查次数 (Default value = 1)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Bool: ping检查通过与否</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">platform</span>
+    <span class="c1"># 根据平台适配不同的ping命令</span>
+    <span class="k">if</span> <span class="s2">&quot;linux&quot;</span> <span class="o">==</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;ping -c </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">ip</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;ping -n </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">ip</span><span class="p">))</span>
+
+    <span class="c1"># ping命令会返回未ping通的次数，这里为1说明ping失败，为0则ping通</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">status</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="wait_until_unreachable"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.wait_until_unreachable">[文档]</a><span class="k">def</span> <span class="nf">wait_until_unreachable</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;等待直到节点不可达</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ip: 主机IP</span>
+<span class="sd">      timeout:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Bool: 状态</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ping</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">已ping不通&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+                <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">endtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">endtime</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">ping</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">raise</span> <span class="ne">TimeoutError</span></div>
+
+
+<div class="viewcode-block" id="wait_until_reachable"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.wait_until_reachable">[文档]</a><span class="k">def</span> <span class="nf">wait_until_reachable</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;等待直到节点可达</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ip: 主机IP</span>
+<span class="sd">      timeout:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Bool: 状态</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ping</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">已ping通&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">endtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">endtime</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">ping</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">status</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">raise</span> <span class="ne">TimeoutError</span></div>
+
+
+<div class="viewcode-block" id="wait_until_k8s_normal"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.wait_until_k8s_normal">[文档]</a><span class="k">def</span> <span class="nf">wait_until_k8s_normal</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;等待直到k8s集群正常</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      node: 节点IP</span>
+<span class="sd">      username: 登陆用户名</span>
+<span class="sd">      password: 登陆密码</span>
+<span class="sd">      timeout:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Bool: 状态</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ssh</span> <span class="o">=</span> <span class="n">Ssh</span><span class="p">()</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;kubectl get pod |grep Running |wc -l&quot;</span>
+    <span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timeout</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_cmd_and_return</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">69</span><span class="p">:</span>  <span class="c1"># SINGLE_NORMAL_PODS=69</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">endtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">endtime</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">ping</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">status</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">raise</span> <span class="ne">TimeoutError</span></div>
+
+
+<div class="viewcode-block" id="validate_url"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.validate_url">[文档]</a><span class="k">def</span> <span class="nf">validate_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;检查url是否合规</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      url: url</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;amp;:/~\+#]*[\w\-\@?^=%&amp;amp;/~\+#])?&quot;</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">url_pattern</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span> <span class="n">string</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">res</span> <span class="k">else</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="validate_str_like_alphabet"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.validate_str_like_alphabet">[文档]</a><span class="k">def</span> <span class="nf">validate_str_like_alphabet</span><span class="p">(</span><span class="n">i_str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;检查str模式是否只含大小写字母，以及下划线</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      i_str: str</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      : bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^[\w_]+$&quot;</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">url_pattern</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span> <span class="n">string</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">i_str</span><span class="p">))</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">res</span> <span class="k">else</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="get_last_ip_str"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.get_last_ip_str">[文档]</a><span class="k">def</span> <span class="nf">get_last_ip_str</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;返回一个ipv4地址的后2位组合的ip string</span>
+<span class="sd">    Args:</span>
+<span class="sd">        ip: ipv4地址，如&#39;1.1.1.1&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: ie: &#39;111222&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ip</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span></div>
+
+
+<div class="viewcode-block" id="cn_to_en"><a class="viewcode-back" href="../../envlib.util.html#envlib.util.cn_to_en">[文档]</a><span class="k">def</span> <span class="nf">cn_to_en</span><span class="p">(</span><span class="n">i_str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;中文文本返回英文样式拼音</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        i_str: str</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lazy_pinyin</span><span class="p">(</span><span class="n">i_str</span><span class="p">))</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

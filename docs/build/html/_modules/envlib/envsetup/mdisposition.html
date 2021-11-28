@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.mdisposition &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.envsetup.mdisposition</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.envsetup.mdisposition 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @File:    mdidposition.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">多维布控类预置库</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">envlib.envsetup.udm</span> <span class="kn">import</span> <span class="n">Udm</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">envlib.env.helpers</span> <span class="kn">import</span> <span class="n">GetKeysMixin</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env_resources.preset_data</span> <span class="kn">import</span> <span class="n">multi_face_national_data</span><span class="p">,</span> <span class="n">multi_vehice_data</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MDisposition&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="MDisposition"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition">[文档]</a><span class="k">class</span> <span class="nc">MDisposition</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;多维布控类&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MDisposition.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;初始化参数&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="MDisposition.query_tree_node_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.query_tree_node_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_tree_node_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询配置中心平台下各类型id</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;mdiposition_tree_node_list&#39;, value=平台下各类型id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest平台下各类型id</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;mdiposition_tree_node_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;childs&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;childs&#39;</span><span class="p">)</span>  <span class="c1"># 默认平台下各类型id</span></div>
+
+<div class="viewcode-block" id="MDisposition.create_vehicle_disposition_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.create_vehicle_disposition_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_vehicle_disposition_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="s2">&quot;0d&quot;</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="s2">&quot;30d&quot;</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">plat_no</span><span class="o">=</span><span class="s2">&quot;渝A123456&quot;</span><span class="p">,</span>
+                                           <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;黄竹路28号1栋&quot;</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;mipc_10.4.32.131&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;新建车辆布控任务</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name(str): 布控任务名称 (Default value = &quot;&quot;)</span>
+<span class="sd">            before(str): 布控开始时间，默认0为当前时间 (Default value = &quot;0d&quot;)</span>
+<span class="sd">            after(str): 布控结束时间，默认布控30天有效 (Default value = &quot;30d&quot;)</span>
+<span class="sd">            notify(int): 是否有告警弹窗，默认0无弹窗，1有弹窗 (Default value = 0)</span>
+<span class="sd">            plat_no(str): 车牌号 (Default value = &quot;渝A123456&quot;)</span>
+<span class="sd">            org_name(str): 设备所属组织，默认为multi_disposition (Default value = &quot;multi_disposition&quot;)</span>
+<span class="sd">            device_name(str): 布控设备的名称 (Default value = &quot;multi_vehilce&quot;)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">begin_mills</span><span class="p">,</span> <span class="n">end_mills</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">get_time_quantum_stamp</span><span class="p">(</span><span class="n">before</span><span class="o">=</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span>
+        <span class="n">Udm</span><span class="o">.</span><span class="n">query_vehicle_tollgate_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+        <span class="n">source_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;udm_vehicle_channel_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+                                                                  <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;owner_aps_name&#39;</span><span class="p">:</span> <span class="n">device_name</span> <span class="o">+</span> <span class="s2">&quot;_设备_1&quot;</span><span class="p">})</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">multi_vehice_data</span><span class="p">)</span>
+        <span class="n">notify_type_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">notify</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">MDisposition</span><span class="o">.</span><span class="n">query_tree_node_by_rest</span><span class="p">()</span>
+        <span class="n">node_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;mdiposition_tree_node_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;node_id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;node_name&#39;</span><span class="p">:</span> <span class="s1">&#39;车辆维度&#39;</span><span class="p">})</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;node_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_id</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;device_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">source_id</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;begin_mills&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">begin_mills</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;end_mills&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">end_mills</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">task_name</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;notify_type_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">notify_type_list</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;differentiated_info&quot;</span><span class="p">][</span><span class="s2">&quot;plate_info&quot;</span><span class="p">][</span><span class="s2">&quot;number&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plat_no</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;differentiated_info&quot;</span><span class="p">][</span><span class="s2">&quot;plate_info&quot;</span><span class="p">][</span><span class="s2">&quot;plate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plat_no</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;differentiated_info&quot;</span><span class="p">][</span><span class="s2">&quot;plate_info&quot;</span><span class="p">][</span><span class="s2">&quot;plate_no&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plat_no</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="MDisposition.create_face_national_disposition_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.create_face_national_disposition_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_face_national_disposition_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="s2">&quot;0d&quot;</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="s2">&quot;30d&quot;</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;新建人像民族布控任务, 并绑定到环境变量&#39;multi_disposition&#39; tag下</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name(str): 布控任务名称 (Default value = &quot;&quot;)</span>
+<span class="sd">            before(str): 布控开始时间，默认0为当前时间 (Default value = &quot;0d&quot;)</span>
+<span class="sd">            after(str): 布控结束时间，默认布控30天有效 (Default value = &quot;30d&quot;)</span>
+<span class="sd">            notify(int): 是否有告警弹窗，默认0无弹窗，1有弹窗 (Default value = True)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">multi_face_national_data</span><span class="p">)</span>
+        <span class="n">begin_mills</span><span class="p">,</span> <span class="n">end_mills</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">get_time_quantum_stamp</span><span class="p">(</span><span class="n">before</span><span class="o">=</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s2">&quot;ms&quot;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="sd">&#39;&#39;&#39;人脸算法ID获取&#39;&#39;&#39;</span>
+        <span class="n">algorithm_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">data_algorithm</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;page_num&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;page_size&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;algorithm_type&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+        <span class="n">res_algorithm</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">data_algorithm</span><span class="p">,</span>
+                                         <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">res_algorithm</span> <span class="ow">in</span> <span class="n">res_algorithm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">res_algorithm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_run&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># 1表示算法运行</span>
+                <span class="n">algorithm_id</span> <span class="o">=</span> <span class="n">res_algorithm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;algorithm_id&quot;</span><span class="p">)</span>
+        <span class="n">algorithm_version</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">algorithm_id</span><span class="p">:</span>
+            <span class="n">algorithm_version</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">algorithm_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;人脸算法不存在，无法创建人像布控任务&quot;</span><span class="p">)</span>
+        <span class="n">notify_type_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">notify</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">MDisposition</span><span class="o">.</span><span class="n">query_tree_node_by_rest</span><span class="p">()</span>
+        <span class="n">node_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;mdiposition_tree_node_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;node_id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;node_name&#39;</span><span class="p">:</span> <span class="s1">&#39;人像维度&#39;</span><span class="p">})</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;node_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_id</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;begin_mills&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">begin_mills</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;end_mills&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">end_mills</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">task_name</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;notify_type_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">notify_type_list</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;differentiated_info&quot;</span><span class="p">][</span><span class="s2">&quot;algorithm_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">algorithm_version</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;multi_disposition_task_id&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="MDisposition.query_multi_disposition_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.query_multi_disposition_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_multi_disposition_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;根据布控任务名称查询布控任务信息</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;mdisposition_task_list&#39;, value=布控任务信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name(str): 查询任务名称 (Default value = &quot;&quot;)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest布控任务信息</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">json_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">,</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s2">&quot;begin&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;mdisposition_task_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># app.send_by_rest默认剥离第一层data</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MDisposition.delete_mult_disposition_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.mdisposition.html#envlib.envsetup.mdisposition.MDisposition.delete_mult_disposition_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">delete_mult_disposition_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;删除指定布控任务</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name(str): 查询任务名称 (Default value = &quot;&quot;)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest查询结果</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">task_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">MDisposition</span><span class="o">.</span><span class="n">query_multi_disposition_task_by_rest</span><span class="p">()</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;mdisposition_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+        <span class="n">task_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">task_ids</span><span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@delete&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.uuv &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.envsetup.uuv</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.envsetup.uuv 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @File:    uuv.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">综合管理操作类预置库</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">envlib.env.helpers</span> <span class="kn">import</span> <span class="n">GetKeysMixin</span>
+<span class="kn">from</span> <span class="nn">envlib.util</span> <span class="kn">import</span> <span class="n">Md5</span>
+<span class="kn">from</span> <span class="nn">resources.data</span> <span class="kn">import</span> <span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">TAG_LIST</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Uuv&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Uuv"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv">[文档]</a><span class="k">class</span> <span class="nc">Uuv</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;综合管理操作类&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Uuv.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Uuv.query_uuv_department_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.query_uuv_department_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_uuv_department_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;传入params，查询部门信息</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;uuv_department_list&#39;, value=查询接口返回值，部门信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，部门信息</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;uuv_department_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;child&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;child&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Uuv.query_department_index_via_dep_name"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.query_department_index_via_dep_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_department_index_via_dep_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dep_name</span><span class="o">=</span><span class="s2">&quot;api&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;传入部门名，查询部门org_index</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dep_name (str): 部门名称</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            部门org_index</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_department_by_rest</span><span class="p">()</span>
+        <span class="n">dep_info</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;uuv_department_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;org_index&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;org_name&#39;</span><span class="p">:</span> <span class="n">dep_name</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">dep_info</span></div>
+
+<div class="viewcode-block" id="Uuv.query_department_info_via_dep_name"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.query_department_info_via_dep_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_department_info_via_dep_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dep_name</span><span class="o">=</span><span class="s2">&quot;api&quot;</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;org_index&#39;</span><span class="p">,)):</span>
+        <span class="sd">&quot;&quot;&quot;传入部门名及可选参数，查询部门info</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dep_name (str): 部门名称</span>
+<span class="sd">            info (tuple): 部门信息元组，例如 (&#39;org_index&#39;,)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            部门info</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_department_by_rest</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;查询组织 </span><span class="si">{</span><span class="n">dep_name</span><span class="si">}</span><span class="s2"> 的 </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2"> 信息&quot;</span><span class="p">)</span>
+        <span class="n">dep_info</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;uuv_department_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="o">*</span><span class="n">info</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;org_name&#39;</span><span class="p">:</span> <span class="n">dep_name</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">dep_info</span></div>
+
+<div class="viewcode-block" id="Uuv.add_uuv_department_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.add_uuv_department_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_uuv_department_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;传入json，添加部门信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            json (any): json数据结构</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_department_by_rest</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Uuv.import_uuv_department_by_rest_via_smb"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.import_uuv_department_by_rest_via_smb">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">import_uuv_department_by_rest_via_smb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;读取 env.ini指定share_path ``\\\\1.1.1.1\\info\\auto\\`` 下的 ``部门导入模板.xlsx`` 导入部门信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (any): 接口data数据结构</span>
+<span class="sd">            headers (dict): rest请求headers</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                               <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_department_by_rest</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Uuv.add_uuv_department_by_rest_via_dep_name"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.add_uuv_department_by_rest_via_dep_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_uuv_department_by_rest_via_dep_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dep_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;传入部门名称，添加部门信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dep_name(str): 组织名称，约定只用数字、字母、中划线</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_department_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_department_by_rest</span><span class="p">()</span>
+        <span class="n">_exist_department_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">dept</span> <span class="k">for</span> <span class="n">dept</span> <span class="ow">in</span> <span class="n">_department_list</span> <span class="k">if</span> <span class="n">dept</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;org_name&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">dep_name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_exist_department_list</span><span class="p">:</span>  <span class="c1"># 未添加</span>
+            <span class="n">_json</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;parent_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;org_parent_index&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;org_name&quot;</span><span class="p">:</span> <span class="n">dep_name</span><span class="p">,</span>
+                <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">Md5</span><span class="o">.</span><span class="n">md5_str</span><span class="p">(</span><span class="n">dep_name</span><span class="p">),</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
+            <span class="p">}</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">add_uuv_department_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">_json</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;所添加的部门 &quot;</span><span class="si">{</span><span class="n">dep_name</span><span class="si">}</span><span class="s1">&quot; 重复，将跳过&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_department_by_rest</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Uuv.batch_add_uuv_department_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.batch_add_uuv_department_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">batch_add_uuv_department_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;批量从env的配置文件中，添加tag_list下的部门信息</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">org_name</span> <span class="ow">in</span> <span class="n">TAG_LIST</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">add_uuv_department_by_rest_via_dep_name</span><span class="p">(</span><span class="n">dep_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Uuv.import_uuv_department_from_excel"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.import_uuv_department_from_excel">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">import_uuv_department_from_excel</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;读取 env.ini指定share_path ``\\\\1.1.1.1\\info\\auto\\`` 下的 ``部门导入模板.xlsx`` 导入部门信息</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 查询部门</span>
+        <span class="n">_department_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_department_by_rest</span><span class="p">()</span>
+        <span class="n">_exist_department_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">dept</span> <span class="k">for</span> <span class="n">dept</span> <span class="ow">in</span> <span class="n">_department_list</span> <span class="k">if</span> <span class="n">dept</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;org_name&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;common&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_exist_department_list</span><span class="p">:</span>  <span class="c1"># 未导入部门</span>
+            <span class="n">_department_xlsx_file</span> <span class="o">=</span> <span class="s1">&#39;部门导入模板.xlsx&#39;</span>
+            <span class="n">_department_xlsx_file_path</span> <span class="o">=</span> <span class="n">SMB_SHARE_PATH</span> <span class="o">+</span> <span class="n">_department_xlsx_file</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb_upload_excel</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">_department_xlsx_file_path</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">import_uuv_department_by_rest_via_smb</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Uuv.query_uuv_organization_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.query_uuv_organization_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_uuv_organization_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询组织list</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;uuv_organization_list&#39;, value=查询接口返回值，组织信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，组织信息</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;page_index&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;page_size&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">}</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;uuv_organization_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Uuv.query_organization_index_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.query_organization_index_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_organization_index_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;传入组织名，查询组织id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            组织index值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_organization_by_rest</span><span class="p">()</span>
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;uuv_organization_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;org_index&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;org_name&#39;</span><span class="p">:</span> <span class="n">org_name</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">org_index</span></div>
+
+<div class="viewcode-block" id="Uuv.query_organization_info_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.query_organization_info_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_organization_info_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;org_index&#39;</span><span class="p">,)):</span>
+        <span class="sd">&quot;&quot;&quot;传入组织名及可选参数，查询组织info</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            info (tuple): 组织信息元组，例如 (&#39;org_index&#39;,)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            org_info</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_organization_by_rest</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;查询组织 </span><span class="si">{</span><span class="n">org_name</span><span class="si">}</span><span class="s2"> 的 </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2"> 信息&quot;</span><span class="p">)</span>
+        <span class="n">org_info</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;uuv_organization_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="o">*</span><span class="n">info</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;org_name&#39;</span><span class="p">:</span> <span class="n">org_name</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">org_info</span></div>
+
+<div class="viewcode-block" id="Uuv.add_uuv_organization_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.add_uuv_organization_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_uuv_organization_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加组织</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            json (any): json数据结构</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_organization_by_rest</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Uuv.import_uuv_organization_via_smb"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.import_uuv_organization_via_smb">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">import_uuv_organization_via_smb</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;读取 env.ini指定share_path ``\\\\1.1.1.1\\info\\auto\\`` 下的 ``组织表.xlsx`` 导入组织信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (any): 接口data数据结构</span>
+<span class="sd">            headers (dict): rest请求headers</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                               <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_organization_by_rest</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Uuv.add_uuv_organization_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.add_uuv_organization_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_uuv_organization_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加组织信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name(str): 组织名称</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None or rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_organization_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_organization_by_rest</span><span class="p">()</span>
+        <span class="n">_exist_organization_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">org</span> <span class="k">for</span> <span class="n">org</span> <span class="ow">in</span> <span class="n">_organization_list</span> <span class="k">if</span> <span class="n">org</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;org_name&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">org_name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_exist_organization_list</span><span class="p">:</span>  <span class="c1"># 未导入组织  # 未添加</span>
+            <span class="n">_json</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;parent_id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;org_name&quot;</span><span class="p">:</span> <span class="n">org_name</span><span class="p">,</span>
+                <span class="s2">&quot;region_code&quot;</span><span class="p">:</span> <span class="s2">&quot;500100&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;street&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;is_region&quot;</span><span class="p">:</span> <span class="kc">False</span>
+            <span class="p">}</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">add_uuv_organization_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">_json</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;所添加的组织 &quot;</span><span class="si">{</span><span class="n">org_name</span><span class="si">}</span><span class="s1">&quot; 重复，将跳过&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Uuv.batch_add_uuv_organization_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.batch_add_uuv_organization_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">batch_add_uuv_organization_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;批量从env的配置文件中，添加tag_list下的组织信息，并绑定到 ``common`` tag下</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">org_name</span> <span class="ow">in</span> <span class="n">TAG_LIST</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">add_uuv_organization_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Uuv.import_uuv_organization_from_excel"><a class="viewcode-back" href="../../../envlib.envsetup.uuv.html#envlib.envsetup.uuv.Uuv.import_uuv_organization_from_excel">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">import_uuv_organization_from_excel</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;读取 env.ini指定share_path ``\\\\1.1.1.1\\info\\auto\\`` 下的 ``组织表.xlsx`` 导入组织信息</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 查询组织</span>
+        <span class="n">_organization_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_uuv_organization_by_rest</span><span class="p">()</span>
+        <span class="n">_exist_organization_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">org</span> <span class="k">for</span> <span class="n">org</span> <span class="ow">in</span> <span class="n">_organization_list</span> <span class="k">if</span> <span class="n">org</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;org_name&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;common&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_exist_organization_list</span><span class="p">:</span>  <span class="c1"># 未导入组织</span>
+            <span class="n">_organization_xlsx_file</span> <span class="o">=</span> <span class="s1">&#39;组织表.xlsx&#39;</span>
+            <span class="n">_organization_xlsx_file_path</span> <span class="o">=</span> <span class="n">SMB_SHARE_PATH</span> <span class="o">+</span> <span class="n">_organization_xlsx_file</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb_upload_excel</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">_organization_xlsx_file_path</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">import_uuv_organization_via_smb</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

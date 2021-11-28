@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.fullanalysis &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.envsetup.fullanalysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.envsetup.fullanalysis 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @File:    fullanalysis.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">全量解析类预置库</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">envlib.envsetup.udm</span> <span class="kn">import</span> <span class="n">Udm</span>
+
+<span class="kn">from</span> <span class="nn">envlib.rest</span> <span class="kn">import</span> <span class="n">Rest</span>
+<span class="kn">from</span> <span class="nn">envlib.util</span> <span class="kn">import</span> <span class="n">random_str_number</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">envlib.env.helpers</span> <span class="kn">import</span> <span class="n">GetKeysMixin</span>
+<span class="kn">from</span> <span class="nn">envlib.envsetup.udm</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">resources.data</span> <span class="kn">import</span> <span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">HOST_IP</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FullAnalysis&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="FullAnalysis"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis">[文档]</a><span class="k">class</span> <span class="nc">FullAnalysis</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;全量解析类&quot;&quot;&quot;</span>
+    <span class="c1"># 创建解析任务类型</span>
+    <span class="n">__task_source_type</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;实时视频流&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;实时图片流&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;在线录像解析&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;离线解析&quot;</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="FullAnalysis.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;初始化参数&quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.query_fullanalysis_task_detail_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_fullanalysis_task_detail_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_fullanalysis_task_detail_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_id</span><span class="p">,</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;根据task_id查询解析任务详情</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;analysis_task_detail_dict&#39;, value=查询接口返回值，解析任务详情</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_id (str): 任务id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，解析任务详情</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># res为字典</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;analysis_task_detail_dict&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>  <span class="c1"># res为字典</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.query_fullanalysis_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_fullanalysis_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_fullanalysis_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source_type</span><span class="o">=</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时视频流&quot;</span><span class="p">),</span> <span class="n">search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询各类解析任务列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;analysis_realtime_video_task_list&#39;, value=接口返回值，解析任务列表</span>
+<span class="sd">            key=&#39;analysis_realtime_image_task_list&#39;, value=接口返回值，解析任务列表</span>
+<span class="sd">            key=&#39;analysis_online_video_task_list&#39;, value=接口返回值，解析任务列表</span>
+<span class="sd">            key=&#39;analysis_offline_video_task_list&#39;, value=接口返回值，解析任务列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            source_type (int): 任务类型</span>
+<span class="sd">            search (str, None): 搜索过滤项</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，解析任务列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;search&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">search</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;analysis_realtime_video_task_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;analysis_realtime_image_task_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;analysis_online_video_task_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;analysis_offline_video_task_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_realtime_video_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_realtime_video_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_fullanalysis_realtime_video_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                                                     <span class="n">device_name</span><span class="o">=</span><span class="s1">&#39;realtime_video&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;创建视频流解析任务</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name(str): 任务名称,可自定义，默认随机生成5位字符串名称</span>
+<span class="sd">            device_name(str): 设备名称 (Default value = &#39;realtime_video&#39;)</span>
+<span class="sd">            **kwargs: 其他请求关键字</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">Udm</span><span class="o">.</span><span class="n">query_encoder_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">)</span>  <span class="c1"># 查询通道并绑定用于后续解析任务获取设备通道编码</span>
+        <span class="n">device_info_list</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;udm_encoder_channel_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_type&#39;</span><span class="p">,</span> <span class="s1">&#39;resource_type&#39;</span><span class="p">,</span>
+                                                                         <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;owner_aps_name&#39;</span><span class="p">:</span> <span class="n">device_name</span><span class="p">})</span>
+        <span class="n">device_info_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_type&#39;</span><span class="p">,</span> <span class="s1">&#39;resource_type&#39;</span><span class="p">),</span> <span class="n">device_info_list</span><span class="p">))</span>
+
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+
+            <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时视频流&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;source_id&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ape_id&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;source_name&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resource_type&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sub_type&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;cascaded_id&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">,</span>
+            <span class="s2">&quot;speed&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;extend_info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;face&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nonvehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;person&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;vehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">body</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_online_video_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_online_video_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>  <span class="c1"># new</span>
+    <span class="k">def</span> <span class="nf">add_fullanalysis_online_video_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                                                   <span class="n">device_name</span><span class="o">=</span><span class="s1">&#39;m_ipc_10.4.48.2&#39;</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="s2">&quot;0m&quot;</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="s2">&quot;5m&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;创建在线录像解析任务</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name (str): 任务名称,可自定义，默认随机生成5位字符串名称</span>
+<span class="sd">            device_name (str): 设备名称 (Default value = &#39;realtime_video&#39;)</span>
+<span class="sd">            before (str): 前x分钟，如&#39;0m&#39;</span>
+<span class="sd">            after (str): 后x分钟， 如&#39;5m&#39;</span>
+<span class="sd">            **kwargs: 其他请求关键字</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">Udm</span><span class="o">.</span><span class="n">query_encoder_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">)</span>  <span class="c1"># 查询通道并绑定用于后续解析任务获取设备通道编码</span>
+        <span class="n">device_info_list</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;udm_encoder_channel_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_type&#39;</span><span class="p">,</span> <span class="s1">&#39;resource_type&#39;</span><span class="p">,</span>
+                                                                         <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;owner_aps_name&#39;</span><span class="p">:</span> <span class="n">device_name</span><span class="p">})</span>
+        <span class="n">device_info_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_type&#39;</span><span class="p">,</span> <span class="s1">&#39;resource_type&#39;</span><span class="p">),</span> <span class="n">device_info_list</span><span class="p">))</span>
+
+        <span class="n">begin_mills</span><span class="p">,</span> <span class="n">end_mills</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">get_time_quantum_stamp</span><span class="p">(</span><span class="n">before</span><span class="o">=</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+
+            <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;在线录像解析&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;source_id&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ape_id&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;source_name&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resource_type&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sub_type&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;cascaded_id&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">,</span>
+            <span class="s2">&quot;speed&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;priority_level&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;extend_info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;face&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nonvehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;person&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;vehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="s2">&quot;video_start_time&quot;</span><span class="p">:</span> <span class="n">begin_mills</span><span class="p">,</span>
+            <span class="s2">&quot;video_end_time&quot;</span><span class="p">:</span> <span class="n">end_mills</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">body</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.add_fullanalysis_realtime_image_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_fullanalysis_realtime_image_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>  <span class="c1"># new</span>
+    <span class="k">def</span> <span class="nf">add_fullanalysis_realtime_image_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                                                     <span class="n">device_name</span><span class="o">=</span><span class="s1">&#39;realtime_image&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;创建实时图片流解析任务</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name(str): 任务名称,可自定义，默认随机生成5位字符串名称</span>
+<span class="sd">            device_name(str): 设备名称 (Default value = &#39;realtime_video&#39;)</span>
+<span class="sd">            **kwargs: 其他请求关键字</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Udm</span><span class="o">.</span><span class="n">query_tollgate_device_list_by_rest_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">)</span>  <span class="c1"># 查询通道并绑定用于后续解析任务获取设备通道编码</span>
+        <span class="n">device_info_list</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;udm_tollgate_device_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;tollgate_id&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_type&#39;</span><span class="p">,</span>
+                                                                         <span class="s1">&#39;resource_type&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">device_name</span><span class="p">})</span>
+        <span class="n">device_info_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;tollgate_id&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_type&#39;</span><span class="p">,</span> <span class="s1">&#39;resource_type&#39;</span><span class="p">),</span> <span class="n">device_info_list</span><span class="p">))</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+
+            <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时图片流&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;source_id&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tollgate_id&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;source_name&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="n">device_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sub_type&#39;</span><span class="p">),</span>
+                    <span class="s2">&quot;cascaded_id&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">,</span>
+            <span class="s2">&quot;speed&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;extend_info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;face&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nonvehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;person&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;vehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;use_coordinate&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">body</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.query_wait_fullanalysis_task_status"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_wait_fullanalysis_task_status">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_wait_fullanalysis_task_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">source_type</span><span class="o">=</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时视频流&quot;</span><span class="p">),</span>
+                                            <span class="n">except_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sleep_time</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;超时时间内校验解析任务状态</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name (str): 解析任务名称</span>
+<span class="sd">            source_type (int): 任务类型</span>
+<span class="sd">            except_status (int):  预期状态列表, 0等待，1运行，2异常，4完成 (Default value = None)</span>
+<span class="sd">            timeout (int): 超时时间 (Default value = 10)</span>
+<span class="sd">            sleep_time (int):  间隔查询时间 (Default value = 1)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (bool)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">FullAnalysis</span><span class="o">.</span><span class="n">query_fullanalysis_task_by_rest</span><span class="p">(</span><span class="n">source_type</span><span class="o">=</span><span class="n">source_type</span><span class="p">,</span> <span class="n">search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_realtime_video_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_realtime_image_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_online_video_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_offline_video_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">except_status</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">except_status</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">*</span> <span class="n">sleep_time</span> <span class="o">&lt;=</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">FullAnalysis</span><span class="o">.</span><span class="n">query_fullanalysis_task_detail_by_rest</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;未检查到任务名为</span><span class="si">%s</span><span class="s2">的任务&quot;</span> <span class="o">%</span> <span class="n">task_name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">except_status</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;名为</span><span class="si">%s</span><span class="s2">的任务为预期状态&quot;</span> <span class="o">%</span> <span class="n">task_name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;未达预期状态，</span><span class="si">%d</span><span class="s2">秒后检查下一次&quot;</span> <span class="o">%</span> <span class="n">sleep_time</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_time</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;timeout，</span><span class="si">%d</span><span class="s2">秒内任务状态未达预期&quot;</span> <span class="o">%</span> <span class="n">timeout</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.delete_fullanalysis_task_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.delete_fullanalysis_task_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">delete_fullanalysis_task_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">source_type</span><span class="o">=</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;实时视频流&quot;</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;删除指定全量解析任务</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name (str): 任务名称</span>
+<span class="sd">            source_type (int): 任务类型</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest任务删除成功ID</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">FullAnalysis</span><span class="o">.</span><span class="n">query_fullanalysis_task_by_rest</span><span class="p">(</span><span class="n">source_type</span><span class="o">=</span><span class="n">source_type</span><span class="p">,</span> <span class="n">search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_realtime_video_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_realtime_image_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_online_video_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;analysis_offline_video_task_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+
+        <span class="n">task_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">task_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">task_ids</span><span class="p">,</span> <span class="s1">&#39;source_type&#39;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.add_offline_task"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.add_offline_task">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_offline_task</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">random_str_number</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;ac-personvehicle.ts&#39;</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;创建离线解析任务</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name(str): 离线任务名称 可自定义，默认随机生成5位字符串名称</span>
+<span class="sd">            speed(int): 算力值 (Default value = 5)</span>
+<span class="sd">            file_name(str): 离线文件名称 (Default value = &#39;ac-personvehicle.ts&#39;)</span>
+<span class="sd">            **kwargs: 其他请求关键字</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_analysis_file_info</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="n">file_info_list</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s2">&quot;fullanalysys_files_info_list&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;file_key&#39;</span><span class="p">,</span> <span class="s1">&#39;file_id&#39;</span><span class="p">,</span> <span class="s1">&#39;file_name&#39;</span><span class="p">,</span>
+                                                                           <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">})</span>
+
+        <span class="n">file_info_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;file_key&#39;</span><span class="p">,</span> <span class="s1">&#39;file_id&#39;</span><span class="p">,</span> <span class="s1">&#39;file_name&#39;</span><span class="p">,</span> <span class="s1">&#39;resource_type&#39;</span><span class="p">),</span> <span class="n">file_info_list</span><span class="p">))</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+
+            <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__task_source_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;离线解析&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;file_key&quot;</span><span class="p">:</span> <span class="n">file_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_key&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;source_id&quot;</span><span class="p">:</span> <span class="n">file_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;source_name&quot;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span>
+                    <span class="s2">&quot;cascaded_id&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span>  <span class="c1"># 是否级联(-1不级联)</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">,</span>
+            <span class="s2">&quot;speed&quot;</span><span class="p">:</span> <span class="n">speed</span><span class="p">,</span>
+            <span class="s2">&quot;priority_level&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;extend_info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;face&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nonvehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;person&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;vehicle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">body</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.query_analysis_file_info"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.query_analysis_file_info">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_analysis_file_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询离线文件信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_name(str): 查询离线文件名称 (Default value = &quot;&quot;)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">query_data</span> <span class="o">=</span> <span class="s2">&quot;page_num=1&amp;page_size=100&amp;search=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">query_data</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;fullanalysys_files_info_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  <span class="c1"># getk进行列表查询，res[0]非列表</span></div>
+
+<div class="viewcode-block" id="FullAnalysis.upload_offline_file"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis.upload_offline_file">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">upload_offline_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;ac-personvehicle.ts&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">31457280</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;离线文件上传入口方法</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_name(str): 上传文件名称 (Default value = &quot;ac-personvehicle.ts&quot;)</span>
+<span class="sd">            size(int): 上传文件分片大小 (Default value = 31457280)</span>
+<span class="sd">            file_relative_path(str): 视频文件smb共享服务器上路径 (Default value = None)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">file_relative_path</span> <span class="k">else</span> <span class="n">SMB_SHARE_PATH</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_absolute_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="c1"># 数据库新增数据</span>
+        <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_fd</span><span class="p">:</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">_fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="kn">import</span> <span class="nn">hashlib</span>
+        <span class="n">maker</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+        <span class="n">maker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+        <span class="n">file_md5</span> <span class="o">=</span> <span class="n">maker</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="n">file_size_class</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">file_size</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">file_size_class</span><span class="p">,</span> <span class="s1">&#39;st_size&#39;</span><span class="p">,</span> <span class="s1">&#39;没有st_size查看smb文件大小属性&#39;</span><span class="p">)</span>
+        <span class="n">file_info</span> <span class="o">=</span> <span class="n">FullAnalysis</span><span class="o">.</span><span class="n">_add_configuration_files</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">file_path</span><span class="p">,</span> <span class="n">file_size</span><span class="o">=</span><span class="n">file_size</span><span class="p">,</span> <span class="n">file_md5</span><span class="o">=</span><span class="n">file_md5</span><span class="p">)</span>
+        <span class="c1"># 上传i/o流</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">start_size</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_fd</span><span class="p">:</span>
+
+                <span class="k">while</span> <span class="n">start_size</span> <span class="o">&lt;</span> <span class="n">file_size</span><span class="p">:</span>
+                    <span class="n">_fd</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">start_size</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">start_size</span> <span class="o">+</span> <span class="n">size</span> <span class="o">&gt;=</span> <span class="n">file_size</span><span class="p">:</span>
+                        <span class="n">FullAnalysis</span><span class="o">.</span><span class="n">_upload_file_by_size</span><span class="p">(</span><span class="n">fp</span><span class="o">=</span><span class="n">_fd</span><span class="p">,</span> <span class="n">start_size</span><span class="o">=</span><span class="n">start_size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">file_size</span> <span class="o">-</span> <span class="n">start_size</span><span class="p">,</span>
+                                                          <span class="n">file_size</span><span class="o">=</span><span class="n">file_size</span><span class="p">,</span> <span class="n">file_info</span><span class="o">=</span><span class="n">file_info</span><span class="p">)</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">FullAnalysis</span><span class="o">.</span><span class="n">_upload_file_by_size</span><span class="p">(</span><span class="n">fp</span><span class="o">=</span><span class="n">_fd</span><span class="p">,</span> <span class="n">start_size</span><span class="o">=</span><span class="n">start_size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">file_size</span><span class="o">=</span><span class="n">file_size</span><span class="p">,</span>
+                                                          <span class="n">file_info</span><span class="o">=</span><span class="n">file_info</span><span class="p">)</span>
+                        <span class="n">start_size</span> <span class="o">=</span> <span class="n">start_size</span> <span class="o">+</span> <span class="n">size</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># 更新离线文件状态</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="n">FullAnalysis</span><span class="o">.</span><span class="n">_update_offline_files_status</span><span class="p">(</span><span class="n">file_info_id</span><span class="o">=</span><span class="n">file_info</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">update</span><span class="p">):</span>
+            <span class="n">file_info</span> <span class="o">=</span> <span class="n">file_info</span>
+            <span class="k">return</span> <span class="n">file_info</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;更新文件状态失败&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="FullAnalysis._upload_file_by_size"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis._upload_file_by_size">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_upload_file_by_size</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">start_size</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">file_size</span><span class="p">,</span> <span class="n">file_info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;全量解析上传视频文件入口函数</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fp(byte): 打开文件句柄</span>
+<span class="sd">            start_size(int): 文件分片中开始位置</span>
+<span class="sd">            size(int): 读取文件分片大小</span>
+<span class="sd">            file_size(str): 文件容量</span>
+<span class="sd">            file_info(dict): 文件其他属性信息</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">upload_url</span> <span class="o">=</span> <span class="n">file_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;upload_url&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;@post&quot;</span>
+        <span class="n">content_disposition</span> <span class="o">=</span> <span class="s1">&#39;attachment;filename=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_name&quot;</span><span class="p">))</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">content_range</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;bytes </span><span class="si">{</span><span class="n">start_size</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">start_size</span> <span class="o">+</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_size</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">headers_</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">:</span> <span class="n">content_disposition</span><span class="p">,</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/octet-stream&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;X-Content-Range&#39;</span><span class="p">:</span> <span class="n">content_range</span><span class="p">,</span> <span class="s1">&#39;Session-ID&#39;</span><span class="p">:</span> <span class="n">file_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id&quot;</span><span class="p">),</span>
+                    <span class="s1">&#39;Content-Length&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">),</span> <span class="s1">&#39;Storage-Info&#39;</span><span class="p">:</span> <span class="n">file_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_info&quot;</span><span class="p">)}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Rest</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;http://</span><span class="si">{}</span><span class="s2">:5091&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">HOST_IP</span><span class="p">))</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">upload_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">202</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;状态码校验失败，期望值为200，实际值为</span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">，接口响应为</span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="FullAnalysis._add_configuration_files"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis._add_configuration_files">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_add_configuration_files</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">file_size</span><span class="p">,</span> <span class="n">file_md5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;全量解析页面上传视频文件创建任务信息(暂未上传视频)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path(str): 视频文件smb共享服务器上路径</span>
+<span class="sd">            file_size(str): 文件容量</span>
+<span class="sd">            file_md5(str): 文件MD5信息</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">file_size</span> <span class="o">=</span> <span class="n">file_size</span>
+        <span class="n">check_param</span> <span class="o">=</span> <span class="n">file_md5</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;file_size&quot;</span><span class="p">:</span> <span class="n">file_size</span><span class="p">,</span> <span class="s2">&quot;check_param&quot;</span><span class="p">:</span> <span class="n">check_param</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span>
+                <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;file_source&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;file_code&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/demo@post&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="FullAnalysis._update_offline_files_status"><a class="viewcode-back" href="../../../envlib.envsetup.fullanalysis.html#envlib.envsetup.fullanalysis.FullAnalysis._update_offline_files_status">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_update_offline_files_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_info_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;更新视频文件状态</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_info_id(str): 文件id值</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;upload_status&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;upload_progress&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/demo@put&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+                               <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+    <span class="c1"># from envlib.envsetup.uuv import Uuv</span>
+    <span class="c1">#</span>
+    <span class="c1"># Uuv.batch_add_uuv_organization_from_env_ini()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.udm &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.envsetup.udm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.envsetup.udm 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @File:    udm.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">设备管理预置库</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">envlib.env.helpers</span> <span class="kn">import</span> <span class="n">GetKeysMixin</span>
+<span class="kn">from</span> <span class="nn">envlib.env_resources.preset_data</span> <span class="kn">import</span> <span class="n">SUB_TYPE</span><span class="p">,</span> <span class="n">RESOURCE_TYPE</span><span class="p">,</span> <span class="n">ACCESS_TYPE</span><span class="p">,</span> <span class="n">PRODUCER</span><span class="p">,</span> <span class="n">func_encoder_body</span><span class="p">,</span> \
+    <span class="n">func_tollgate_body</span><span class="p">,</span> <span class="n">TOLLGATE_TYPE</span>
+<span class="kn">from</span> <span class="nn">envlib.envsetup.uuv</span> <span class="kn">import</span> <span class="n">Uuv</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Udm&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Udm"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm">[文档]</a><span class="k">class</span> <span class="nc">Udm</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;设备管理类&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Udm.query_encoder_device_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_encoder_device_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_encoder_device_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询编码器设备列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_encoder_device_list&#39;, value=查询接口返回值，编码器设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，编码器设备列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;编码器&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_encoder_device_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_decoder_device_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_decoder_device_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_decoder_device_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询解码器设备列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_decoder_device_list&#39;, value=查询接口返回值，解码器设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，解码器设备列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;解码器&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_decoder_device_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_tollgate_device_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_tollgate_device_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_tollgate_device_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询卡口设备列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_tollgate_device_list&#39;, value=查询接口返回值，卡口设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，卡口设备列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;卡口&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;tollgate_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_tollgate_device_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_video_capture_device_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_video_capture_device_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_video_capture_device_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询采集设备列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_video_capture_device_list&#39;, value=查询接口返回值，采集设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，采集设备列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;采集设备&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_video_capture_device_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_encoder_channel_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_encoder_channel_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_encoder_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询编码器通道列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_encoder_channel_list&#39;, value=查询接口返回值，编码器通道列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，编码器通道列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;编码器&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;通道&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_encoder_channel_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_encoder_face_tollgate_vehicle_tollgate_channel_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_encoder_face_tollgate_vehicle_tollgate_channel_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_encoder_face_tollgate_vehicle_tollgate_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                                                       <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询编码器,人脸卡口，车辆卡口通道列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_encoder_face_tollgate_vehicle_tollgate_channel_list&#39;, value=查询接口返回值，编码器,人脸卡口，车辆卡口通道列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，编码器,人脸卡口，车辆卡口通道列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;编码器&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;人脸卡口&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;车辆卡口&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;通道&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_encoder_face_tollgate_vehicle_tollgate_channel_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># 还有一种接口是同时列出channel和device,/api/infra-udm/v0.1/channel/listChannelAndDevice</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_decoder_channel_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_decoder_channel_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_decoder_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询解码器通道列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_decoder_channel_list&#39;, value=查询接口返回值，解码器通道列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，解码器通道列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;解码器&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;通道&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_decoder_channel_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_face_tollgate_channel_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_face_tollgate_channel_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_face_tollgate_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询人脸卡口通道列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_face_tollgate_channel_list&#39;, value=查询接口返回值，人脸卡口通道列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，人脸卡口通道列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;人脸卡口&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;通道&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_face_tollgate_channel_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_vehicle_tollgate_channel_list_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_vehicle_tollgate_channel_list_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vehicle_tollgate_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询车辆卡口通道列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_vehicle_channel_list&#39;, value=查询接口返回值，车辆卡口通道列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，车辆卡口通道列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;车辆卡口&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;通道&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_vehicle_channel_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.query_tollgate_channel_list_detail_by_rest_via_org_name"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.query_tollgate_channel_list_detail_by_rest_via_org_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_tollgate_channel_list_detail_by_rest_via_org_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询卡口设备列表，包含设备详细信息</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;udm_tollgate_channel_list_detail&#39;, value=卡口设备列表，包含设备详细信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，卡口设备列表，包含设备详细信息</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_index_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">)</span>
+
+        <span class="n">para</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub_type&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;人脸卡口&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;车辆卡口&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;通道&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;org_index&quot;</span><span class="p">:</span> <span class="n">org_index</span><span class="p">,</span>
+            <span class="s2">&quot;include_child&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># 默认包含叶子列表</span>
+            <span class="s2">&quot;page_num&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="s2">&quot;order_field&quot;</span><span class="p">:</span> <span class="s1">&#39;ape_id&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;order_rule&quot;</span><span class="p">:</span> <span class="s1">&#39;asc&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">para</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">para</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;udm_tollgate_channel_list_detail&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.add_encoder_device_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.add_encoder_device_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_encoder_device_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ip_port</span><span class="p">,</span>
+                                          <span class="n">device_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                          <span class="n">user</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span>
+                                          <span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin123&#39;</span><span class="p">,</span>
+                                          <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span>
+                                          <span class="n">access_type</span><span class="o">=</span><span class="s1">&#39;Onvif&#39;</span><span class="p">,</span>
+                                          <span class="n">producer</span><span class="o">=</span><span class="s2">&quot;UVW&quot;</span><span class="p">,</span>
+                                          <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span>
+                                          <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span>
+                                          <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加编码器设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ip_port (str): &#39;1.1.1.1_80&#39;形式</span>
+<span class="sd">            device_name (str): 设备名</span>
+<span class="sd">            user (str): 设备登陆用户名</span>
+<span class="sd">            password (str): 设备登陆密码</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            access_type (str): 设备接入协议</span>
+<span class="sd">            producer (str): 设备厂商</span>
+<span class="sd">            se_longitude (tuple): 经度范围，如(105.5, 106.5)</span>
+<span class="sd">            se_latitude (tuple): 纬度范围，如(29.0, 30.0)</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 设备已添加不重复添加</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_encoder_device_list_by_rest_via_org_name</span><span class="p">()</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;ip_addr&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ip_port</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ip_port</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
+                            <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;udm_encoder_device_list&quot;</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;设备</span><span class="si">{</span><span class="n">ip_port</span><span class="si">}</span><span class="s2">已存在&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">org_info</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_info_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">,</span>
+                                                            <span class="n">info</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;org_name&#39;</span><span class="p">,</span> <span class="s1">&#39;org_index&#39;</span><span class="p">,</span> <span class="s1">&#39;region_code&#39;</span><span class="p">))</span>
+        <span class="c1"># 确保目标组织存在</span>
+        <span class="k">if</span> <span class="n">org_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># 添加设备</span>
+        <span class="n">org_info_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;org_name&#39;</span><span class="p">,</span> <span class="s1">&#39;org_index&#39;</span><span class="p">,</span> <span class="s1">&#39;place_code&#39;</span><span class="p">),</span> <span class="n">org_info</span><span class="p">))</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">func_encoder_body</span><span class="p">(</span><span class="n">ip_port</span><span class="o">=</span><span class="n">ip_port</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                                 <span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+                                 <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+                                 <span class="o">**</span><span class="n">org_info_dict</span><span class="p">,</span>
+                                 <span class="n">access_type</span><span class="o">=</span><span class="n">ACCESS_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">access_type</span><span class="p">),</span>
+                                 <span class="n">producer</span><span class="o">=</span><span class="n">PRODUCER</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">producer</span><span class="p">),</span>
+                                 <span class="n">se_longitude</span><span class="o">=</span><span class="n">se_longitude</span><span class="p">,</span>
+                                 <span class="n">se_latitude</span><span class="o">=</span><span class="n">se_latitude</span><span class="p">,</span>
+                                 <span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Udm.add_onvif_encoder_device"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.add_onvif_encoder_device">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_onvif_encoder_device</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ip_port</span><span class="p">,</span>
+                                 <span class="n">device_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">user</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span>
+                                 <span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin123&#39;</span><span class="p">,</span>
+                                 <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span>
+                                 <span class="n">producer</span><span class="o">=</span><span class="s2">&quot;UVW&quot;</span><span class="p">,</span>
+                                 <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span>
+                                 <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span>
+                                 <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加onvif类型的编码器设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ip_port (str): &#39;1.1.1.1_80&#39;形式</span>
+<span class="sd">            device_name (str): 设备名</span>
+<span class="sd">            user (str): 设备登陆用户名</span>
+<span class="sd">            password (str): 设备登陆密码</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            producer (str): 设备厂商</span>
+<span class="sd">            se_longitude (tuple): 经度范围，如(105.5, 106.5)</span>
+<span class="sd">            se_latitude (tuple): 纬度范围，如(29.0, 30.0)</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_encoder_device_by_rest_via_kw</span><span class="p">(</span><span class="n">ip_port</span><span class="o">=</span><span class="n">ip_port</span><span class="p">,</span>
+                                                     <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                                                     <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+                                                     <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+                                                     <span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">,</span>
+                                                     <span class="n">access_type</span><span class="o">=</span><span class="s1">&#39;Onvif&#39;</span><span class="p">,</span>
+                                                     <span class="n">producer</span><span class="o">=</span><span class="n">producer</span><span class="p">,</span>
+                                                     <span class="n">se_longitude</span><span class="o">=</span><span class="n">se_longitude</span><span class="p">,</span>
+                                                     <span class="n">se_latitude</span><span class="o">=</span><span class="n">se_latitude</span><span class="p">,</span>
+                                                     <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.add_tollgate_device_by_rest_via_kw"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.add_tollgate_device_by_rest_via_kw">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_tollgate_device_by_rest_via_kw</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ip_port</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;人脸卡口&quot;</span><span class="p">,</span>
+                                           <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span> <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加卡口设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ip_port (str): &#39;1.1.1.1_80&#39;形式</span>
+<span class="sd">            device_name (str): 设备名</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            se_longitude (tuple): 经度范围，如(105.5, 106.5)</span>
+<span class="sd">            se_latitude (tuple): 纬度范围，如(29.0, 30.0)</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 设备已添加不重复添加</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_tollgate_channel_list_detail_by_rest_via_org_name</span><span class="p">()</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ip_addr&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">ip_port</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;udm_tollgate_channel_list_detail&quot;</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;设备</span><span class="si">{</span><span class="n">ip_port</span><span class="si">}</span><span class="s2">已存在&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">org_info</span> <span class="o">=</span> <span class="n">Uuv</span><span class="o">.</span><span class="n">query_organization_info_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">,</span>
+                                                            <span class="n">info</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;org_name&#39;</span><span class="p">,</span> <span class="s1">&#39;org_index&#39;</span><span class="p">,</span> <span class="s1">&#39;region_code&#39;</span><span class="p">))</span>
+        <span class="c1"># 确保目标组织存在</span>
+        <span class="k">if</span> <span class="n">org_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># 添加设备</span>
+        <span class="k">if</span> <span class="n">device_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">device_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;face_</span><span class="si">{</span><span class="n">ip_port</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">org_info_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;org_name&#39;</span><span class="p">,</span> <span class="s1">&#39;org_index&#39;</span><span class="p">,</span> <span class="s1">&#39;place_code&#39;</span><span class="p">),</span> <span class="n">org_info</span><span class="p">))</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">func_tollgate_body</span><span class="p">(</span><span class="n">ip_port</span><span class="o">=</span><span class="n">ip_port</span><span class="p">,</span>
+                                  <span class="n">name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                                  <span class="n">sub_type</span><span class="o">=</span><span class="n">TOLLGATE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_type</span><span class="p">),</span>
+                                  <span class="n">channel_sub_type</span><span class="o">=</span><span class="n">SUB_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_type</span><span class="p">),</span>
+                                  <span class="o">**</span><span class="n">org_info_dict</span><span class="p">,</span>
+                                  <span class="n">se_longitude</span><span class="o">=</span><span class="n">se_longitude</span><span class="p">,</span>
+                                  <span class="n">se_latitude</span><span class="o">=</span><span class="n">se_latitude</span><span class="p">,</span>
+                                  <span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Udm.add_face_tollgate_device"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.add_face_tollgate_device">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_face_tollgate_device</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ip_port</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span>
+                                 <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span> <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加人脸卡口设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ip_port (str): &#39;1.1.1.1_80&#39;形式</span>
+<span class="sd">            device_name (str): 设备名</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            se_longitude (tuple): 经度范围，如(105.5, 106.5)</span>
+<span class="sd">            se_latitude (tuple): 纬度范围，如(29.0, 30.0)</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_tollgate_device_by_rest_via_kw</span><span class="p">(</span><span class="n">ip_port</span><span class="o">=</span><span class="n">ip_port</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">,</span>
+                                                      <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;人脸卡口&quot;</span><span class="p">,</span>
+                                                      <span class="n">se_longitude</span><span class="o">=</span><span class="n">se_longitude</span><span class="p">,</span> <span class="n">se_latitude</span><span class="o">=</span><span class="n">se_latitude</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Udm.add_vehicle_tollgate_device"><a class="viewcode-back" href="../../../envlib.envsetup.udm.html#envlib.envsetup.udm.Udm.add_vehicle_tollgate_device">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_vehicle_tollgate_device</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ip_port</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span>
+                                    <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span> <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加车辆卡口设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ip_port (str): &#39;1.1.1.1_80&#39;形式</span>
+<span class="sd">            device_name (str): 设备名</span>
+<span class="sd">            org_name (str): 组织名</span>
+<span class="sd">            se_longitude (tuple): 经度范围，如(105.5, 106.5)</span>
+<span class="sd">            se_latitude (tuple): 纬度范围，如(29.0, 30.0)</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_tollgate_device_by_rest_via_kw</span><span class="p">(</span><span class="n">ip_port</span><span class="o">=</span><span class="n">ip_port</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span> <span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">,</span>
+                                                      <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;车辆卡口&quot;</span><span class="p">,</span>
+                                                      <span class="n">se_longitude</span><span class="o">=</span><span class="n">se_longitude</span><span class="p">,</span> <span class="n">se_latitude</span><span class="o">=</span><span class="n">se_latitude</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

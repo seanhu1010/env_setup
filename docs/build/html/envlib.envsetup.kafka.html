@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.kafka module &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="envlib.envsetup.mda module" href="envlib.envsetup.mda.html" />
+    <link rel="prev" title="envlib.envsetup.k8s module" href="envlib.envsetup.k8s.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">envlib</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="envlib.html">envlib package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="envlib.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="envlib.env.html">envlib.env package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.env_resources.html">envlib.env_resources package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="envlib.envsetup.html">envlib.envsetup package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#module-envlib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">envlib</a> &raquo;</li>
+          <li><a href="envlib.html">envlib package</a> &raquo;</li>
+          <li><a href="envlib.envsetup.html">envlib.envsetup package</a> &raquo;</li>
+      <li>envlib.envsetup.kafka module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/envlib.envsetup.kafka.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-envlib.envsetup.kafka">
+<span id="envlib-envsetup-kafka-module"></span><h1>envlib.envsetup.kafka module<a class="headerlink" href="#module-envlib.envsetup.kafka" title="永久链接至标题"></a></h1>
+<p>数据推送预置库</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="envlib.envsetup.kafka.Kafka">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">envlib.envsetup.kafka.</span></span><span class="sig-name descname"><span class="pre">Kafka</span></span><a class="reference internal" href="_modules/envlib/envsetup/kafka.html#Kafka"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.kafka.Kafka" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>推数据到kafka，ssh方式</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="envlib.envsetup.kafka.Kafka.kafka_port">
+<span class="sig-name descname"><span class="pre">kafka_port</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9093</span></em><a class="headerlink" href="#envlib.envsetup.kafka.Kafka.kafka_port" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.kafka.Kafka.produce_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">produce_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'visitor-event-topic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/kafka.html#Kafka.produce_data"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.kafka.Kafka.produce_data" title="永久链接至目标"></a></dt>
+<dd><p>模拟kafka生产者，发送数据</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>body_list</strong> (<em>list</em>) – 发送的数据对象列表</p></li>
+<li><p><strong>topic</strong> (<em>str</em><em>, </em><em>optional</em>) – topic名称, (Default value = “visitor-event-topic”)</p></li>
+<li><p><strong>topic_key</strong> (<em>str</em><em>, </em><em>optional</em>) – 是否带key，例如传topic_key=”egs_upload_event” (Default value = None)</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – 超时时间, s, (Default value = 60)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>终端打印输出</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.kafka.Kafka.consume_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">consume_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uss-egs-event'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/kafka.html#Kafka.consume_data"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.kafka.Kafka.consume_data" title="永久链接至目标"></a></dt>
+<dd><p>模拟kafka生消费者，消费数据</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic</strong> (<em>str</em><em>, </em><em>optional</em>) – topic名称 (Default value = “uss-egs-event”)</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – 超时时间, s, (Default value = 60)</p></li>
+<li><p><strong>**kwargs</strong> – 可选字典项</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>终端打印输出</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="envlib.envsetup.kafka.Kafka.__module__">
+<span class="sig-name descname"><span class="pre">__module__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'envlib.envsetup.kafka'</span></em><a class="headerlink" href="#envlib.envsetup.kafka.Kafka.__module__" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="envlib.envsetup.kafka.Kafka.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#envlib.envsetup.kafka.Kafka.__weakref__" title="永久链接至目标"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="envlib.envsetup.k8s.html" class="btn btn-neutral float-left" title="envlib.envsetup.k8s module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="envlib.envsetup.mda.html" class="btn btn-neutral float-right" title="envlib.envsetup.mda module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

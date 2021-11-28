@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.vms &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.envsetup.vms</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.envsetup.vms 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @File:    vms.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Vms操作预置库</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">envlib.env.helpers</span> <span class="kn">import</span> <span class="n">GetKeysMixin</span>
+<span class="kn">from</span> <span class="nn">envlib.env_resources.preset_data</span> <span class="kn">import</span> <span class="n">VMS_GB_CODE</span><span class="p">,</span> <span class="n">VMS_GUARD_UPLOAD_IP</span>
+<span class="kn">from</span> <span class="nn">envlib.envsetup.udm</span> <span class="kn">import</span> <span class="n">Udm</span>
+<span class="kn">from</span> <span class="nn">envlib.envsetup.uuv</span> <span class="kn">import</span> <span class="n">Uuv</span>
+<span class="kn">from</span> <span class="nn">envlib.util</span> <span class="kn">import</span> <span class="n">get_last_ip_str</span>
+<span class="kn">from</span> <span class="nn">resources.data</span> <span class="kn">import</span> <span class="n">AUTO_CONFIG</span><span class="p">,</span> <span class="n">STORAGE_CONFIG</span><span class="p">,</span> <span class="n">HOST_IP</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Vms&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Vms"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms">[文档]</a><span class="k">class</span> <span class="nc">Vms</span><span class="p">(</span><span class="n">GetKeysMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Vms操作类&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Vms.__init__"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_config_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_config_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_config_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询VMS配置-参数设置</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;vms_config&#39;,value=查询接口返回值，VMS参数设置</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest查询接口返回值，VMS参数设置</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_config&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.config_vms_config_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.config_vms_config_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">config_vms_config_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;传入json,配置VMS配置-参数设置</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            json (any): json数据结构</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Vms.config_vms_gb_code"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.config_vms_gb_code">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">config_vms_gb_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;设置VMS配置-参数设置-GB配置</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_vms_gb_code</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_config_by_rest</span><span class="p">()[</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;configPar1&#39;</span><span class="p">)</span>  <span class="c1"># vms平台国标编码对应配置项30</span>
+        <span class="k">if</span> <span class="n">_vms_gb_code</span> <span class="o">==</span> <span class="n">VMS_GB_CODE</span><span class="p">:</span>  <span class="c1"># 已配置</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 未配置,则配置</span>
+            <span class="n">vms_gb_code_json</span> <span class="o">=</span> <span class="p">[{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                <span class="s2">&quot;configType&quot;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                <span class="s2">&quot;configName&quot;</span><span class="p">:</span> <span class="s2">&quot;平台国标编码&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;configSeq&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;configPar1&quot;</span><span class="p">:</span> <span class="n">VMS_GB_CODE</span><span class="p">,</span>
+                <span class="s2">&quot;configPar2&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;configPar3&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;stat&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;updated&quot;</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="p">}]</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">config_vms_config_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">vms_gb_code_json</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.config_vms_guard_upload"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.config_vms_guard_upload">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">config_vms_guard_upload</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;设置VMS配置-参数设置-门禁设置</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_vms_guard_upload_ip</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_config_by_rest</span><span class="p">()[</span><span class="mi">27</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s1">&#39;configPar1&#39;</span><span class="p">)</span>  <span class="c1"># 对应配置项27</span>
+        <span class="k">if</span> <span class="n">_vms_guard_upload_ip</span> <span class="o">==</span> <span class="n">VMS_GUARD_UPLOAD_IP</span><span class="p">:</span>  <span class="c1"># 已配置</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 未配置,则配置</span>
+            <span class="n">vms_guard_set_json</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+                    <span class="s2">&quot;configType&quot;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">config_vms_config_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">vms_guard_set_json</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.add_vms_storage_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_vms_storage_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;传入json，配置vms存储</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            json (any): json数据结构</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_storage_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storage_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_storage_list_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询VMS已配置的存储</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;vms_storage_list&#39;,value=查询接口返回值, VMS已配置的存储list</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值, VMS已配置的存储list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">vms_storage_list_json</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pageNo&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;totalPage&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;orderBy&quot;</span><span class="p">:</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;serviceType&quot;</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">vms_storage_list_json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storage_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_evc_storage_info_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_evc_storage_info_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_evc_storage_info_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询evc存储容量信息</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;vms_evc_storage_info&#39;,value=查询接口返回值，evc存储容量信息</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，evc存储容量信息</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">vms_get_evc_storage_cap_json</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;st&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;serverIP&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cm_ip&#39;</span><span class="p">)),</span>
+            <span class="s2">&quot;serverPort&quot;</span><span class="p">:</span> <span class="s2">&quot;9001&quot;</span>
+        <span class="p">}</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">vms_get_evc_storage_cap_json</span><span class="p">,</span>
+                               <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_evc_storage_info&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.add_vms_storage_plan_template_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_plan_template_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_vms_storage_plan_template_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;vms业务设置-录像管理-录像计划模板</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">vms_storage_plan_template_alltime_2m_json</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">AUTO_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_plan_template_name&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;streamType&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;storagePlanTimeIndex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;streamRate&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;reserveDay&quot;</span><span class="p">:</span> <span class="s2">&quot;7&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;oneRouteQuota&quot;</span><span class="p">:</span> <span class="mi">148</span>
+        <span class="p">}</span>
+
+        <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span>
+                         <span class="n">json</span><span class="o">=</span><span class="n">vms_storage_plan_template_alltime_2m_json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storage_plan_template_by_rest</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_storage_plan_template_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storage_plan_template_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_storage_plan_template_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询vms业务设置-录像管理-录像计划模板</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;vms_storage_plan_template&#39;,value=查询接口返回值，录像计划模板</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，录像计划模板</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">query_vms_storage_plan_template_json</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pageSize&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+            <span class="s2">&quot;pageNo&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span>
+                               <span class="n">json</span><span class="o">=</span><span class="n">query_vms_storage_plan_template_json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storage_plan_template&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_storageplan_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_storageplan_list_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询vms录像计划列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;vms_storageplan_list&#39;,value=查询接口返回值，录像计划列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，录像计划列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_json</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;orderBy&quot;</span><span class="p">:</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pageSize&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+            <span class="s2">&quot;pageNo&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">_json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storageplan_list&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_storageplan_detail_by_rest_via_record_id"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_detail_by_rest_via_record_id">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_storageplan_detail_by_rest_via_record_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">record_id</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询录像计划详情</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;vms_storageplan_detail&#39;,value=查询接口返回值，查询录像计划详情</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record_id (str): 录像计划id</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，查询录像计划详情</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/api/demo@get&#39;</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">bind_to_g</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;vms_storageplan_detail&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">),</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vms.add_vms_storageplan_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storageplan_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_vms_storageplan_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;添加设备录像</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            json (any): json数据结构</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Vms.modify_vms_storageplan_by_rest_via_json"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.modify_vms_storageplan_by_rest_via_json">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">modify_vms_storageplan_by_rest_via_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;修改设备录像</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            json (any): json数据结构</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_by_rest</span><span class="p">(</span><span class="s1">&#39;/api/demo@put&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_storageplan_used_channel_list_by_rest"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_used_channel_list_by_rest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_storageplan_used_channel_list_by_rest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;查询vms录像计划已使用的通道列表</span>
+
+<span class="sd">        查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下::</span>
+
+<span class="sd">            key=&#39;vms_storage_list&#39;,value=查询接口返回值，录像计划已使用的通道列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            check (bool): 接口返回状态码校验，默认不校验</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，录像计划已使用的通道列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Vms.add_vms_storage_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_vms_storage_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;根据env_ini中预设的存储配置，添加存储，当前仅支持sdk添加转存</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，录像计划列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_vms_storage_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storage_list_by_rest</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">_vms_storage_list</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 未添加存储</span>
+            <span class="n">vms_add_y3000_transit_json</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_name&#39;</span><span class="p">),</span>
+                <span class="s2">&quot;serverIP&quot;</span><span class="p">:</span> <span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cm_ip&#39;</span><span class="p">),</span>
+                <span class="s2">&quot;serverPort&quot;</span><span class="p">:</span> <span class="s2">&quot;9001&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;place&quot;</span><span class="p">:</span> <span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_quota&#39;</span><span class="p">),</span>
+                <span class="s2">&quot;storagePath&quot;</span><span class="p">:</span> <span class="s2">&quot;StoragePath</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">get_last_ip_str</span><span class="p">(</span><span class="n">HOST_IP</span><span class="p">)),</span>
+                <span class="s2">&quot;diskFullcoverPercent&quot;</span><span class="p">:</span> <span class="s2">&quot;99&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;isDirect&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;serviceType&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;installService&quot;</span><span class="p">:</span> <span class="kc">False</span>
+            <span class="p">}</span>
+
+            <span class="n">_res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_vms_storage_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">vms_add_y3000_transit_json</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result_code&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>  <span class="c1"># 存储目录&lt;6000G,减小容量重新添加,配置为当前可用容量的一半继续添加</span>
+
+                <span class="n">_free_capacity</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_evc_storage_info_by_rest</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;free_capacity&#39;</span><span class="p">)</span>
+                <span class="n">_vms_add_y3000_transit_json</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">vms_add_y3000_transit_json</span><span class="p">)</span>
+                <span class="n">_vms_add_y3000_transit_json</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">place</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_free_capacity</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+                <span class="n">_res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_vms_storage_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">_vms_add_y3000_transit_json</span><span class="p">)</span>
+            <span class="n">_vms_storage_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storage_list_by_rest</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">_vms_storage_list</span></div>
+
+<div class="viewcode-block" id="Vms.query_vms_storageplan_detail_channel_list_via_record_name"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.query_vms_storageplan_detail_channel_list_via_record_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_vms_storageplan_detail_channel_list_via_record_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">record_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;根据录像计划的名称，查询vms录像计划详详情中的设备列表</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record_name (str): 录像计划名称</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，录像计划详详情中的设备列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storageplan_list_by_rest</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">record_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;vms_storageplan_list&#39;</span><span class="p">)</span><span class="o">.</span> \
+                <span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">record_name</span><span class="p">})</span>
+
+            <span class="n">storageplan_detail_channel_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storageplan_detail_by_rest_via_record_id</span><span class="p">(</span>
+                <span class="n">record_id</span><span class="o">=</span><span class="n">record_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;channels&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;录像计划 &quot;</span><span class="si">{</span><span class="n">record_name</span><span class="si">}</span><span class="s1">&quot; 未创建&#39;</span><span class="p">)</span>
+            <span class="n">storageplan_detail_channel_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="n">storageplan_detail_channel_list</span></div>
+
+<div class="viewcode-block" id="Vms.add_vms_storage_plan_template_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storage_plan_template_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_vms_storage_plan_template_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;根据env.ini中的 ``vms_storage_plan_template_name`` 设置存储计划模板，默认存7天，全天录制，2M码率</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_vms_storage_plan_template_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storage_plan_template_by_rest</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">_vms_storage_plan_template_list</span><span class="p">:</span>
+            <span class="n">_exist_storage_plan_template</span> <span class="o">=</span> \
+                <span class="p">[</span><span class="n">_plan_template</span> <span class="k">for</span> <span class="n">_plan_template</span> <span class="ow">in</span> <span class="n">_vms_storage_plan_template_list</span> <span class="k">if</span>
+                 <span class="n">_plan_template</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">AUTO_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_plan_template_name&#39;</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_exist_storage_plan_template</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_exist_storage_plan_template</span><span class="p">:</span>  <span class="c1"># 未添加存储计划模板</span>
+            <span class="n">_res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_vms_storage_plan_template_by_rest</span><span class="p">()</span>
+            <span class="n">_vms_storage_plan_template_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storage_plan_template_by_rest</span><span class="p">()</span>
+            <span class="n">_exist_storage_plan_template</span> <span class="o">=</span> \
+                <span class="p">[</span><span class="n">_plan_template</span> <span class="k">for</span> <span class="n">_plan_template</span> <span class="ow">in</span> <span class="n">_vms_storage_plan_template_list</span> <span class="k">if</span>
+                 <span class="n">_plan_template</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">AUTO_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_plan_template_name&#39;</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">_exist_storage_plan_template</span></div>
+
+<div class="viewcode-block" id="Vms.add_vms_storageplan_from_env_ini"><a class="viewcode-back" href="../../../envlib.envsetup.vms.html#envlib.envsetup.vms.Vms.add_vms_storageplan_from_env_ini">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_vms_storageplan_from_env_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">record_quantity</span><span class="p">,</span>
+                                         <span class="n">record_name</span><span class="o">=</span><span class="n">AUTO_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_plan_record_name&#39;</span><span class="p">),</span>
+                                         <span class="n">org_name</span><span class="o">=</span><span class="s1">&#39;本域&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;根据env.ini中的 ``vms_storage_plan_record_name`` 添加默认录像计划</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record_quantity (int): 录像计划配额</span>
+<span class="sd">            record_name (str): 录像计划名称</span>
+<span class="sd">            org_name (str): 设备所属组织</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            rest接口返回值，录像计划详详情中的设备列表</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 获取组织id</span>
+        <span class="n">Uuv</span><span class="o">.</span><span class="n">query_uuv_organization_by_rest</span><span class="p">()</span>
+        <span class="n">org_index</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;uuv_organization_list&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;org_index&#39;</span><span class="p">,</span>
+                                                               <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;org_name&#39;</span><span class="p">:</span> <span class="n">org_name</span><span class="p">})</span>
+
+        <span class="c1"># 查询已有录像计划的设备通道编码列表</span>
+        <span class="n">used_channel_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storageplan_used_channel_list_by_rest</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">org_index</span><span class="p">)</span>
+
+        <span class="c1"># 查询设备列表</span>
+        <span class="n">Udm</span><span class="o">.</span><span class="n">query_encoder_face_tollgate_vehicle_tollgate_channel_list_by_rest_via_org_name</span><span class="p">(</span><span class="n">org_name</span><span class="o">=</span><span class="n">org_name</span><span class="p">,</span>
+                                                                                           <span class="n">include_child</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">used_channel_list</span><span class="p">:</span>  <span class="c1"># 已有录像计划</span>
+            <span class="c1"># 提取有可用的channel_list</span>
+            <span class="n">_channel_list</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;udm_encoder_face_tollgate_vehicle_tollgate_channel_list&#39;</span><span class="p">)</span><span class="o">.</span> \
+                <span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;ape_id&#39;</span><span class="p">,</span> <span class="s1">&#39;org_index&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;ape_id&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">used_channel_list</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_channel_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">_channel_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 无录像计划</span>
+            <span class="n">_channel_list</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;udm_encoder_face_tollgate_vehicle_tollgate_channel_list&#39;</span><span class="p">)</span><span class="o">.</span> \
+                <span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;ape_id&#39;</span><span class="p">,</span> <span class="s1">&#39;org_index&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_channel_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">_channel_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># 添加存储，并绑定到环境变量</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">add_vms_storage_from_env_ini</span><span class="p">()</span>
+        <span class="n">_storage_index</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;vms_storage_list&#39;</span><span class="p">)</span><span class="o">.</span> \
+            <span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">STORAGE_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_name&#39;</span><span class="p">)})</span>
+
+        <span class="c1"># 添加录像计划模板，并绑定到环境变量</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">add_vms_storage_plan_template_by_rest</span><span class="p">()</span>
+        <span class="n">_template_index</span><span class="p">,</span> <span class="n">_quota</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;vms_storage_plan_template&#39;</span><span class="p">)</span><span class="o">.</span> \
+            <span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;oneRouteQuota&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">AUTO_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vms_storage_plan_template_name&#39;</span><span class="p">)})</span>
+
+        <span class="c1"># 查询已存在的录像计划，并绑定到环境变量</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storageplan_list_by_rest</span><span class="p">()</span>
+
+        <span class="c1"># post的json模板</span>
+        <span class="n">_json</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># 获取录像计划id</span>
+        <span class="n">_record_id</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getk</span><span class="p">(</span><span class="s1">&#39;vms_storageplan_list&#39;</span><span class="p">)</span><span class="o">.</span> \
+            <span class="n">extracting</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">record_name</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">_record_id</span><span class="p">:</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;录像计划 </span><span class="si">{</span><span class="n">record_name</span><span class="si">}</span><span class="s1"> 已添加，将修改录像计划&#39;</span><span class="p">)</span>
+
+            <span class="c1"># 已添加录像计划，将提取已添加的通道信息，并与预期的数量进行判断</span>
+            <span class="n">storageplan_detail_channel_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storageplan_detail_channel_list_via_record_name</span><span class="p">(</span>
+                <span class="n">record_name</span><span class="o">=</span><span class="n">record_name</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_channel_list</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">storageplan_detail_channel_list</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">record_quantity</span><span class="p">,</span> \
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">org_name</span><span class="si">}</span><span class="s1">组织下设备数据少于预期值</span><span class="si">{</span><span class="n">record_quantity</span><span class="si">}</span><span class="s1">, 请调用Device.add_encoder_onvif进行添加&#39;</span>
+
+            <span class="k">if</span> <span class="n">record_quantity</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">storageplan_detail_channel_list</span><span class="p">):</span>
+                <span class="c1"># 预期需要添加的通道数量record_quantity &lt;= 已添加录像计划通道数量, 将调整为所需要的数量</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;预期需要添加的通道数量</span><span class="si">{</span><span class="n">record_quantity</span><span class="si">}</span><span class="s1"> &lt;= 已添加录像计划通道数量</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">storageplan_detail_channel_list</span><span class="p">)</span><span class="si">}</span><span class="s1">, 将调整为所需要的数量&#39;</span><span class="p">)</span>
+                <span class="n">channels</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;channelCode&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;channelCode&#39;</span><span class="p">],</span> <span class="s2">&quot;orgIndex&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;orgIndex&#39;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span>
+                            <span class="n">storageplan_detail_channel_list</span><span class="p">[:</span><span class="n">record_quantity</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># 预期需要添加的通道数量record_quantity &gt;= 已添加录像计划通道数量, 将从_channel_list中追加</span>
+                <span class="n">channels</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;channelCode&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;channelCode&#39;</span><span class="p">],</span> <span class="s2">&quot;orgIndex&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;orgIndex&#39;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span>
+                            <span class="n">storageplan_detail_channel_list</span><span class="p">]</span>
+                <span class="n">channels</span> <span class="o">=</span> <span class="n">channels</span> <span class="o">+</span> <span class="p">[{</span><span class="s2">&quot;channelCode&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;orgIndex&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span>
+                                       <span class="n">_channel_list</span><span class="p">[:</span><span class="n">record_quantity</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">storageplan_detail_channel_list</span><span class="p">)]]</span>
+
+            <span class="n">_json</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">_record_id</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">modify_vms_storageplan_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">_json</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storageplan_detail_channel_list_via_record_name</span><span class="p">(</span><span class="n">record_name</span><span class="o">=</span><span class="n">record_name</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;录像计划 </span><span class="si">{</span><span class="n">record_name</span><span class="si">}</span><span class="s1"> 未添加，将添加录像计划&#39;</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">_channel_list</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">record_quantity</span><span class="p">,</span> \
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">org_name</span><span class="si">}</span><span class="s1">组织下设备数据少于预期值</span><span class="si">{</span><span class="n">record_quantity</span><span class="si">}</span><span class="s1">, 请调用Device.add_encoder_onvif进行添加&#39;</span>
+
+            <span class="n">channels</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;channelCode&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;orgIndex&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">_channel_list</span><span class="p">[:</span><span class="n">record_quantity</span><span class="p">]]</span>
+            <span class="n">_json</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">add_vms_storageplan_by_rest_via_json</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">_json</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">query_vms_storageplan_detail_channel_list_via_record_name</span><span class="p">(</span><span class="n">record_name</span><span class="o">=</span><span class="n">record_name</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

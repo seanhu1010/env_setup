@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.kafka &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.envsetup.kafka</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.envsetup.kafka 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @File:    kafka.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">数据推送预置库</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span> <span class="k">as</span> <span class="nn">json_tool</span>
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Kafka&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Kafka"><a class="viewcode-back" href="../../../envlib.envsetup.kafka.html#envlib.envsetup.kafka.Kafka">[文档]</a><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;推数据到kafka，ssh方式&quot;&quot;&quot;</span>
+
+    <span class="n">kafka_port</span> <span class="o">=</span> <span class="mi">9093</span>
+
+<div class="viewcode-block" id="Kafka.produce_data"><a class="viewcode-back" href="../../../envlib.envsetup.kafka.html#envlib.envsetup.kafka.Kafka.produce_data">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">produce_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">body_list</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;visitor-event-topic&quot;</span><span class="p">,</span> <span class="n">topic_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;模拟kafka生产者，发送数据</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            body_list (list): 发送的数据对象列表</span>
+<span class="sd">            topic (str, optional): topic名称, (Default value = &quot;visitor-event-topic&quot;)</span>
+<span class="sd">            topic_key (str, optional): 是否带key，例如传topic_key=&quot;egs_upload_event&quot; (Default value = None)</span>
+<span class="sd">            timeout (int, optional): 超时时间, s, (Default value = 60)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: 终端打印输出</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cmd3</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;kafka-console-producer.sh --broker-list kafka-hs:</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">kafka_port</span><span class="si">}</span><span class="s2"> --topic </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">topic_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">topic_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">cmd3</span> <span class="o">+=</span> <span class="s2">&quot; --property </span><span class="se">\&quot;</span><span class="s2">parse.key=true</span><span class="se">\&quot;</span><span class="s2"> --property </span><span class="se">\&quot;</span><span class="s2">key.separator=:</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+
+        <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;kubectl exec -it kafka-0 bash&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;cd /opt/kafka_2.12-2.2.1/bin&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">cmd3</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="n">body_list</span><span class="p">:</span>
+            <span class="n">str_body</span> <span class="o">=</span> <span class="n">json_tool</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">topic_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">topic_key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">topic_key</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">str_body</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">str_body</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_cmds_with_expect</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;给topic </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s1"> 发送数据 </span><span class="si">{</span><span class="n">body_list</span><span class="si">}</span><span class="s1"> 超时, 报错信息为:</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="Kafka.consume_data"><a class="viewcode-back" href="../../../envlib.envsetup.kafka.html#envlib.envsetup.kafka.Kafka.consume_data">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">consume_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;uss-egs-event&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;模拟kafka生消费者，消费数据</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            topic (str, optional): topic名称 (Default value = &quot;uss-egs-event&quot;)</span>
+<span class="sd">            timeout (int, optional): 超时时间, s, (Default value = 60)</span>
+<span class="sd">            **kwargs: 可选字典项</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: 终端打印输出</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd3</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;kafka-console-consumer.sh --bootstrap-server kafka-hs:</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">kafka_port</span><span class="si">}</span><span class="s2"> --topic </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
+                <span class="n">cmd3</span> <span class="o">+=</span> <span class="s2">&quot; --</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cmd3</span> <span class="o">+=</span> <span class="s2">&quot; --</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;kubectl exec -it kafka-0 bash&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;cd /opt/kafka_2.12-2.2.1/bin&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">cmd3</span><span class="p">,</span> <span class="s2">&quot;}</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_cmds_with_expect</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;查询topic </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s1"> 数据超时, 报错信息为:</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">out</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

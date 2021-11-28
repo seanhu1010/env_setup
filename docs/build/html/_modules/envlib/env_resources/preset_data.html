@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.env_resources.preset_data &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.env_resources.preset_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.env_resources.preset_data 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding=utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">预置body</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">resources.data</span> <span class="kn">import</span> <span class="n">HOST_IP</span>
+
+<span class="c1"># ========解析env.ini,路径常量========</span>
+<span class="n">resources_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">resources_path_super</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">resources_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">root_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">resources_path_super</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+<span class="n">config_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="s1">&#39;env.ini&#39;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="c1"># ========设备添加相关========</span>
+<span class="c1"># 枚举变量-资源类型</span>
+<span class="n">RESOURCE_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;编码器&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;解码器&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;卡口&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;通道&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;门禁设备&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;报警设备&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RFID&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;流量设备&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;诱导屏&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;信号机&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;移动警务&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;采集设备&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;采集系统&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;访客机&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;网络键盘&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;拼控器&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># 枚举变量-设备子类型</span>
+<span class="n">SUB_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;IPC&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NVR&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DVR&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MDVR&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MTU300&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;拼控器&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;编码器&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;解码器&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;报警输入&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;人脸卡口&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;车辆卡口&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;门禁设备&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;访客机&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># 枚举变量-厂商类型</span>
+<span class="n">PRODUCER</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;UVW&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;海康&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;大华&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;艾礼富&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;宇视&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;科达&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;旷世&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;其他厂商&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;不存在的厂商1&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;不存在的厂商2&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 枚举变量-接入方式</span>
+<span class="n">ACCESS_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;私有SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;主动注册&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Onvif&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GB28181&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 枚举变量-在线状态</span>
+<span class="n">IS_ONLINE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;在线/启用&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;离线/停用&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;登录中&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;登陆失败&quot;</span><span class="p">:</span> <span class="s2">&quot;-2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;其他/异常&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># 枚举变量-报警主机设备子类型</span>
+<span class="n">SUB_TYPE_ALARM</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;TNW-9400&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Other&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 枚举变量-协议类型</span>
+<span class="n">SDK_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UVW-M1&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UVW-M2&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UVW-Y&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 文件格式转换字典</span>
+<span class="n">content_type_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;xls&quot;</span><span class="p">:</span> <span class="s2">&quot;application/vnd.ms-excel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;zip&quot;</span><span class="p">:</span> <span class="s2">&quot;application/x-zip-compressed&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;xlsx&quot;</span><span class="p">:</span> <span class="s2">&quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;image/jpeg&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;png&quot;</span><span class="p">:</span> <span class="s2">&quot;image/png&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;jpeg&quot;</span><span class="p">:</span> <span class="s2">&quot;image/jpeg&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># ========门禁相关========</span>
+<span class="c1"># REGISTER_ID = config.get(&#39;visitor&#39;, &#39;register_id&#39;)</span>
+
+<span class="c1"># 门禁相关</span>
+<span class="n">GUARD_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;人脸门禁&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;门禁控制器&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IPC&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># ========视图库相关========</span>
+<span class="c1"># 修改平台GB编码，传参</span>
+<span class="n">last_ip_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOST_IP</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>  <span class="c1"># 取平台IP后2段组成字符串，如1.1.1.1</span>
+<span class="n">VMS_GB_DEFAULT_CODE</span> <span class="o">=</span> <span class="s1">&#39;50010000002000000001&#39;</span>
+<span class="n">VMS_GB_CODE</span> <span class="o">=</span> <span class="n">VMS_GB_DEFAULT_CODE</span><span class="p">[:</span><span class="mi">20</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">last_ip_string</span><span class="p">)]</span> <span class="o">+</span> <span class="n">last_ip_string</span>  <span class="c1"># 用11694替换默认平台编码后5位</span>
+
+<span class="c1"># ========VMS相关========</span>
+<span class="c1"># VMS门禁设置，传参，默认设置上报综合安防地址，门禁数据推送视图库</span>
+<span class="n">VMS_GUARD_UPLOAD_IP</span> <span class="o">=</span> <span class="n">HOST_IP</span> <span class="o">+</span> <span class="s2">&quot;:40087&quot;</span>
+
+<span class="c1"># ========对象管理相关========</span>
+<span class="c1"># 各对象分组类型</span>
+<span class="n">OBJECT_GROUP_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;人员&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;静态库&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;黑名单&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;白名单&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;普通分组&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;客流密度底库&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;无感考勤&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;门禁考勤&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;车辆&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;黑名单&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;白名单&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;红名单&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;房屋&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;普通分组&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1"># 对象字典</span>
+<span class="n">OBJECT_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;人员&quot;</span><span class="p">:</span> <span class="s2">&quot;omperson&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;车辆&quot;</span><span class="p">:</span> <span class="s2">&quot;omvehicle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;房屋&quot;</span><span class="p">:</span> <span class="s2">&quot;omhouse&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># ========CMS相关========</span>
+<span class="c1"># cms_platform</span>
+<span class="n">cms_system_config_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;localCode&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;orgCode&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;placeCode&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;MTIzNDU2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ip&quot;</span><span class="p">:</span> <span class="n">HOST_IP</span><span class="p">,</span>
+    <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;placeName&quot;</span><span class="p">:</span> <span class="s2">&quot;500000,500100&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># cms一人一档配置</span>
+<span class="n">cms_archive_config_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># 聚档阈值75</span>
+    <span class="s2">&quot;confirm_threshold&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># 置信阈值75</span>
+    <span class="s2">&quot;confirm_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;algorithm_id&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="mi">0</span>  <span class="c1"># 置信模式全库</span>
+<span class="p">}</span>
+
+<span class="n">CMS_STORAGE_DIRECTORY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;scenefaces&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;storage_id&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;storage_info&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;capacity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">strategy</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="s2">0</span><span class="se">\&quot;</span><span class="s2">}&quot;</span><span class="p">}]},</span>
+    <span class="s2">&quot;featurefaces&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;storage_id&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                     <span class="s2">&quot;storage_info&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;capacity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">strategy</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="s2">0</span><span class="se">\&quot;</span><span class="s2">}&quot;</span><span class="p">}]},</span>
+<span class="p">}</span>
+
+<span class="n">CMS_STORAGE_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;scenefaces&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># ========多维布控任务========</span>
+<span class="c1"># 新建车辆布控任务</span>
+<span class="n">multi_vehice_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;vehicle_auto_1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;e684a66609d54f6595bb29c8677b1f44&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;auth_user_code_list&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;notify1&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;differentiated_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;disposition_type&quot;</span><span class="p">:</span> <span class="s2">&quot;E_Car_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;priority_level&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;plate_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="s2">&quot;A123456&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;colorList&quot;</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;黄&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;remark&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffcc00&quot;</span>
+            <span class="p">},</span> <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;蓝&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;remark&quot;</span><span class="p">:</span> <span class="s2">&quot;#188feb&quot;</span>
+            <span class="p">},</span> <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;绿&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;remark&quot;</span><span class="p">:</span> <span class="s2">&quot;#36c13c&quot;</span>
+            <span class="p">},</span> <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;黑&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;remark&quot;</span><span class="p">:</span> <span class="s2">&quot;#000000&quot;</span>
+            <span class="p">},</span> <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;白&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;remark&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffffff&quot;</span>
+            <span class="p">}],</span>
+            <span class="s2">&quot;plate&quot;</span><span class="p">:</span> <span class="s2">&quot;渝A123456&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plate_no&quot;</span><span class="p">:</span> <span class="s2">&quot;渝A123456&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plate_ownership_code&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;device_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;begin_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;end_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;disposition_to&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;notify_type_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># 新建人像民族布控</span>
+<span class="n">multi_face_national_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;民族布控&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;9f1a99187f2d4c149af754199cdf4e9a&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;auth_user_code_list&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;notify1&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;differentiated_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;disposition_type&quot;</span><span class="p">:</span> <span class="s2">&quot;E_Per_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;priority_level&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;algorithm_version&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;nation&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;begin_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;end_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;disposition_to&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;notify_type_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># 新建人像单对象布控</span>
+<span class="n">multi_face_single_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;单人布控&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;9f1a99187f2d4c149af754199cdf4e9a&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;auth_user_code_list&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;notify1&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;differentiated_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;disposition_type&quot;</span><span class="p">:</span> <span class="s2">&quot;E_Per_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;priority_level&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;algorithm_version&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;target_image_uri&quot;</span><span class="p">:</span> <span class="s2">&quot;data:image/jpeg;base64,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&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;face&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gender&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;birthday&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;begin_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;end_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;disposition_to&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;notify_type_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># 白名单布控</span>
+<span class="n">multi_face_tab_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;人像白名单布控&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;9f1a99187f2d4c149af754199cdf4e9a&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resource_type&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;auth_user_code_list&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;notify1&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;differentiated_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;disposition_type&quot;</span><span class="p">:</span> <span class="s2">&quot;E_Per_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;priority_level&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;algorithm_version&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;tab_id_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;tab_id_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;begin_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;end_mills&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;disposition_to&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;notify_type_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># ========解析相关========</span>
+<span class="c1"># 算力查询-解析类型</span>
+<span class="n">product_type</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;人脸&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;结构化&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;车辆&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="c1"># 算力查询-解析类型</span>
+<span class="n">service_type</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;图片流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;视频流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;特征对比&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="c1"># 解析任务类型</span>
+<span class="n">analysis_type</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;人脸实时图片流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;人脸实时视频流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;人脸在线录像&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;人脸本地文件&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;人脸人体实时视频流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;人脸人体在线录像&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;人脸人体本地文件&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;结构化实时视频流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;结构化在线录像&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;结构化本地文件&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;结构化图片流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;车辆二次解析&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># 解析定时设置</span>
+<span class="n">cycle_type</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;无&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;按日循环&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;按周循环&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;按月循环&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;定时不循环&quot;</span><span class="p">:</span> <span class="mi">0</span>
+
+<span class="p">}</span>
+
+<span class="c1"># 任务优先级</span>
+<span class="n">priority_level</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;紧急&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;常规&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;闲时&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="c1"># 解析类型</span>
+<span class="n">source_type</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;实时视频流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;实时图片流&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;在线录像&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;离线文件&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="c1"># ========车辆相关========</span>
+<span class="c1"># 车牌颜色</span>
+<span class="n">VEHICLE_PLATE_COLOR</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;绿色&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;蓝色&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;黑色&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;不限&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 车辆类型</span>
+<span class="n">VEHICLE_CLASS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;客车&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;轿车&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;不限&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 车牌类型</span>
+<span class="n">PLATE_CLASS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;小型汽车牌号&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 车辆品牌</span>
+<span class="n">VEHICLE_BRANDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;奇瑞&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;铃木&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;马自达&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;不限&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+
+<span class="c1"># 查询数据类型</span>
+<span class="n">VEHICLE_PLATE_RECOGNITION_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;图像识别&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rfid识别&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;双基识别&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 布控等级</span>
+<span class="n">VEHICLE_BASE_PRIORITY_LEVEL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;一级布控&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;二级布控&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;三级布控&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># 车牌</span>
+<span class="n">VEHICLE_PLATE_NO</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;不限&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 卡口类型</span>
+<span class="n">TOLLGATE_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;人脸卡口&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;车辆卡口&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">}</span>
+
+
+<span class="c1"># ========添加设备相关========</span>
+<div class="viewcode-block" id="func_encoder_body"><a class="viewcode-back" href="../../../envlib.env_resources.preset_data.html#envlib.env_resources.preset_data.func_encoder_body">[文档]</a><span class="k">def</span> <span class="nf">func_encoder_body</span><span class="p">(</span><span class="n">ip_port</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin123&#39;</span><span class="p">,</span>
+                      <span class="n">org_name</span><span class="o">=</span><span class="s2">&quot;本域&quot;</span><span class="p">,</span> <span class="n">org_index</span><span class="o">=</span><span class="s2">&quot;10&quot;</span><span class="p">,</span> <span class="n">place_code</span><span class="o">=</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span>
+                      <span class="n">resource_type</span><span class="o">=</span><span class="n">RESOURCE_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;编码器&quot;</span><span class="p">),</span>
+                      <span class="n">access_type</span><span class="o">=</span><span class="n">ACCESS_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Onvif&quot;</span><span class="p">),</span>
+                      <span class="n">producer</span><span class="o">=</span><span class="n">PRODUCER</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;华智&quot;</span><span class="p">),</span>
+                      <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span>
+                      <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span>
+                      <span class="p">):</span>
+    <span class="k">pass</span>  <span class="c1"># demonstrate</span></div>
+
+
+<div class="viewcode-block" id="func_visitor_body"><a class="viewcode-back" href="../../../envlib.env_resources.preset_data.html#envlib.env_resources.preset_data.func_visitor_body">[文档]</a><span class="k">def</span> <span class="nf">func_visitor_body</span><span class="p">(</span><span class="n">ip_port</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">register_id</span><span class="p">,</span> <span class="n">org_name</span><span class="p">,</span> <span class="n">org_index</span><span class="p">,</span> <span class="n">place_code</span><span class="o">=</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span> <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span>
+                      <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="p">):</span>
+    <span class="k">pass</span>  <span class="c1"># demonstrate</span></div>
+
+
+<div class="viewcode-block" id="func_guard_body"><a class="viewcode-back" href="../../../envlib.env_resources.preset_data.html#envlib.env_resources.preset_data.func_guard_body">[文档]</a><span class="k">def</span> <span class="nf">func_guard_body</span><span class="p">(</span><span class="n">ip_port</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">org_name</span><span class="p">,</span> <span class="n">org_index</span><span class="p">,</span> <span class="n">sub_type</span><span class="p">,</span> <span class="n">place_code</span><span class="o">=</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span>
+                    <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span>
+                    <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="p">):</span>
+    <span class="k">pass</span>  <span class="c1"># demonstrate</span></div>
+
+
+<div class="viewcode-block" id="func_tollgate_body"><a class="viewcode-back" href="../../../envlib.env_resources.preset_data.html#envlib.env_resources.preset_data.func_tollgate_body">[文档]</a><span class="k">def</span> <span class="nf">func_tollgate_body</span><span class="p">(</span><span class="n">ip_port</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sub_type</span><span class="p">,</span> <span class="n">channel_sub_type</span><span class="p">,</span> <span class="n">org_name</span><span class="p">,</span> <span class="n">org_index</span><span class="p">,</span> <span class="n">place_code</span><span class="o">=</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span>
+                       <span class="n">se_longitude</span><span class="o">=</span><span class="p">(</span><span class="mf">105.5</span><span class="p">,</span> <span class="mf">106.5</span><span class="p">),</span>
+                       <span class="n">se_latitude</span><span class="o">=</span><span class="p">(</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="p">):</span>
+    <span class="k">pass</span>  <span class="c1"># demonstrate</span></div>
+
+
+<span class="c1"># 默认headers（临时鉴权）</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;charset&quot;</span><span class="p">:</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;User&quot;</span><span class="p">:</span> <span class="s2">&quot;username%253Aadmin</span><span class="si">%2526u</span><span class="s2">sercode%253Aadmin&quot;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+    <span class="n">resources_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">resources_path_super</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">resources_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">root_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">resources_path_super</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">root_path</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

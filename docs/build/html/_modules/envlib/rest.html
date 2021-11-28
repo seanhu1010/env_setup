@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.rest &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.rest</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.rest 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlencode</span><span class="p">,</span> <span class="n">quote</span>
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">envlib.util</span> <span class="kn">import</span> <span class="n">validate_url</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rest&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="Rest"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest">[文档]</a><span class="k">class</span> <span class="nc">Rest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;restful接口操作基础库</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        logger: 日志模块</span>
+<span class="sd">        session: 会话</span>
+<span class="sd">        host: str: 平台URL, 例如&#39;http://ip:8000&#39;</span>
+<span class="sd">        timeout: 超时时间</span>
+<span class="sd">        headers: 请求头，默认为None</span>
+<span class="sd">        cookies: cookies</span>
+<span class="sd">        verify: verify</span>
+
+<span class="sd">    Tip:</span>
+<span class="sd">        有两种使用方法：</span>
+<span class="sd">        1、使用send方法解析专有格式的uri（uri@method格式的）</span>
+<span class="sd">        2、使用传统方式，传入完整url和参数</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Rest.__init__"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">validate_url</span><span class="p">(</span><span class="n">host</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;输入的主机地址不符合正则规定，请检查！！&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cookies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">cookies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verify</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">verify</span></div>
+
+<div class="viewcode-block" id="Rest.send"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.send">[文档]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;request send请求, 通过uri中的@判断到对应的post/get等方法</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: 形如&quot;/api/demo@get&quot;这样包含相对uri和method</span>
+<span class="sd">            *args: 无实际意义</span>
+<span class="sd">            **kwargs: 允许的options</span>
+<span class="sd">                &#39;method&#39;, &#39;url&#39;, &#39;params&#39;, &#39;data&#39;, &#39;headers&#39;, &#39;cookies&#39;, &#39;files&#39;, &#39;auth&#39;, &#39;timeout&#39;,</span>
+<span class="sd">                &#39;allow_redirects&#39;, &#39;proxies&#39;, &#39;hooks&#39;, &#39;stream&#39;, &#39;verify&#39;, &#39;cert&#39;, &#39;json&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            接口response对象</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="s2">&quot;@&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;URL not contain request METHOD infomation, use other specific method&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url_data&quot;</span><span class="p">))</span>
+        <span class="n">url_info</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="n">url_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">host</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span>
+        <span class="n">actual_url</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">uri</span><span class="p">:</span>
+            <span class="n">slash</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;/&#39;</span>
+            <span class="n">actual_url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">slash</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
+        <span class="n">method_name</span> <span class="o">=</span> <span class="n">url_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="n">actual_url</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;解析出的方法不存在，请检查@后的字符&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Rest.post"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">url</span><span class="p">,</span>
+             <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;发送post请求</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: 请求地址,形如&quot;/api/demo@get&quot;这样包含相对uri和method</span>
+<span class="sd">            data: a dictionary of key-value pairs that will be urlencoded</span>
+<span class="sd">               and sent as POST data</span>
+<span class="sd">               or binary data that is sent as the raw body content</span>
+<span class="sd">               or passed as such for multipart form data if ``files`` is also defined</span>
+<span class="sd">            json: a value that will be json encoded</span>
+<span class="sd">               and sent as POST data if files or data is not specified</span>
+<span class="sd">            params: url parameters to append to the uri</span>
+<span class="sd">            headers: a dictionary of headers to use with the request</span>
+<span class="sd">            files: a dictionary of file names containing file data to POST to the server</span>
+<span class="sd">            allow_redirects: Boolean. Set to True if POST/PUT/DELETE redirect following is allowed.</span>
+<span class="sd">            timeout: connection timeout</span>
+<span class="sd">            **kwargs: 其他允许的options</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            接口response对象</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cookies</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cookies&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cookies&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">redir</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">allow_redirects</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">allow_redirects</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span> <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">json</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+            <span class="n">allow_redirects</span><span class="o">=</span><span class="n">redir</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="n">cookies</span><span class="o">=</span><span class="n">cookies</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">data_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)[:</span><span class="mi">400</span><span class="p">]</span>
+        <span class="n">json_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="p">)[:</span><span class="mi">400</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;请求文件：</span><span class="si">{</span><span class="n">files</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------响应状态码---</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;-------请求路径 : </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求参数 : </span><span class="si">{</span><span class="n">json_str</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求头 : </span><span class="si">{</span><span class="n">headers</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求方式 : POST&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-------请求返回值 : </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+<div class="viewcode-block" id="Rest.get"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">url</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;发送get请求</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: 请求地址,形如&quot;/api/demo@get&quot;这样包含相对uri和method</span>
+<span class="sd">            params: url parameters to append to the uri</span>
+<span class="sd">            headers: a dictionary of headers to use with the request</span>
+<span class="sd">            json: a value that will be json encoded</span>
+<span class="sd">               and sent as POST data if files or data is not specified</span>
+<span class="sd">            allow_redirects: Boolean. Set to True if POST/PUT/DELETE redirect following is allowed.</span>
+<span class="sd">            timeout: connection timeout</span>
+<span class="sd">            **kwargs: 其他允许的options</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            接口response对象</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">redir</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">allow_redirects</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">allow_redirects</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span> <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
+                                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                                <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span>
+                                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_utf8_urlencode</span><span class="p">(</span><span class="n">params</span><span class="p">),</span>
+                                <span class="n">allow_redirects</span><span class="o">=</span><span class="n">redir</span><span class="p">,</span>
+                                <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">),</span>
+                                <span class="n">cookies</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cookies</span><span class="p">,</span>
+                                <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verify</span><span class="p">,</span>
+                                <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">json_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span>
+        <span class="n">params_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span> <span class="k">else</span> <span class="n">json_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;-------请求路径 : </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求参数 : </span><span class="si">{</span><span class="n">params_str</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求头 : </span><span class="si">{</span><span class="n">headers</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求方式 : GET&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------响应状态码---</span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-------请求返回值 : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)[:</span><span class="mi">500</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">resp</span></div>
+
+<div class="viewcode-block" id="Rest.put"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">url</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;发送put请求</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: 请求地址,形如&quot;/api/demo@get&quot;这样包含相对uri和method</span>
+<span class="sd">            data: a dictionary of key-value pairs that will be urlencoded</span>
+<span class="sd">               and sent as POST data</span>
+<span class="sd">               or binary data that is sent as the raw body content</span>
+<span class="sd">               or passed as such for multipart form data if ``files`` is also defined</span>
+<span class="sd">            json: a value that will be json encoded</span>
+<span class="sd">               and sent as POST data if files or data is not specified</span>
+<span class="sd">            params: url parameters to append to the uri</span>
+<span class="sd">            headers: a dictionary of headers to use with the request</span>
+<span class="sd">            files: a dictionary of file names containing file data to POST to the server</span>
+<span class="sd">            allow_redirects: Boolean. Set to True if POST/PUT/DELETE redirect following is allowed.</span>
+<span class="sd">            timeout: connection timeout</span>
+<span class="sd">            **kwargs: 其他允许的options</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            接口response对象</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">redir</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">allow_redirects</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">allow_redirects</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span> <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+            <span class="n">allow_redirects</span><span class="o">=</span><span class="n">redir</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span>
+        <span class="n">json_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span>
+        <span class="n">params_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span> <span class="k">else</span> <span class="n">json_str</span>
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;请求文件 : </span><span class="si">{</span><span class="n">files</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;-------请求路径 : </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求参数 : </span><span class="si">{</span><span class="n">params_str</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求头 : </span><span class="si">{</span><span class="n">headers</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求方式 : PUT&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------响应状态码---</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-------请求返回值 : </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+<div class="viewcode-block" id="Rest.patch"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.patch">[文档]</a>    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">url</span><span class="p">,</span>
+              <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;发送patch请求</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: 请求地址,形如&quot;/api/demo@get&quot;这样包含相对uri和method</span>
+<span class="sd">            data: a dictionary of key-value pairs that will be urlencoded</span>
+<span class="sd">               and sent as POST data</span>
+<span class="sd">               or binary data that is sent as the raw body content</span>
+<span class="sd">               or passed as such for multipart form data if ``files`` is also defined</span>
+<span class="sd">            json: a value that will be json encoded</span>
+<span class="sd">               and sent as POST data if files or data is not specified</span>
+<span class="sd">            params: url parameters to append to the uri</span>
+<span class="sd">            headers: a dictionary of headers to use with the request</span>
+<span class="sd">            files: a dictionary of file names containing file data to POST to the server</span>
+<span class="sd">            allow_redirects: Boolean. Set to True if POST/PUT/DELETE redirect following is allowed.</span>
+<span class="sd">            timeout: connection timeout</span>
+<span class="sd">            **kwargs: 其他允许的options</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            接口response对象</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">redir</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">allow_redirects</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">allow_redirects</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span> <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+            <span class="n">allow_redirects</span><span class="o">=</span><span class="n">redir</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)[:</span><span class="mi">40</span><span class="p">]</span>
+        <span class="n">json_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="p">)[:</span><span class="mi">40</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;PATCH Request : uri=</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">,params=</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s1">, data=</span><span class="si">{</span><span class="n">data_str</span><span class="si">}</span><span class="s1">, json=</span><span class="si">{</span><span class="n">json_str</span><span class="si">}</span><span class="s1">,headers=</span><span class="si">{</span><span class="n">headers</span><span class="si">}</span><span class="s1">, &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;files=</span><span class="si">{</span><span class="n">files</span><span class="si">}</span><span class="s1">, allow_redirects=</span><span class="si">{</span><span class="n">redir</span><span class="si">}</span><span class="s1">, timeout=</span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Patch Response : </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+<div class="viewcode-block" id="Rest.delete"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.delete">[文档]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">url</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;发送delete请求</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: 请求地址,形如&quot;/api/demo@get&quot;这样包含相对uri和method</span>
+<span class="sd">            data: a dictionary of key-value pairs that will be urlencoded</span>
+<span class="sd">               and sent as POST data</span>
+<span class="sd">               or binary data that is sent as the raw body content</span>
+<span class="sd">               or passed as such for multipart form data if ``files`` is also defined</span>
+<span class="sd">            json: a value that will be json encoded</span>
+<span class="sd">               and sent as POST data if files or data is not specified</span>
+<span class="sd">            params: url parameters to append to the uri</span>
+<span class="sd">            headers: a dictionary of headers to use with the request</span>
+<span class="sd">            allow_redirects: Boolean. Set to True if POST/PUT/DELETE redirect following is allowed.</span>
+<span class="sd">            timeout: connection timeout</span>
+<span class="sd">            **kwargs: 其他允许的options</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            接口response对象</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">redir</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">allow_redirects</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">allow_redirects</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span> <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="n">redir</span><span class="p">,</span>
+                                       <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">data_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)[:</span><span class="mi">40</span><span class="p">]</span>
+        <span class="n">json_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">json</span><span class="p">)[:</span><span class="mi">40</span><span class="p">]</span>
+        <span class="n">params_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)[:</span><span class="mi">200</span><span class="p">]</span> <span class="k">else</span> <span class="n">json_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;-------请求路径 : </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求参数 : </span><span class="si">{</span><span class="n">params_str</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求头 : </span><span class="si">{</span><span class="n">headers</span><span class="si">}</span><span class="se">\n</span><span class="s1">-------请求方式 : DELETE&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-------响应状态码---</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-------请求返回值 : </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+<div class="viewcode-block" id="Rest.close"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.close">[文档]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;关闭session连接&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Rest._format_data_to_log_string_according_to_header"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._format_data_to_log_string_according_to_header">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_format_data_to_log_string_according_to_header</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="n">dataStr</span> <span class="o">=</span> <span class="s2">&quot;&lt;empty&gt;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;Content-Type&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;application/json&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;application/x-www-form-urlencoded&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                    <span class="n">dataStr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dataStr</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dataStr</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span>
+
+        <span class="k">return</span> <span class="n">dataStr</span></div>
+
+<div class="viewcode-block" id="Rest._get_timeout"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._get_timeout">[文档]</a>    <span class="k">def</span> <span class="nf">_get_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span> <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span>
+        <span class="k">return</span> <span class="n">timeout</span></div>
+
+<div class="viewcode-block" id="Rest._get_str_from_bytes"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._get_str_from_bytes">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_str_from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">coding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">coding</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">content</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Rest._get_base64_from_data"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._get_base64_from_data">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_base64_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">base64</span>
+        <span class="c1"># 如果是二进制内容，直接把二进制编码成base64</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># 如果是字符串，尝试判断是不是文件</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Rest._merge_headers"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._merge_headers">[文档]</a>    <span class="k">def</span> <span class="nf">_merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">headers</span></div>
+
+<div class="viewcode-block" id="Rest._utf8_urlencode"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._utf8_urlencode">[文档]</a>    <span class="k">def</span> <span class="nf">_utf8_urlencode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_string_type</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="n">utf8_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_string_type</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="n">utf8_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">urlencode</span><span class="p">(</span><span class="n">utf8_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Rest._is_json"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._is_json">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_json</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Rest._is_string_type"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest._is_string_type">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_string_type</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Rest.encode_authentication"><a class="viewcode-back" href="../../envlib.rest.html#envlib.rest.Rest.encode_authentication">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">encode_authentication</span><span class="p">(</span><span class="n">usercode</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;将用户信息，转换成鉴权Header使用User的字符串，如&#39;User: usercode%253Aadmin%2526username%253Aadmin&#39;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            usercode: 用户编号，string</span>
+<span class="sd">            username: 用户名，string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Header的User所需字符串</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;usercode:</span><span class="si">{</span><span class="n">usercode</span><span class="si">}</span><span class="s1">&amp;username:</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># twice</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

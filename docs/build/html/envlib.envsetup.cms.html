@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.envsetup.cms module &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="envlib.envsetup.fullanalysis module" href="envlib.envsetup.fullanalysis.html" />
+    <link rel="prev" title="envlib.envsetup package" href="envlib.envsetup.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">envlib</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="envlib.html">envlib package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="envlib.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="envlib.env.html">envlib.env package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="envlib.env_resources.html">envlib.env_resources package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="envlib.envsetup.html">envlib.envsetup package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="envlib.html#module-envlib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">envlib</a> &raquo;</li>
+          <li><a href="envlib.html">envlib package</a> &raquo;</li>
+          <li><a href="envlib.envsetup.html">envlib.envsetup package</a> &raquo;</li>
+      <li>envlib.envsetup.cms module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/envlib.envsetup.cms.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-envlib.envsetup.cms">
+<span id="envlib-envsetup-cms-module"></span><h1>envlib.envsetup.cms module<a class="headerlink" href="#module-envlib.envsetup.cms" title="永久链接至标题"></a></h1>
+<section id="envlib-cms">
+<h2>envlib.cms<a class="headerlink" href="#envlib-cms" title="永久链接至标题"></a></h2>
+<p>Cms配置类预置库</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">envlib.envsetup.cms.</span></span><span class="sig-name descname"><span class="pre">Cms</span></span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="envlib.env.helpers.html#envlib.env.helpers.GetKeysMixin" title="envlib.env.helpers.GetKeysMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">envlib.env.helpers.GetKeysMixin</span></code></a></p>
+<p>Cms配置类</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.__init__" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.query_cms_platform_config_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_cms_platform_config_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.query_cms_platform_config_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.query_cms_platform_config_by_rest" title="永久链接至目标"></a></dt>
+<dd><p>查询cms，系统配置，平台配置</p>
+<p>查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 <code class="docutils literal notranslate"><span class="pre">g</span></code> 下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>key=&#39;cms_platform_config&#39;, value=查询接口返回值，cms，系统配置，平台配置
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值，cms，系统配置，平台配置</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.config_cms_platform_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_cms_platform_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'ip':</span> <span class="pre">'1.1.1.1',</span> <span class="pre">'localCode':</span> <span class="pre">'xyz',</span> <span class="pre">'orgCode':</span> <span class="pre">'xyz',</span> <span class="pre">'password':</span> <span class="pre">'MTIzNDU2',</span> <span class="pre">'placeCode':</span> <span class="pre">'xyz',</span> <span class="pre">'placeName':</span> <span class="pre">'500000,500100',</span> <span class="pre">'port':</span> <span class="pre">'xyz',</span> <span class="pre">'username':</span> <span class="pre">'admin'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.config_cms_platform_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.config_cms_platform_by_rest" title="永久链接至目标"></a></dt>
+<dd><p>cms,系统配置,平台配置</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json</strong> (<em>any</em>) – json数据结构</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.query_cms_archive_config_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_cms_archive_config_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.query_cms_archive_config_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.query_cms_archive_config_by_rest" title="永久链接至目标"></a></dt>
+<dd><p>查询cms，系统配置，一人一档配置</p>
+<p>查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 <code class="docutils literal notranslate"><span class="pre">g</span></code> 下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>key=&#39;cms_archive_config&#39;, value=查询接口返回值，cms，系统配置，一人一档配置
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值，cms，系统配置，一人一档配置</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.config_cms_archive_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_cms_archive_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'algorithm_id':</span> <span class="pre">'xyz',</span> <span class="pre">'confirm_threshold':</span> <span class="pre">0,</span> <span class="pre">'confirm_type':</span> <span class="pre">0,</span> <span class="pre">'mode':</span> <span class="pre">0,</span> <span class="pre">'threshold':</span> <span class="pre">0}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.config_cms_archive_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.config_cms_archive_by_rest" title="永久链接至目标"></a></dt>
+<dd><p>cms,系统配置,一人一档</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json</strong> (<em>any</em>) – json数据结构</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.query_cms_cloud_storage_list_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_cms_cloud_storage_list_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.query_cms_cloud_storage_list_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.query_cms_cloud_storage_list_by_rest" title="永久链接至目标"></a></dt>
+<dd><p>cms-查询存储集群列表</p>
+<p>查询结果绑定到 当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 <code class="docutils literal notranslate"><span class="pre">g</span></code> 下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>key=&#39;cms_cloud_storage_list&#39;, value=查询接口返回值，cms-查询存储集群列表
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值，cms-查询存储集群列表</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.add_cms_cloud_storage_by_rest_via_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_cms_cloud_storage_by_rest_via_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.add_cms_cloud_storage_by_rest_via_json"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.add_cms_cloud_storage_by_rest_via_json" title="永久链接至目标"></a></dt>
+<dd><p>cms系统配置-云存储配置-添加存储集群</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json</strong> (<em>any</em>) – json数据结构</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.query_cms_cloud_storage_capacity_by_rest">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_cms_cloud_storage_capacity_by_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1.1.1.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.query_cms_cloud_storage_capacity_by_rest"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.query_cms_cloud_storage_capacity_by_rest" title="永久链接至目标"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip</strong> (<em>str</em>) – ip</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_by_rest_via_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_cms_cloud_storage_directory_by_rest_via_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.config_cms_cloud_storage_directory_by_rest_via_json"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_by_rest_via_json" title="永久链接至目标"></a></dt>
+<dd><p>cms-存储集群存储目录配置</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json</strong> (<em>any</em>) – json数据结构</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.query_cms_cloud_storage_directory_by_rest_via_params">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_cms_cloud_storage_directory_by_rest_via_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.query_cms_cloud_storage_directory_by_rest_via_params"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.query_cms_cloud_storage_directory_by_rest_via_params" title="永久链接至目标"></a></dt>
+<dd><p>cms-查询存储集群存储目录配置</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>any</em>) – params数据结构</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – 接口返回状态码校验，默认不校验</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.config_cms_cloud_storage_from_env_ini">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_cms_cloud_storage_from_env_ini</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.config_cms_cloud_storage_from_env_ini"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.config_cms_cloud_storage_from_env_ini" title="永久链接至目标"></a></dt>
+<dd><p>cms,系统配置-云存储配置，根据env_ini中预设的存储集群，添加存储集群</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.get_storage_id_via_cm_ip">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_storage_id_via_cm_ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cm_ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1.1.1.1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.get_storage_id_via_cm_ip"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.get_storage_id_via_cm_ip" title="永久链接至目标"></a></dt>
+<dd><p>通过cm ip获取存储id</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>cm_ip</strong> (<em>str</em>) – cm ip</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>rest接口返回值, 存储id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_from_env_ini">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_cms_cloud_storage_directory_from_env_ini</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/envlib/envsetup/cms.html#Cms.config_cms_cloud_storage_directory_from_env_ini"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#envlib.envsetup.cms.Cms.config_cms_cloud_storage_directory_from_env_ini" title="永久链接至目标"></a></dt>
+<dd><p>cms,系统配置-云存储配置，根据env_ini中预设的存储集群，进行目录配置</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>rest接口返回值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="envlib.envsetup.cms.Cms.__module__">
+<span class="sig-name descname"><span class="pre">__module__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'envlib.envsetup.cms'</span></em><a class="headerlink" href="#envlib.envsetup.cms.Cms.__module__" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="envlib.envsetup.html" class="btn btn-neutral float-left" title="envlib.envsetup package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="envlib.envsetup.fullanalysis.html" class="btn btn-neutral float-right" title="envlib.envsetup.fullanalysis module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
