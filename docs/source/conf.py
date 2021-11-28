@@ -15,6 +15,9 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../envlib'))
+sys.path.insert(0, os.path.abspath('../../envlib/env'))
+sys.path.insert(0, os.path.abspath('../../envlib/envsetup'))
+sys.path.insert(0, os.path.abspath('../../envlib/env_resources'))
 
 # -- Project information -----------------------------------------------------
 
