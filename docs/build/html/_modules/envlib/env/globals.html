@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.env.globals &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.env.globals</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.env.globals 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python </span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @Author:  sean</span>
+<span class="c1"># @File:    globals.py</span>
+<span class="c1"># @Time:    2021/06/18</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    定义全局变量代理到当前激活的上下文环境</span>
+
+<span class="sd">    ``ctx_stack``: Env运行的堆栈</span>
+
+<span class="sd">    ``current_app``: 代理到当前运行的Env实例</span>
+
+<span class="sd">    ``g``: 代理到当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例，支持getk来extracting快捷提取所需字段, 详见ExtractingMixin类说明</span>
+
+<span class="sd">    ``env_pools``: 基于import实现单例Rest实例池</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.local</span> <span class="kn">import</span> <span class="n">LocalStack</span>
+<span class="kn">from</span> <span class="nn">envlib.env.local</span> <span class="kn">import</span> <span class="n">LocalProxy</span>
+
+
+<div class="viewcode-block" id="_lookup_app_object"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.globals._lookup_app_object">[文档]</a><span class="k">def</span> <span class="nf">_lookup_app_object</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx_stack</span><span class="o">.</span><span class="n">top</span>
+    <span class="k">if</span> <span class="n">top</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Working outside of ctx context.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_find_app"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.globals._find_app">[文档]</a><span class="k">def</span> <span class="nf">_find_app</span><span class="p">():</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx_stack</span><span class="o">.</span><span class="n">top</span>
+    <span class="k">if</span> <span class="n">top</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Working outside of ctx context.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">top</span><span class="o">.</span><span class="n">app</span></div>
+
+
+<span class="c1"># Env运行的堆栈</span>
+<span class="n">ctx_stack</span> <span class="o">=</span> <span class="n">LocalStack</span><span class="p">()</span>
+
+<span class="c1"># 代理到当前运行的Env实例</span>
+<span class="n">current_app</span> <span class="o">=</span> <span class="n">LocalProxy</span><span class="p">(</span><span class="n">_find_app</span><span class="p">)</span>
+
+<span class="c1"># 代理到当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例，支持getk来extracting快捷提取所需字段</span>
+<span class="c1"># 详见ExtractingMixin类说明</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">LocalProxy</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">_lookup_app_object</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">))</span>
+
+<span class="c1"># 基于import实现单例Rest实例池</span>
+<span class="n">env_pools</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># import单例，全局变量</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

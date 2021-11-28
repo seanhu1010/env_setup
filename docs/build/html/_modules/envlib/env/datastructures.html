@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.env.datastructures &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.env.datastructures</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.env.datastructures 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python </span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @Author:  sean</span>
+<span class="c1"># @File:    datastructures.py</span>
+<span class="c1"># @Time:    2021/06/11</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    werkzeug.datastructures</span>
+<span class="sd">    ~~~~~~~~~~~~~~~~~~~~~~~</span>
+
+<span class="sd">    This module provides mixins and classes with an immutable interface.</span>
+<span class="sd">    一些扩展的数据结构，如MultiDict, ImmutableDict等</span>
+
+<span class="sd">    :copyright: 2007 Pallets</span>
+<span class="sd">    :license: BSD-3-Clause</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env</span> <span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="nn">envlib.env._compat</span> <span class="kn">import</span> <span class="n">iteritems</span>
+<span class="kn">from</span> <span class="nn">envlib.env._compat</span> <span class="kn">import</span> <span class="n">iterkeys</span>
+<span class="kn">from</span> <span class="nn">envlib.env._compat</span> <span class="kn">import</span> <span class="n">iterlists</span>
+<span class="kn">from</span> <span class="nn">envlib.env._compat</span> <span class="kn">import</span> <span class="n">itervalues</span>
+<span class="kn">from</span> <span class="nn">envlib.env._compat</span> <span class="kn">import</span> <span class="n">PY2</span>
+<span class="kn">from</span> <span class="nn">envlib.env._internal</span> <span class="kn">import</span> <span class="n">_missing</span>
+<span class="kn">from</span> <span class="nn">envlib.env._internal</span> <span class="kn">import</span> <span class="n">_proxy_repr</span>
+
+
+<div class="viewcode-block" id="native_itermethods"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.native_itermethods">[文档]</a><span class="k">def</span> <span class="nf">native_itermethods</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">PY2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">setviewmethod</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">viewmethod_name</span> <span class="o">=</span> <span class="s2">&quot;view</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span>
+        <span class="n">repr_name</span> <span class="o">=</span> <span class="s2">&quot;view_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span>
+
+        <span class="k">def</span> <span class="nf">viewmethod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ViewItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">repr_name</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="n">viewmethod</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">viewmethod_name</span>
+        <span class="n">viewmethod</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;`</span><span class="si">%s</span><span class="s2">()` object providing a view on </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">viewmethod_name</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">viewmethod_name</span><span class="p">,</span> <span class="n">viewmethod</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setitermethod</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">itermethod</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;iter</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">itermethod</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">listmethod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">itermethod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">))</span>
+
+        <span class="n">listmethod</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">listmethod</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;Like :py:meth:`iter</span><span class="si">%s</span><span class="s2">`, but returns a list.&quot;</span> <span class="o">%</span> <span class="n">name</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">listmethod</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="n">setitermethod</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">setviewmethod</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span>
+
+    <span class="k">return</span> <span class="n">wrap</span></div>
+
+
+<div class="viewcode-block" id="iter_multi_items"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.iter_multi_items">[文档]</a><span class="k">def</span> <span class="nf">iter_multi_items</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Iterates over the items of a mapping yielding keys and values</span>
+<span class="sd">    without dropping any from more complex structures.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">MultiDict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">item</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">item</span></div>
+
+
+<div class="viewcode-block" id="is_immutable"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.is_immutable">[文档]</a><span class="k">def</span> <span class="nf">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%r</span><span class="s1"> objects are immutable&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ViewItems"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ViewItems">[文档]</a><span class="k">class</span> <span class="nc">ViewItems</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ViewItems.__init__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ViewItems.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi_dict</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">repr_name</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__multi_dict</span> <span class="o">=</span> <span class="n">multi_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__repr_name</span> <span class="o">=</span> <span class="n">repr_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__a</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__kw</span> <span class="o">=</span> <span class="n">kw</span></div>
+
+    <span class="k">def</span> <span class="nf">__get_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__multi_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__method</span><span class="p">)(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">__a</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">__kw</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ViewItems.__repr__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ViewItems.__repr__">[文档]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__repr_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_items</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="ViewItems.__iter__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ViewItems.__iter__">[文档]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_items</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="TypeConversionDict"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.TypeConversionDict">[文档]</a><span class="k">class</span> <span class="nc">TypeConversionDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Works like a regular dict but the :meth:`get` method can perform</span>
+<span class="sd">    type conversions.  :class:`MultiDict` and :class:`CombinedMultiDict`</span>
+<span class="sd">    are subclasses of this class and provide the same feature.</span>
+
+<span class="sd">    .. versionadded:: 0.5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TypeConversionDict.get"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.TypeConversionDict.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the default value if the requested data doesn&#39;t exist.</span>
+<span class="sd">        If `type` is provided and is a callable it should convert the value,</span>
+<span class="sd">        return it or raise a :exc:`ValueError` if that is not possible.  In</span>
+<span class="sd">        this case the function will return the default as if the value was not</span>
+<span class="sd">        found:</span>
+
+<span class="sd">        &gt;&gt;&gt; d = TypeConversionDict(foo=&#39;42&#39;, bar=&#39;blub&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; d.get(&#39;foo&#39;, type=int)</span>
+<span class="sd">        42</span>
+<span class="sd">        &gt;&gt;&gt; d.get(&#39;bar&#39;, -1, type=int)</span>
+<span class="sd">        -1</span>
+
+<span class="sd">        :param key: The key to be looked up.</span>
+<span class="sd">        :param default: The default value to be returned if the key can&#39;t</span>
+<span class="sd">                        be looked up.  If not further specified `None` is</span>
+<span class="sd">                        returned.</span>
+<span class="sd">        :param type: A callable that is used to cast the value in the</span>
+<span class="sd">                     :class:`MultiDict`.  If a :exc:`ValueError` is raised</span>
+<span class="sd">                     by this callable the default value is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rv</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">rv</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">rv</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="k">return</span> <span class="n">rv</span></div></div>
+
+
+<div class="viewcode-block" id="MultiDict"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict">[文档]</a><span class="nd">@native_itermethods</span><span class="p">([</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="s2">&quot;items&quot;</span><span class="p">,</span> <span class="s2">&quot;lists&quot;</span><span class="p">,</span> <span class="s2">&quot;listvalues&quot;</span><span class="p">])</span>
+<span class="k">class</span> <span class="nc">MultiDict</span><span class="p">(</span><span class="n">TypeConversionDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A :class:`MultiDict` is a dictionary subclass customized to deal with</span>
+<span class="sd">    multiple values for the same key which is for example used by the parsing</span>
+<span class="sd">    functions in the wrappers.  This is necessary because some HTML form</span>
+<span class="sd">    elements pass multiple values for the same key.</span>
+
+<span class="sd">    :class:`MultiDict` implements all standard dictionary methods.</span>
+<span class="sd">    Internally, it saves all values for a key as a list, but the standard dict</span>
+<span class="sd">    access methods will only return the first value for a key. If you want to</span>
+<span class="sd">    gain access to the other values, too, you have to use the `list` methods as</span>
+<span class="sd">    explained below.</span>
+
+<span class="sd">    Basic Usage:</span>
+
+<span class="sd">    &gt;&gt;&gt; d = MultiDict([(&#39;a&#39;, &#39;b&#39;), (&#39;a&#39;, &#39;c&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    MultiDict([(&#39;a&#39;, &#39;b&#39;), (&#39;a&#39;, &#39;c&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d[&#39;a&#39;]</span>
+<span class="sd">    &#39;b&#39;</span>
+<span class="sd">    &gt;&gt;&gt; d.getlist(&#39;a&#39;)</span>
+<span class="sd">    [&#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; &#39;a&#39; in d</span>
+<span class="sd">    True</span>
+
+<span class="sd">    It behaves like a normal dict thus all dict functions will only return the</span>
+<span class="sd">    first value when multiple values for one key are found.</span>
+
+<span class="sd">    From Werkzeug 0.3 onwards, the `KeyError` raised by this class is also a</span>
+<span class="sd">    subclass of the :exc:`~exceptions.BadRequest` HTTP exception and will</span>
+<span class="sd">    render a page for a ``400 BAD REQUEST`` if caught in a catch-all for HTTP</span>
+<span class="sd">    exceptions.</span>
+
+<span class="sd">    A :class:`MultiDict` can be constructed from an iterable of</span>
+<span class="sd">    ``(key, value)`` tuples, a dict, a :class:`MultiDict` or from Werkzeug 0.2</span>
+<span class="sd">    onwards some keyword parameters.</span>
+
+<span class="sd">    :param mapping: the initial value for the :class:`MultiDict`.  Either a</span>
+<span class="sd">                    regular dict, an iterable of ``(key, value)`` tuples</span>
+<span class="sd">                    or `None`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MultiDict.__init__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">MultiDict</span><span class="p">):</span>
+            <span class="nb">dict</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">[:])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">iterlists</span><span class="p">(</span><span class="n">mapping</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+                <span class="n">tmp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="nb">dict</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mapping</span> <span class="ow">or</span> <span class="p">():</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="nb">dict</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.__getstate__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__getstate__">[文档]</a>    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lists</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="MultiDict.__setstate__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__setstate__">[文档]</a>    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.__getitem__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__getitem__">[文档]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the first data value for this key;</span>
+<span class="sd">        raises KeyError if not found.</span>
+
+<span class="sd">        :param key: The key to be looked up.</span>
+<span class="sd">        :raise KeyError: if the key does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">lst</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">BadRequestKeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.__setitem__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__setitem__">[文档]</a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Like :meth:`add` but removes an existing key first.</span>
+
+<span class="sd">        :param key: the key for the value.</span>
+<span class="sd">        :param value: the value to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="MultiDict.add"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.add">[文档]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a new value for the key.</span>
+
+<span class="sd">        .. versionadded:: 0.6</span>
+
+<span class="sd">        :param key: the key for the value.</span>
+<span class="sd">        :param value: the value to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.getlist"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.getlist">[文档]</a>    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the list of items for a given key. If that key is not in the</span>
+<span class="sd">        `MultiDict`, the return value will be an empty list.  Just as `get`</span>
+<span class="sd">        `getlist` accepts a `type` parameter.  All items will be converted</span>
+<span class="sd">        with the callable defined there.</span>
+
+<span class="sd">        :param key: The key to be looked up.</span>
+<span class="sd">        :param type: A callable that is used to cast the value in the</span>
+<span class="sd">                     :class:`MultiDict`.  If a :exc:`ValueError` is raised</span>
+<span class="sd">                     by this callable the value will be removed from the list.</span>
+<span class="sd">        :return: a :class:`list` of all the values for the key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rv</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">rv</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rv</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="MultiDict.setlist"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.setlist">[文档]</a>    <span class="k">def</span> <span class="nf">setlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">new_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove the old values for a key and add new ones.  Note that the list</span>
+<span class="sd">        you pass the values in will be shallow-copied before it is inserted in</span>
+<span class="sd">        the dictionary.</span>
+
+<span class="sd">        &gt;&gt;&gt; d = MultiDict()</span>
+<span class="sd">        &gt;&gt;&gt; d.setlist(&#39;foo&#39;, [&#39;1&#39;, &#39;2&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; d[&#39;foo&#39;]</span>
+<span class="sd">        &#39;1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; d.getlist(&#39;foo&#39;)</span>
+<span class="sd">        [&#39;1&#39;, &#39;2&#39;]</span>
+
+<span class="sd">        :param key: The key for which the values are set.</span>
+<span class="sd">        :param new_list: An iterable with the new values for the key.  Old values</span>
+<span class="sd">                         are removed first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_list</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MultiDict.setdefault"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.setdefault">[文档]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value for the key if it is in the dict, otherwise it</span>
+<span class="sd">        returns `default` and sets that value for `key`.</span>
+
+<span class="sd">        :param key: The key to be looked up.</span>
+<span class="sd">        :param default: The default value to be returned if the key is not</span>
+<span class="sd">                        in the dict.  If not further specified it&#39;s `None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">default</span></div>
+
+<div class="viewcode-block" id="MultiDict.setlistdefault"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.setlistdefault">[文档]</a>    <span class="k">def</span> <span class="nf">setlistdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Like `setdefault` but sets multiple values.  The list returned</span>
+<span class="sd">        is not a copy, but the list that is actually used internally.  This</span>
+<span class="sd">        means that you can put new values into the dict by appending items</span>
+<span class="sd">        to the list:</span>
+
+<span class="sd">        &gt;&gt;&gt; d = MultiDict({&quot;foo&quot;: 1})</span>
+<span class="sd">        &gt;&gt;&gt; d.setlistdefault(&quot;foo&quot;).extend([2, 3])</span>
+<span class="sd">        &gt;&gt;&gt; d.getlist(&quot;foo&quot;)</span>
+<span class="sd">        [1, 2, 3]</span>
+
+<span class="sd">        :param key: The key to be looked up.</span>
+<span class="sd">        :param default_list: An iterable of default values.  It is either copied</span>
+<span class="sd">                             (in case it was a list) or converted into a list</span>
+<span class="sd">                             before returned.</span>
+<span class="sd">        :return: a :class:`list`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">default_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">default_list</span> <span class="ow">or</span> <span class="p">())</span>
+            <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default_list</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default_list</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_list</span></div>
+
+<div class="viewcode-block" id="MultiDict.items"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.items">[文档]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an iterator of ``(key, value)`` pairs.</span>
+
+<span class="sd">        :param multi: If set to `True` the iterator returned will have a pair</span>
+<span class="sd">                      for each value of each key.  Otherwise it will only</span>
+<span class="sd">                      contain pairs for the first value of each key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">multi</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="MultiDict.lists"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.lists">[文档]</a>    <span class="k">def</span> <span class="nf">lists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a iterator of ``(key, values)`` pairs, where values is the list</span>
+<span class="sd">        of all values associated with the key.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.keys"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.keys">[文档]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">iterkeys</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="fm">__iter__</span> <span class="o">=</span> <span class="n">keys</span>
+
+<div class="viewcode-block" id="MultiDict.values"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.values">[文档]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an iterator of the first value on every key&#39;s value list.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">itervalues</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="MultiDict.listvalues"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.listvalues">[文档]</a>    <span class="k">def</span> <span class="nf">listvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an iterator of all values associated with a key.  Zipping</span>
+<span class="sd">        :meth:`keys` and this is the same as calling :meth:`lists`:</span>
+
+<span class="sd">        &gt;&gt;&gt; d = MultiDict({&quot;foo&quot;: [1, 2, 3]})</span>
+<span class="sd">        &gt;&gt;&gt; zip(d.keys(), d.listvalues()) == d.lists()</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">itervalues</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.copy"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.copy">[文档]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a shallow copy of this object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.deepcopy"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.deepcopy">[文档]</a>    <span class="k">def</span> <span class="nf">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a deep copy of this object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">memo</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MultiDict.to_dict"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.to_dict">[文档]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the contents as regular dict.  If `flat` is `True` the</span>
+<span class="sd">        returned dict will only have the first item present, if `flat` is</span>
+<span class="sd">        `False` all values will be returned as lists.</span>
+
+<span class="sd">        :param flat: If set to `False` the dict returned will have lists</span>
+<span class="sd">                     with all the values in it.  Otherwise it will only</span>
+<span class="sd">                     contain the first value for each key.</span>
+<span class="sd">        :return: a :class:`dict`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lists</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="MultiDict.update"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;update() extends rather than replaces existing key lists:</span>
+
+<span class="sd">        &gt;&gt;&gt; a = MultiDict({&#39;x&#39;: 1})</span>
+<span class="sd">        &gt;&gt;&gt; b = MultiDict({&#39;x&#39;: 2, &#39;y&#39;: 3})</span>
+<span class="sd">        &gt;&gt;&gt; a.update(b)</span>
+<span class="sd">        &gt;&gt;&gt; a</span>
+<span class="sd">        MultiDict([(&#39;y&#39;, 3), (&#39;x&#39;, 1), (&#39;x&#39;, 2)])</span>
+
+<span class="sd">        If the value list for a key in ``other_dict`` is empty, no new values</span>
+<span class="sd">        will be added to the dict and the key will not be created:</span>
+
+<span class="sd">        &gt;&gt;&gt; x = {&#39;empty_list&#39;: []}</span>
+<span class="sd">        &gt;&gt;&gt; y = MultiDict()</span>
+<span class="sd">        &gt;&gt;&gt; y.update(x)</span>
+<span class="sd">        &gt;&gt;&gt; y</span>
+<span class="sd">        MultiDict([])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iter_multi_items</span><span class="p">(</span><span class="n">other_dict</span><span class="p">):</span>
+            <span class="n">MultiDict</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.pop"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.pop">[文档]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_missing</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pop the first item for a list on the dict.  Afterwards the</span>
+<span class="sd">        key is removed from the dict, so additional values are discarded:</span>
+
+<span class="sd">        &gt;&gt;&gt; d = MultiDict({&quot;foo&quot;: [1, 2, 3]})</span>
+<span class="sd">        &gt;&gt;&gt; d.pop(&quot;foo&quot;)</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; &quot;foo&quot; in d</span>
+<span class="sd">        False</span>
+
+<span class="sd">        :param key: the key to pop.</span>
+<span class="sd">        :param default: if provided the value to return if the key was</span>
+<span class="sd">                        not in the dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lst</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">BadRequestKeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_missing</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">default</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">BadRequestKeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.popitem"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.popitem">[文档]</a>    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pop an item from the dict.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">BadRequestKeyError</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">BadRequestKeyError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="MultiDict.poplist"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.poplist">[文档]</a>    <span class="k">def</span> <span class="nf">poplist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pop the list for a key from the dict.  If the key is not in the dict</span>
+<span class="sd">        an empty list is returned.</span>
+
+<span class="sd">        .. versionchanged:: 0.5</span>
+<span class="sd">           If the key does no longer exist a list is returned instead of</span>
+<span class="sd">           raising an error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="p">[])</span></div>
+
+<div class="viewcode-block" id="MultiDict.popitemlist"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.popitemlist">[文档]</a>    <span class="k">def</span> <span class="nf">popitemlist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pop a ``(key, list)`` tuple from the dict.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">BadRequestKeyError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="MultiDict.__copy__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__copy__">[文档]</a>    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MultiDict.__deepcopy__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__deepcopy__">[文档]</a>    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">memo</span><span class="o">=</span><span class="n">memo</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiDict.__repr__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.MultiDict.__repr__">[文档]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%r</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span></div></div>
+
+
+<div class="viewcode-block" id="ImmutableDictMixin"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin">[文档]</a><span class="k">class</span> <span class="nc">ImmutableDictMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Makes a :class:`dict` immutable.</span>
+
+<span class="sd">    .. versionadded:: 0.5</span>
+
+<span class="sd">    :private:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ImmutableDictMixin.__reduce_ex__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.__reduce_ex__">[文档]</a>    <span class="k">def</span> <span class="nf">__reduce_ex__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">),)</span></div>
+
+<div class="viewcode-block" id="ImmutableDictMixin.setdefault"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.setdefault">[文档]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImmutableDictMixin.update"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImmutableDictMixin.pop"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.pop">[文档]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImmutableDictMixin.popitem"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.popitem">[文档]</a>    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImmutableDictMixin.__setitem__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.__setitem__">[文档]</a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImmutableDictMixin.__delitem__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.__delitem__">[文档]</a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImmutableDictMixin.clear"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDictMixin.clear">[文档]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ImmutableDict"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDict">[文档]</a><span class="k">class</span> <span class="nc">ImmutableDict</span><span class="p">(</span><span class="n">ImmutableDictMixin</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An immutable :class:`dict`.</span>
+
+<span class="sd">    .. versionadded:: 0.5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">_proxy_repr</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ImmutableDict.copy"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDict.copy">[文档]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a shallow mutable copy of this object.  Keep in mind that</span>
+<span class="sd">        the standard library&#39;s :func:`copy` function is a no-op for this class</span>
+<span class="sd">        like for any other python immutable type (eg: :class:`tuple`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImmutableDict.__copy__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.datastructures.ImmutableDict.__copy__">[文档]</a>    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

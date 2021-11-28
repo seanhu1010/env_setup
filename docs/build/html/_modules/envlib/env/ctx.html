@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.env.ctx &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.env.ctx</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.env.ctx 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python </span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @Author:  sean</span>
+<span class="c1"># @File:    ctx.py</span>
+<span class="c1"># @Time:    2021/06/18</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    上下文管理</span>
+<span class="sd">    </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">ctx_stack</span>
+<span class="kn">from</span> <span class="nn">envlib.env.helpers</span> <span class="kn">import</span> <span class="n">ExtractingMixin</span>
+<span class="kn">from</span> <span class="nn">envlib.env.helpers</span> <span class="kn">import</span> <span class="n">HelpersMixin</span>
+
+<span class="c1"># a singleton sentinel value for parameter defaults</span>
+<span class="n">_sentinel</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="AppCtxGlobals"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.AppCtxGlobals">[文档]</a><span class="k">class</span> <span class="nc">AppCtxGlobals</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A plain object. Used as a namespace for storing data during an</span>
+<span class="sd">    application context.</span>
+
+<span class="sd">    Creating an app context automatically creates this object, which is</span>
+<span class="sd">    made available as the :data:`g` proxy.</span>
+
+<span class="sd">    .. describe:: &#39;key&#39; in g</span>
+
+<span class="sd">        Check whether an attribute is present.</span>
+
+<span class="sd">    .. describe:: iter(g)</span>
+
+<span class="sd">        Return an iterator over the attribute names.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AppCtxGlobals.get"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.AppCtxGlobals.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an attribute by name, or a default value. Like</span>
+<span class="sd">        :meth:`dict.get`.</span>
+
+<span class="sd">        :param name: Name of attribute to get.</span>
+<span class="sd">        :param default: Value to return if the attribute is not present.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppCtxGlobals.pop"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.AppCtxGlobals.pop">[文档]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_sentinel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and remove an attribute by name. Like :meth:`dict.pop`.</span>
+
+<span class="sd">        :param name: Name of attribute to pop.</span>
+<span class="sd">        :param default: Value to return if the attribute is not present,</span>
+<span class="sd">            instead of raise a ``KeyError``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="n">_sentinel</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppCtxGlobals.setdefault"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.AppCtxGlobals.setdefault">[文档]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value of an attribute if it is present, otherwise</span>
+<span class="sd">        set and return a default value. Like :meth:`dict.setdefault`.</span>
+
+<span class="sd">        :param name: Name of attribute to get.</span>
+<span class="sd">        :param: default: Value to set and return if the attribute is not</span>
+<span class="sd">            present.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppCtxGlobals.__contains__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.AppCtxGlobals.__contains__">[文档]</a>    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span></div>
+
+<div class="viewcode-block" id="AppCtxGlobals.getk"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.AppCtxGlobals.getk">[文档]</a>    <span class="k">def</span> <span class="nf">getk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">TagCtxGlobals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppCtxGlobals.__iter__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.AppCtxGlobals.__iter__">[文档]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TagCtxGlobals"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.TagCtxGlobals">[文档]</a><span class="k">class</span> <span class="nc">TagCtxGlobals</span><span class="p">(</span><span class="n">HelpersMixin</span><span class="p">,</span> <span class="n">ExtractingMixin</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TagCtxGlobals.__init__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.TagCtxGlobals.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span></div>
+
+<div class="viewcode-block" id="TagCtxGlobals._builder"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.TagCtxGlobals._builder">[文档]</a>    <span class="k">def</span> <span class="nf">_builder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">TagCtxGlobals</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TagCtxGlobals.__repr__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.TagCtxGlobals.__repr__">[文档]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">object</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="EnvContext"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.EnvContext">[文档]</a><span class="k">class</span> <span class="nc">EnvContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="EnvContext.__init__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.EnvContext.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+        <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">AppCtxGlobals</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">g</span></div>
+
+<div class="viewcode-block" id="EnvContext.copy"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.EnvContext.copy">[文档]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a copy of this request context with the same request object.</span>
+<span class="sd">        This can be used to move a request context to a different greenlet.</span>
+<span class="sd">        Because the actual request object is the same this cannot be used to</span>
+<span class="sd">        move a request context to a different thread unless access to the</span>
+<span class="sd">        request object is locked.</span>
+
+<span class="sd">        .. versionadded:: 0.10</span>
+
+<span class="sd">        .. versionchanged:: 1.1</span>
+<span class="sd">           The current session object is used instead of reloading the original</span>
+<span class="sd">           data. This prevents `flask.session` pointing to an out-of-date object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+            <span class="n">g</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">g</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="EnvContext.push"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.EnvContext.push">[文档]</a>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;绑定Env实例及其运行环境g&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ctx_stack</span><span class="o">.</span><span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">debug</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">ctx_stack</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">app</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ctx_stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ctx_stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EnvContext.pop"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.EnvContext.pop">[文档]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+            <span class="n">ctx_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="EnvContext.__enter__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.EnvContext.__enter__">[文档]</a>    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="EnvContext.__exit__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.ctx.EnvContext.__exit__">[文档]</a>    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+        <span class="c1"># do not pop the request stack if we are in debug mode and an</span>
+        <span class="c1"># exception happened.  This will allow the debugger to still</span>
+        <span class="c1"># access the request object in the interactive shell.  Furthermore</span>
+        <span class="c1"># the context can be force kept alive for the test client.</span>
+        <span class="c1"># See flask.testing for how this works.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tb</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">debug</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.env.app &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.env.app</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.env.app 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python </span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @Author:  sean</span>
+<span class="c1"># @File:    app.py</span>
+<span class="c1"># @Time:    2021/06/10</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    envlib.app</span>
+<span class="sd">    ~~~~~~~~~~</span>
+
+<span class="sd">    实用应用程序集合</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+<span class="kn">from</span> <span class="nn">requests_toolbelt.multipart.encoder</span> <span class="kn">import</span> <span class="n">MultipartEncoder</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">envlib.database</span> <span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">envlib.ssh</span> <span class="kn">import</span> <span class="n">Ssh</span>
+<span class="kn">from</span> <span class="nn">envlib.smb</span> <span class="kn">import</span> <span class="n">Smb</span>
+<span class="kn">from</span> <span class="nn">envlib.env.ctx</span> <span class="kn">import</span> <span class="n">EnvContext</span>
+<span class="kn">from</span> <span class="nn">envlib.rest</span> <span class="kn">import</span> <span class="n">Rest</span>
+<span class="kn">from</span> <span class="nn">envlib.env.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">ctx_stack</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">env_pools</span>
+<span class="kn">from</span> <span class="nn">envlib.env.globals</span> <span class="kn">import</span> <span class="n">current_app</span>
+<span class="kn">from</span> <span class="nn">resources.data</span> <span class="kn">import</span> <span class="n">HOST_IP</span><span class="p">,</span> <span class="n">SSH_NAME</span><span class="p">,</span> <span class="n">SSH_PASSWORD</span><span class="p">,</span> <span class="n">SMB_SHARE_PATH</span>
+
+
+<div class="viewcode-block" id="_assure_keys_in_request_parameters"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app._assure_keys_in_request_parameters">[文档]</a><span class="k">def</span> <span class="nf">_assure_keys_in_request_parameters</span><span class="p">(</span><span class="n">key_set</span><span class="p">:</span> <span class="nb">set</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;检查传入的key_set是允许的options</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key_set: set: 请求参数集合</span>
+
+<span class="sd">    Tip:</span>
+<span class="sd">        允许的options有::</span>
+
+<span class="sd">            &#39;method&#39;, &#39;url&#39;, &#39;params&#39;, &#39;data&#39;, &#39;headers&#39;, &#39;cookies&#39;, &#39;files&#39;, &#39;auth&#39;, &#39;timeout&#39;,</span>
+<span class="sd">            &#39;allow_redirects&#39;, &#39;proxies&#39;, &#39;hooks&#39;, &#39;stream&#39;, &#39;verify&#39;, &#39;cert&#39;, &#39;json&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">req_param_set</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># 允许的options</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;params&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;headers&#39;</span><span class="p">,</span> <span class="s1">&#39;cookies&#39;</span><span class="p">,</span> <span class="s1">&#39;files&#39;</span><span class="p">,</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allow_redirects&#39;</span><span class="p">,</span> <span class="s1">&#39;proxies&#39;</span><span class="p">,</span> <span class="s1">&#39;hooks&#39;</span><span class="p">,</span> <span class="s1">&#39;stream&#39;</span><span class="p">,</span> <span class="s1">&#39;verify&#39;</span><span class="p">,</span> <span class="s1">&#39;cert&#39;</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;check&#39;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">key_set</span> <span class="o">&lt;=</span> <span class="n">req_param_set</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wrong_req_param_set</span> <span class="o">=</span> <span class="n">key_set</span> <span class="o">-</span> <span class="n">req_param_set</span>
+        <span class="k">assert</span> <span class="n">wrong_req_param_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;请求参数错误! 错误请求参数为:</span><span class="si">{</span><span class="n">wrong_req_param_set</span><span class="si">}</span><span class="s2">, 可选类型为:</span><span class="si">{</span><span class="n">req_param_set</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Env"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env">[文档]</a><span class="k">class</span> <span class="nc">Env</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;运行环境类，只有用户+端口不同的才创建新的实例&quot;&quot;&quot;</span>
+
+    <span class="n">_instance_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+
+    <span class="c1">#: The debug flag.  Set this to `True` to enable debugging of the</span>
+    <span class="c1">#: application.  In debug mode the debugger will kick in when an unhandled</span>
+    <span class="c1">#: exception ocurrs and the integrated server will automatically reload</span>
+    <span class="c1">#: the application if changes in the code are detected.</span>
+    <span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Env.__init__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.__init__">[文档]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+
+        <span class="c1">#: 平台port, 如&#39;8000&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+
+        <span class="c1">#: 登陆用户</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+
+        <span class="c1">#: 登陆密码</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+
+        <span class="c1">#: 当前的Rest实例</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_appropriate_rest</span><span class="p">()</span>  <span class="c1"># proxy指向 session_pool的字典项</span>
+
+        <span class="c1">#: 初始化SSH连接为集群的业务虚ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span> <span class="o">=</span> <span class="n">Ssh</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">HOST_IP</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">SSH_NAME</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">SSH_PASSWORD</span><span class="p">)</span>
+
+        <span class="c1">#: 初始化pgsql连接</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pgsql</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="s1">&#39;pgsql&#39;</span><span class="p">)</span>
+
+        <span class="c1">#: 初始化pgsql连接</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertica</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="s1">&#39;vertica&#39;</span><span class="p">)</span>
+
+        <span class="c1">#: 初始化smb client连接</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smb</span> <span class="o">=</span> <span class="n">Smb</span><span class="p">()</span>
+
+        <span class="c1">#: 预留config设置模式选项</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+
+        <span class="c1">#: 预留扩展模块</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;返回当前环境上下文实例&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ctx_stack</span><span class="o">.</span><span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">ctx_stack</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">app</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ctx_stack</span><span class="o">.</span><span class="n">top</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">EnvContext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EnvContext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Env._get_restful_response"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env._get_restful_response">[文档]</a>    <span class="k">def</span> <span class="nf">_get_restful_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 对restful接口的返回值，做状态判断，并尝试以json形式返回</span>
+
+<span class="sd">        Tip:</span>
+<span class="sd">            新接口有标准的接口规范，response示例 {&quot;error_code&quot;:&quot;0000000000&quot;, &quot;message&quot;:&quot;XXX处理成功&quot;, &quot;data&quot;: {业务自定义json格式}}</span>
+<span class="sd">            使用老接口时有warning信息, 新接口将自动提取data</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            **options: 可选&#39;method&#39;, &#39;url&#39;, &#39;params&#39;, &#39;data&#39;, &#39;headers&#39;, &#39;cookies&#39;, &#39;files&#39;, &#39;auth&#39;, &#39;timeout&#39;,</span>
+<span class="sd">                &#39;allow_redirects&#39;, &#39;proxies&#39;, &#39;hooks&#39;, &#39;stream&#39;, &#39;verify&#39;, &#39;cert&#39;, &#39;json&#39;</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            check: 是否强制断言接口返回值为[200, 201, 204]状态之一，默认开启，强制校验接口返回若非2XX状态，程序会有中断</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            content or data json, 接口返回</span>
+<span class="sd">            新接口将自动提取data json片断</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_check</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">_assure_keys_in_request_parameters</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="k">if</span> <span class="s1">&#39;check&#39;</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+                <span class="n">_check</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;check&#39;</span><span class="p">)</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;check&#39;</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+
+            <span class="c1"># 如果会话失效会返回登陆页面，重试登陆</span>
+            <span class="k">if</span> <span class="s2">&quot;&lt;!DOCTYPE html&gt;&quot;</span> <span class="o">==</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">[:</span><span class="mi">15</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_re_login</span><span class="p">()</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+
+            <span class="c1"># 尝试将返回值用json解析</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">content</span>
+
+            <span class="k">if</span> <span class="n">_check</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">201</span><span class="p">,</span>
+                                           <span class="mi">204</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot; ERROR 状态码校验失败，期望值为200,201或204，实际值为</span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">，接口响应为</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="c1"># 新接口有标准的接口规范，response示例 {&quot;error_code&quot;:&quot;0000000000&quot;, &quot;message&quot;:&quot;XXX处理成功&quot;, &quot;data&quot;:{业务自定义json格式}}</span>
+            <span class="c1"># 使用老接口时有warning信息, 新接口将自动提取data</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">and</span> <span class="s1">&#39;error_code&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;新式接口:</span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, 即将提取data中的信息&quot;</span><span class="p">)</span>
+                    <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;可能是老式接口,请检查接口规范:</span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;可能是老式接口,请检查接口规范:</span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">content</span></div>
+
+<div class="viewcode-block" id="Env.send_by_rest"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.send_by_rest">[文档]</a>    <span class="k">def</span> <span class="nf">send_by_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;rest请求封装</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): url, &#39;api@options&#39;形式, 如&#39;/api/demo@get&#39;</span>
+<span class="sd">            **kwargs: 可选&#39;method&#39;, &#39;url&#39;, &#39;params&#39;, &#39;data&#39;, &#39;headers&#39;, &#39;cookies&#39;, &#39;files&#39;, &#39;auth&#39;, &#39;timeout&#39;,</span>
+<span class="sd">                &#39;allow_redirects&#39;, &#39;proxies&#39;, &#39;hooks&#39;, &#39;stream&#39;, &#39;verify&#39;, &#39;cert&#39;, &#39;json&#39;</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            check: 是否强制断言接口返回值为[200, 201, 204]状态之一，默认开启，强制校验接口返回若非2XX状态，程序会有中断</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            接口返回内容content的data，兼容新老接口，新接口将自动提取 *data* ，老接口会有warning提示，返回原 *content*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 因装饰器形式不易理解，舍弃之</span>
+        <span class="c1"># @wrapt.decorator</span>
+        <span class="c1"># def wrapper(wrapped, instance, args, kwargs):</span>
+        <span class="c1">#     options = dict({&#39;url&#39;: url}, **kwargs)  # 格式化拼接后的request options</span>
+        <span class="c1">#     restful_response = self._get_restful_response(**options)</span>
+        <span class="c1">#     g[wrapped.__name__] = restful_response</span>
+        <span class="c1">#     return restful_response</span>
+        <span class="c1">#</span>
+        <span class="c1"># return wrapper</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">restful_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_restful_response</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">restful_response</span></div>
+
+<div class="viewcode-block" id="Env.bind_to_g"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.bind_to_g">[文档]</a>    <span class="k">def</span> <span class="nf">bind_to_g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;绑定单个value到环境变量，以key,value的形式绑定到当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g``</span>
+
+<span class="sd">        适用于循环/批量处理值的绑定</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: key</span>
+<span class="sd">            value: 待绑定的value</span>
+<span class="sd">            lock: 是否加锁，加锁且值存在，将不修改原值</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">lock</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;g.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">的键重复，其value将被修改为 </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1"> !!&#39;</span><span class="p">)</span>
+            <span class="n">g</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span>
+            <span class="n">g</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;保存g k,v项为 =&gt; </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># lock is True and key in,不修改</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;g.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> is locked, 将不修改其value!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Env.smb_upload_excel"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.smb_upload_excel">[文档]</a>    <span class="k">def</span> <span class="nf">smb_upload_excel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;application/vnd.ms-excel&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;SMB连接上传excel</span>
+
+<span class="sd">        smb远程读文件转化为multipart/form-data请求所需的data 和 header</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_name (str): 文件名</span>
+<span class="sd">            file_relative_path (str):</span>
+<span class="sd">                相对远程目录，根目录为env.ini文件中的smb_share ``\\\\1.1.1.1\\info\\auto\\``</span>
+<span class="sd">            file_type (str):</span>
+<span class="sd">                文件类型，默认为excel类型，&#39;application/vnd.ms-excel&#39;</span>
+<span class="sd">                可能用到的例如，具体可抓包查找</span>
+
+<span class="sd">                &#39;doc[x]&#39;   :  &#39;application/msword&#39;</span>
+
+<span class="sd">                &#39;xls[x]&#39;   :  &#39;application/vnd.ms-excel&#39;</span>
+
+<span class="sd">                &#39;zip&#39;      :  &#39;application/zip&#39;</span>
+
+<span class="sd">                &#39;jpeg|jpg&#39;:  &#39;image/jpeg&#39;</span>
+
+<span class="sd">                &#39;png&#39;      :  &#39;image/png&#39;</span>
+
+<span class="sd">            **kwargs:</span>
+<span class="sd">                可选参数，以字典形式传入</span>
+<span class="sd">                用来表示除了&#39;file&#39;: file_tuple，以外的其他参数</span>
+
+<span class="sd">                .. code:: python</span>
+
+<span class="sd">                    MultipartEncoder(</span>
+<span class="sd">                        fields={&#39;file&#39;: file_tuple, **kwargs}</span>
+<span class="sd">                    )</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            data, headers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">_absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">file_relative_path</span> <span class="k">else</span> <span class="n">SMB_SHARE_PATH</span>
+        <span class="n">_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_absolute_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_fd</span><span class="p">:</span>
+            <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">_fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">file_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">file_pointer</span><span class="p">,</span> <span class="n">file_type</span><span class="p">)</span>
+        <span class="n">fields_dicts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">file_tuple</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">MultipartEncoder</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields_dicts</span><span class="p">)</span>
+        <span class="n">_headers</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">())</span>
+        <span class="n">_headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">content_type</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">_headers</span></div>
+
+<div class="viewcode-block" id="Env.smb_upload_zip"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.smb_upload_zip">[文档]</a>    <span class="k">def</span> <span class="nf">smb_upload_zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;application/x-zip-compressed&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;SMB连接上传zip文件，需要额外传入tab_id=tab_id</span>
+
+<span class="sd">        smb远程读文件转化为multipart/form-data请求所需的data 和 header</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_name (str): 文件名</span>
+<span class="sd">            file_relative_path (str):</span>
+<span class="sd">                相对远程目录，根目录为env.ini文件中的smb_share ``\\\\1.1.1.1\\info\\auto\\``</span>
+<span class="sd">            file_type (str):</span>
+<span class="sd">                文件类型，默认为excel类型，&#39;application/vnd.ms-excel&#39;</span>
+<span class="sd">                可能用到的例如，具体可抓包查找</span>
+
+<span class="sd">                &#39;doc[x]&#39;   :  &#39;application/msword&#39;</span>
+
+<span class="sd">                &#39;xls[x]&#39;   :  &#39;application/vnd.ms-excel&#39;</span>
+
+<span class="sd">                &#39;zip&#39;      :  &#39;application/zip&#39;</span>
+
+<span class="sd">                &#39;jpeg|jpg&#39;:  &#39;image/jpeg&#39;</span>
+
+<span class="sd">                &#39;png&#39;      :  &#39;image/png&#39;</span>
+
+<span class="sd">            **kwargs:</span>
+<span class="sd">                可选参数，以字典形式传入, &#39;tab_id&#39;: tab_id</span>
+<span class="sd">                用来表示除了&#39;file&#39;: file_tuple，以外的其他参数</span>
+
+<span class="sd">                .. code:: python</span>
+
+<span class="sd">                    MultipartEncoder(</span>
+<span class="sd">                        fields={&#39;file&#39;: file_tuple, **kwargs}</span>
+<span class="sd">                    )</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            data, headers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">file_relative_path</span> <span class="k">else</span> <span class="n">SMB_SHARE_PATH</span>
+        <span class="n">_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_absolute_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_fd</span><span class="p">:</span>
+            <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">_fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">file_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">file_pointer</span><span class="p">,</span> <span class="n">file_type</span><span class="p">)</span>
+        <span class="n">fields_dicts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s1">&#39;zip&#39;</span><span class="p">:</span> <span class="n">file_tuple</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">MultipartEncoder</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields_dicts</span><span class="p">)</span>
+        <span class="n">_headers</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">())</span>
+        <span class="n">_headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">content_type</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">_headers</span></div>
+
+<div class="viewcode-block" id="Env.smb_upload_jpg"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.smb_upload_jpg">[文档]</a>    <span class="k">def</span> <span class="nf">smb_upload_jpg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;SMB连接上传jpg,jpeg文件</span>
+
+<span class="sd">        smb远程读文件转化为multipart/form-data请求所需的data 和 header</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_name (str): 文件名</span>
+<span class="sd">            file_relative_path (str):</span>
+<span class="sd">                相对远程目录，根目录为env.ini文件中的smb_share ``\\\\1.1.1.1\\info\\auto\\``</span>
+<span class="sd">            file_type (str):</span>
+<span class="sd">                文件类型，默认为excel类型，&#39;application/vnd.ms-excel&#39;</span>
+<span class="sd">                可能用到的例如，具体可抓包查找</span>
+
+<span class="sd">                &#39;doc[x]&#39;   :  &#39;application/msword&#39;</span>
+
+<span class="sd">                &#39;xls[x]&#39;   :  &#39;application/vnd.ms-excel&#39;</span>
+
+<span class="sd">                &#39;zip&#39;      :  &#39;application/zip&#39;</span>
+
+<span class="sd">                &#39;jpeg|jpg&#39;:  &#39;image/jpeg&#39;</span>
+
+<span class="sd">                &#39;png&#39;      :  &#39;image/png&#39;</span>
+
+<span class="sd">            **kwargs:</span>
+<span class="sd">                可选参数，以字典形式传入</span>
+<span class="sd">                用来表示除了&#39;file&#39;: file_tuple，以外的其他参数</span>
+
+<span class="sd">                .. code:: python</span>
+
+<span class="sd">                    MultipartEncoder(</span>
+<span class="sd">                        fields={&#39;file&#39;: file_tuple, **kwargs}</span>
+<span class="sd">                    )</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            data, headers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">file_relative_path</span> <span class="k">else</span> <span class="n">SMB_SHARE_PATH</span>
+        <span class="n">_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_absolute_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_fd</span><span class="p">:</span>
+            <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">_fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">file_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">file_pointer</span><span class="p">,</span> <span class="n">file_type</span><span class="p">)</span>
+        <span class="n">fields_dicts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">file_tuple</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">MultipartEncoder</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields_dicts</span><span class="p">)</span>
+        <span class="n">_headers</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">())</span>
+        <span class="n">_headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">content_type</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">_headers</span></div>
+
+<div class="viewcode-block" id="Env.smb_get_base64"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.smb_get_base64">[文档]</a>    <span class="k">def</span> <span class="nf">smb_get_base64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;SMB读取远端图片数据路径，并返回base64</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_name (str): 文件名</span>
+<span class="sd">            file_relative_path (str):</span>
+<span class="sd">                相对远程目录，根目录为env.ini文件中的smb_share ``\\\\1.1.1.1\\info\\auto\\``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (str) base64编码</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SMB_SHARE_PATH</span><span class="p">,</span> <span class="n">file_relative_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">file_relative_path</span> <span class="k">else</span> <span class="n">SMB_SHARE_PATH</span>
+        <span class="n">_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_absolute_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">smb</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_fd</span><span class="p">:</span>
+            <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">_fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">base64_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">base64_data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span></div>
+
+<div class="viewcode-block" id="Env._rest_login"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env._rest_login">[文档]</a>    <span class="k">def</span> <span class="nf">_rest_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rest</span><span class="p">,</span> <span class="n">begin_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;会话登录, 保存session, cookies</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rest (str): 需要登录的会话</span>
+<span class="sd">            begin_url (str): 登录初始url</span>
+<span class="sd">            username (str): 登录用户名</span>
+<span class="sd">            password (str): 登录密码</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 计算密码md5</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;用户</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">进行登陆操作&quot;</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+        <span class="n">pwd_md5</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+        <span class="n">login_page</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">begin_url</span><span class="p">)</span>
+        <span class="c1"># 提取登录页隐藏编码</span>
+        <span class="n">execution</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;input type=&quot;hidden&quot; name=&quot;execution&quot; value=&quot;(\S+?)&quot;&#39;</span><span class="p">,</span> <span class="n">login_page</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span><span class="p">}</span>
+        <span class="n">req_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+                    <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">pwd_md5</span><span class="p">,</span>
+                    <span class="s2">&quot;execution&quot;</span><span class="p">:</span> <span class="n">execution</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="s2">&quot;_eventId&quot;</span><span class="p">:</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;submit&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">%E</span><span class="s2">7</span><span class="si">%99%</span><span class="s2">BB</span><span class="si">%E</span><span class="s2">5%BD%95&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;geolocation&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+        <span class="n">req_data</span> <span class="o">=</span> <span class="s2">&quot;&amp;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">req_json</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+        <span class="c1"># 集群登录存在跳转，可能实际登录IP不是输入的host ip，替换请求IP</span>
+        <span class="n">req_port</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">host</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_ip</span> <span class="o">=</span> <span class="n">login_page</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rest</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">new_ip</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">req_port</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># 登录</span>
+        <span class="n">rest</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">login_page</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">head</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">req_data</span><span class="p">)</span>
+
+        <span class="c1"># 校验登录结果，校验session的cookies</span>
+        <span class="n">sso_cookies</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">_cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">new_ip</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/sso/&#39;</span><span class="p">)</span>
+        <span class="n">rest</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sso_cookies</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;登录失败&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Env._re_login"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env._re_login">[文档]</a>    <span class="k">def</span> <span class="nf">_re_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;重新登陆rest会话&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rest_login</span><span class="p">(</span><span class="n">rest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">,</span> <span class="n">begin_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Env._fetch_appropriate_rest"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env._fetch_appropriate_rest">[文档]</a>    <span class="k">def</span> <span class="nf">_fetch_appropriate_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;从单例Rest实例池获取缓存的实例，否则新建&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;rest&#39;</span><span class="p">):</span>
+            <span class="n">_rest</span> <span class="o">=</span> <span class="n">Rest</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;http://</span><span class="si">{</span><span class="n">HOST_IP</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rest_login</span><span class="p">(</span><span class="n">rest</span><span class="o">=</span><span class="n">_rest</span><span class="p">,</span> <span class="n">begin_url</span><span class="o">=</span><span class="n">_rest</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_rest</span> <span class="o">=</span> <span class="n">env_pools</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">))</span><span class="o">.</span><span class="n">rest</span>
+        <span class="k">return</span> <span class="n">_rest</span></div>
+
+<div class="viewcode-block" id="Env._headers"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env._headers">[文档]</a>    <span class="k">def</span> <span class="nf">_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;登录后的的header&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>  <span class="c1"># 正常登录后的的header</span>
+            <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;username:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">&amp;usercode:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;User&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;username:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">&amp;usercode:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json;charset=utf-8&quot;</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="Env.push_context"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.push_context">[文档]</a>    <span class="k">def</span> <span class="nf">push_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;调用方式触发上下文&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_context</span><span class="o">.</span><span class="n">push</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Env.pop_context"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.pop_context">[文档]</a>    <span class="k">def</span> <span class="nf">pop_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;调用方式弹出上下文&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_context</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Env.__enter__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.__enter__">[文档]</a>    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;with方式触发上下文&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_context</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">current_app</span></div>
+
+<div class="viewcode-block" id="Env.__exit__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.__exit__">[文档]</a>    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;自动释放上下文&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_context</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Env.__new__"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.app.Env.__new__">[文档]</a>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;基于元类的实例产生&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_instance&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">Env</span><span class="o">.</span><span class="n">_instance_lock</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_instance&quot;</span><span class="p">):</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+                    <span class="n">env_pools</span><span class="p">[</span><span class="n">user</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">Env</span><span class="o">.</span><span class="n">_instance_lock</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">user</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env_pools</span><span class="p">:</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+                    <span class="n">env_pools</span><span class="p">[</span><span class="n">user</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">env_pools</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

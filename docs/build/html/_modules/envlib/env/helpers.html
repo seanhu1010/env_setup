@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>envlib.env.helpers &mdash; env_setup_v2 v0.0.2 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> env_setup_v2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">1. 项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id5">2. 主要库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id10">3. 提交说明</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">envlib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">env_setup_v2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>envlib.env.helpers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>envlib.env.helpers 源代码</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python </span>
+<span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="c1"># @Author:  sean</span>
+<span class="c1"># @File:    helpers.py</span>
+<span class="c1"># @Time:    2021/06/11</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">一此实用的工具Mixin类</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="kn">from</span> <span class="nn">envlib.env.envlogging</span> <span class="kn">import</span> <span class="n">logger</span>
+
+
+<div class="viewcode-block" id="HelpersMixin"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.helpers.HelpersMixin">[文档]</a><span class="k">class</span> <span class="nc">HelpersMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Helpers mixin.  For internal use only.</span>
+
+<span class="sd">    参考assertpy.helpers</span>
+<span class="sd">    为类 mixin一些检查方法</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="HelpersMixin._check_dict_like"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.helpers.HelpersMixin._check_dict_like">[文档]</a>    <span class="k">def</span> <span class="nf">_check_dict_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">check_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_values</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_getitem</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;val&#39;</span><span class="p">,</span>
+                         <span class="n">return_as_bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper to check if given val has various dict-like attributes.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">return_as_bool</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt; is not dict-like: not iterable&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">check_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;keys&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;keys&#39;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">return_as_bool</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt; is not dict-like: missing keys()&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">check_values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;values&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;values&#39;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">return_as_bool</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt; is not dict-like: missing values()&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">check_getitem</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;__getitem__&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">return_as_bool</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt; is not dict-like: missing [] accessor&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">return_as_bool</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="HelpersMixin._check_iterable"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.helpers.HelpersMixin._check_iterable">[文档]</a>    <span class="k">def</span> <span class="nf">_check_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">check_getitem</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;val&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper to check if given val has various iterable attributes.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt; is not iterable&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">check_getitem</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;__getitem__&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt; does not have [] accessor&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="ExtractingMixin"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.helpers.ExtractingMixin">[文档]</a><span class="k">class</span> <span class="nc">ExtractingMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Collection flattening mixin</span>
+
+<span class="sd">    参考assertpy.extracting</span>
+<span class="sd">    当前接口返回的数据json千奇百怪, 对json的处理通常会使用字典或列表的一些操作, 并结合一些</span>
+<span class="sd">    map/reduce/lambda等来提取，再作为功能或端到端自动化接口的入参,重复单调！</span>
+<span class="sd">    这里借鉴assertpy的思路，来针对性地处理保存在 class: ``TagCtxGlobals`` 中复杂的json,</span>
+<span class="sd">    如嵌套字典和字典列表等，提供了一个统一的 ``extracting()`` 方法</span>
+
+<span class="sd">    Tip:</span>
+<span class="sd">        假设示例均保存在当前运行的Env实例关联的上下文环境信息AppCtxGlobals实例的代理 ``g`` 下</span>
+
+<span class="sd">    **extracting**</span>
+
+<span class="sd">    1) ``extracting()`` 的值为非可迭代对象，非列表、元组、字符串、字典等，直接返回::</span>
+
+<span class="sd">        users = { &#39;item&#39;: not_Iterable_obj }</span>
+
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;item&#39;)</span>
+
+<span class="sd">        Returns: not_Iterable_obj</span>
+
+<span class="sd">    2) ``extracting()`` 值是字符串，直接返回::</span>
+
+<span class="sd">        users = { &#39;item&#39;: str }</span>
+
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;item&#39;)</span>
+
+<span class="sd">        Returns: str</span>
+
+<span class="sd">    3)如果 ``extracting()`` 值是字典，查names，递归查找后返回list::</span>
+
+<span class="sd">            json_nested_dict = {</span>
+<span class="sd">                &quot;name&quot;: &quot;208_1.1.1.1_SDK&quot;,</span>
+<span class="sd">                &quot;ape_id&quot;: &quot;50010000001181000003&quot;,</span>
+<span class="sd">                &quot;org_name&quot;: &quot;illegal_system&quot;,</span>
+<span class="sd">                &quot;org_index&quot;: &quot;50010000002160000006&quot;,</span>
+<span class="sd">                &quot;channel_list&quot;: [</span>
+<span class="sd">                {</span>
+<span class="sd">                  &quot;ape_id&quot;: &quot;50010000001311000021&quot;,</span>
+<span class="sd">                  &quot;name&quot;: &quot;208_1.1.1.1_SDK_通道_1&quot;</span>
+<span class="sd">                },</span>
+<span class="sd">                {</span>
+<span class="sd">                  &quot;ape_id&quot;: &quot;50010000001311000022&quot;,</span>
+<span class="sd">                  &quot;name&quot;: &quot;208_1.1.1.1_SDK_通道_2&quot;</span>
+<span class="sd">                }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+
+<span class="sd">            g.getk(&#39;json_nested_dict&#39;).extracting(&#39;ape_id&#39;)</span>
+
+<span class="sd">            Returns: [&quot;50010000001181000003&quot;, &quot;208_1.1.1.1_SDK_通道_1&quot;, &quot;208_1.1.1.1_SDK_通道_2&quot;]</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        关键字{names}数量 不等于 提取值{extracted}数量, 会有 `critical` 提醒</span>
+
+<span class="sd">    4)如果 ``extracting()`` 值是单层元组，直接返回::</span>
+
+<span class="sd">        users = { &#39;item&#39;: (a,b,c) }</span>
+
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;item&#39;)</span>
+
+<span class="sd">        Returns: (a,b,c)</span>
+
+<span class="sd">    5)如果 ``extracting()`` 值是list of dicts [{},{},{}],将批量提取::</span>
+
+<span class="sd">        users = [</span>
+<span class="sd">            {&#39;user&#39;: &#39;Alice&#39;, &#39;age&#39;: 36, &#39;active&#39;: True},</span>
+<span class="sd">            {&#39;user&#39;: &#39;Bob&#39;, &#39;age&#39;: 40, &#39;active&#39;: False},</span>
+<span class="sd">            {&#39;user&#39;: &#39;Charlie&#39;, &#39;age&#39;: 13, &#39;active&#39;: True}</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;user&#39;)</span>
+
+<span class="sd">        Returns: [&#39;Alice&#39;, &#39;Bob&#39;, &#39;Charlie&#39;]</span>
+
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;user&#39;,&#39;age&#39;)</span>
+
+<span class="sd">        Returns: [(&#39;Alice&#39;,36), (&#39;Bob&#39;,40), (&#39;Charlie&#39;,13)]</span>
+
+<span class="sd">    **Filtering**</span>
+
+<span class="sd">    Warning:</span>
+
+<span class="sd">        *filter* 仅在所提取对象是 形如 ``list of dicts`` 生效</span>
+
+<span class="sd">    ``extracting()`` 方法可以接受 *filter* 来过滤并提取*filter*的条件为true时的items</span>
+
+<span class="sd">    For example::</span>
+
+<span class="sd">        users = [</span>
+<span class="sd">            {&#39;user&#39;: &#39;Alice&#39;, &#39;age&#39;: 36, &#39;active&#39;: True},</span>
+<span class="sd">            {&#39;user&#39;: &#39;Bob&#39;, &#39;age&#39;: 40, &#39;active&#39;: False},</span>
+<span class="sd">            {&#39;user&#39;: &#39;Charlie&#39;, &#39;age&#39;: 13, &#39;active&#39;: True}</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        # filter the active users</span>
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;user&#39;, filter=&#39;active&#39;)</span>
+
+<span class="sd">    *filter* 也可以接受一个/一组 *dict-like* 对象, 过滤并提取*filter*与相应的key-value pairs相等的items::</span>
+
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;user&#39;, filter={&#39;active&#39;: False})</span>
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;user&#39;, filter={&#39;age&#39;: 36, &#39;active&#39;: True})</span>
+
+<span class="sd">    *filter* 还可以接受function (including an in-line ``lambda``) that accepts as its single</span>
+<span class="sd">    argument each item in the collection, and the extracted items are kept if the function</span>
+<span class="sd">    evaluates to ``True`` ::</span>
+
+<span class="sd">        g.getk(&#39;users&#39;).extracting(&#39;user&#39;, filter=lambda x: x[&#39;age&#39;] &gt; 20)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ExtractingMixin.extracting"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.helpers.ExtractingMixin.extracting">[文档]</a>    <span class="k">def</span> <span class="nf">extracting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;提取元素，类似assertpy，支持元素及filter</span>
+
+<span class="sd">        :author: sean</span>
+<span class="sd">        :created: 2021/2/3 20:31</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *names: the attribute to be extracted (or property or zero-arg method)</span>
+<span class="sd">            **kwargs: see below</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            filter: extract only those items where filter is truthy</span>
+
+<span class="sd">        Tip:</span>
+<span class="sd">            假设示例均保存在 ``common`` 的tag下</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            1) ``extracting()`` 的值为非可迭代对象（如非列表、非元组、非字符串、非字典），或字符串，或单层元组，直接返回::</span>
+
+<span class="sd">                g.getk(&#39;users&#39;).extracting(&#39;item&#39;)</span>
+
+<span class="sd">            2)如果 ``extracting()`` 值是字典，查names，递归查找后返回list::</span>
+
+<span class="sd">                json_nested_dict = {</span>
+<span class="sd">                    &quot;name&quot;: &quot;208_1.1.1.1_SDK&quot;,</span>
+<span class="sd">                    &quot;ape_id&quot;: &quot;50010000001181000003&quot;,</span>
+<span class="sd">                    &quot;org_name&quot;: &quot;illegal_system&quot;,</span>
+<span class="sd">                    &quot;org_index&quot;: &quot;50010000002160000006&quot;,</span>
+<span class="sd">                    &quot;channel_list&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                      &quot;ape_id&quot;: &quot;50010000001311000021&quot;,</span>
+<span class="sd">                      &quot;name&quot;: &quot;208_1.1.1.1_SDK_通道_1&quot;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    {</span>
+<span class="sd">                      &quot;ape_id&quot;: &quot;50010000001311000022&quot;,</span>
+<span class="sd">                      &quot;name&quot;: &quot;208_1.1.1.1_SDK_通道_2&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">                    ]</span>
+<span class="sd">                }</span>
+
+<span class="sd">                g.getk(&#39;json_nested_dict&#39;).extracting(&#39;ape_id&#39;)</span>
+
+<span class="sd">                Returns: [&quot;50010000001181000003&quot;, &quot;208_1.1.1.1_SDK_通道_1&quot;, &quot;208_1.1.1.1_SDK_通道_2&quot;]</span>
+
+<span class="sd">            关键字{names}数量 不等于 提取值{extracted}数量, 会有 ``critical`` 提醒</span>
+
+<span class="sd">            3)如果 ``extracting()`` 值是list of dicts ``[{}, {}, {}]`` ,将批量提取::</span>
+
+<span class="sd">                users = [</span>
+<span class="sd">                    {&#39;user&#39;: &#39;Alice&#39;, &#39;age&#39;: 36, &#39;active&#39;: True},</span>
+<span class="sd">                    {&#39;user&#39;: &#39;Bob&#39;, &#39;age&#39;: 40, &#39;active&#39;: False},</span>
+<span class="sd">                    {&#39;user&#39;: &#39;Charlie&#39;, &#39;age&#39;: 13, &#39;active&#39;: True}</span>
+<span class="sd">                ]</span>
+
+<span class="sd">                g.getk(&#39;users&#39;).extracting(&#39;user&#39;)</span>
+
+<span class="sd">                g.getk(&#39;users&#39;).extracting(&#39;user&#39;,&#39;age&#39;)</span>
+
+<span class="sd">            Filter::</span>
+
+<span class="sd">                g.getk(&#39;users&#39;).extracting(&#39;user&#39;, filter={&#39;active&#39;: False})</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a list of values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>  <span class="c1"># 值为非可迭代对象，非列表、元组、字符串、字典等，直接返回</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s1"> is not Iterable, 将直接返回</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s1"> is string, 将直接返回</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># 是字符串，直接返回</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;one or more name args must be given！！&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dict_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">check_values</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_as_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;item keys </span><span class="si">%s</span><span class="s1"> did not contain key &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">name</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_iterable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;item&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">attr</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;val method &lt;</span><span class="si">%s</span><span class="s1">()&gt; exists, but is not zero-arg method&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">attr</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;val does not have property or zero-arg method &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_filter</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;filter&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">_extract</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dict_like</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">],</span> <span class="n">check_values</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_as_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">_extract</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">!=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]:</span>
+                                <span class="k">return</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]):</span>
+                    <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">def</span> <span class="nf">_get_nested_dict_value</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">yield from</span> <span class="n">_get_nested_dict_value</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="k">yield</span> <span class="n">v</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># 如果是字典，查names，递归查找后返回list</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s1"> is dict or nested dict,将递归提取</span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">extracted</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_get_nested_dict_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="n">names</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">extracted</span><span class="p">):</span>  <span class="c1"># bug，无法识别key1对应2个值， key2对应0个值的情况</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;提取数据不符合预期, 关键字</span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s1">数量 不等于 提取值</span><span class="si">{</span><span class="n">extracted</span><span class="si">}</span><span class="s1">数量，请谨慎处理！&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;所提取的值 </span><span class="si">{</span><span class="n">extracted</span><span class="si">}</span><span class="s1"> 只有一个，将直接提取为 </span><span class="si">{</span><span class="n">extracted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> !!&#39;</span><span class="p">)</span>
+            <span class="n">extracted</span> <span class="o">=</span> <span class="n">extracted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">extracted</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># 单层元组，直接返回</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s1"> is 单层元组,将直接返回&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 如果是list of dicts [{},{},{}] 或 list of list[[],[],[]]，将批量提取</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s1"> is list of dicts OR list of list, 将批量提取</span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">extracted</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_filter</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+                    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">_extract</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+                    <span class="c1"># extracted.append(tuple(items) if len(items) &gt; 1 else items[0])</span>
+                    <span class="n">extracted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">extracted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extracted</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;未找到符合条件 </span><span class="si">{</span><span class="n">names</span><span class="p">,</span> <span class="n">kwargs</span><span class="si">}</span><span class="s1">的值 !!&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extracted</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;所提取的值 </span><span class="si">{</span><span class="n">extracted</span><span class="si">}</span><span class="s1"> 只有一个，将直接提取为 </span><span class="si">{</span><span class="n">extracted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> !!&#39;</span><span class="p">)</span>
+                <span class="n">extracted</span> <span class="o">=</span> <span class="n">extracted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_builder</span><span class="p">(</span><span class="n">extracted</span><span class="p">)</span><span class="o">.</span><span class="n">val</span></div></div>
+
+
+<div class="viewcode-block" id="GetKeysMixin"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.helpers.GetKeysMixin">[文档]</a><span class="k">class</span> <span class="nc">GetKeysMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;获取类的key列表&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GetKeysMixin.get_keys"><a class="viewcode-back" href="../../../envlib.env.html#envlib.env.helpers.GetKeysMixin.get_keys">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">func_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">func</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)]</span>
+        <span class="n">kv</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">func_list</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;bind_to_g\(key=</span><span class="se">\&#39;</span><span class="s1">(.*?)</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">)))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
+                <span class="n">kv</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;函数名: </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s1">, 含义: </span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">kv</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, sean.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
