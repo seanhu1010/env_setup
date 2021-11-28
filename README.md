@@ -4,7 +4,9 @@ Introduction
 # 1. 项目简介
 
 
-预置驱动库框架，提供一些基础的预置库方法，方便进行端到端自动化预置，工程地址
+预置驱动库框架，提供一些基础的预置库方法，方便进行端到端自动化预置；
+项目已脱敏，无法实际运行，仅做展示；
+[设计思路](https://docs.qq.com/flowchart/DS0xTcU5WWGRSeUdZ)
 
 
 基于 [pytest](https://docs.pytest.org/en/6.2.x/) 测试框架 + [allure](https://docs.qameta.io/allure/) 生成测试报告
@@ -29,7 +31,7 @@ Introduction
 * 支持根据模板生成api函数方法
 
 
-#### level定义:
+#### 分层定义:
 
 * level0: 如服务状态检查`K8s`,存储状态查询`Storage`,综合管理`Uuv`,各类tool`Kafka`等
 
