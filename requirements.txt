@@ -1,0 +1,17 @@
+setuptools>=54.0.0
+loguru>=0.5.3
+qtaf==5.4.43
+psycopg2>=2.8.6
+vertica-python>=1.0.1
+wrapt==1.12.1
+requests-toolbelt>=0.9.1
+requests>=2.25.1
+smbprotocol==1.4.0
+paramiko>=2.7.2
+pypinyin>=0.40.0
+Sphinx>=3.5.1
+recommonmark>=0.7.1
+sphinx-rtd-theme>=0.5.1
+pandas>=1.0.3
+pytest>=6.2.4
+allure-pytest>=2.9.45
